@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyTitle>Whose IPTV</AssemblyTitle>
+    <Product>Whose IPTV</Product>
+    <ApplicationIcon>Assets\WhoseIptv.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IptvPlayer.Application\IptvPlayer.Application.csproj" />
+    <ProjectReference Include="..\IptvPlayer.Contracts\IptvPlayer.Contracts.csproj" />
+    <ProjectReference Include="..\IptvPlayer.Domain\IptvPlayer.Domain.csproj" />
+    <ProjectReference Include="..\IptvPlayer.Infrastructure\IptvPlayer.Infrastructure.csproj" />
+    <ProjectReference Include="..\IptvPlayer.Player.Vlc\IptvPlayer.Player.Vlc.csproj" />
+    <ProjectReference Include="..\IptvPlayer.Presentation\IptvPlayer.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LibVLCSharp.WPF" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Extensions.Hosting" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="AssertPlaybackRegressionGuards"
+          BeforeTargets="BeforeBuild"
+          Condition="'$(DesignTimeBuild)' != 'true'">
+    <Exec Command="powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\..\qa-artifacts\Assert-PlaybackRegressionGuards.ps1&quot; -SourceOnly" />
+  </Target>
+</Project>

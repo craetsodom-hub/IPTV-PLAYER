@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>भाषा</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>भाषाएँ खोजें</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>पसंदीदा चैनल</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>ऊपर स्क्रॉल करें</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>नीचे स्क्रॉल करें</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>बाएँ स्क्रॉल करें</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>दाएँ स्क्रॉल करें</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>देखना जारी रखें दिखाएँ या छिपाएँ</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>प्लेलिस्ट</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>प्लेलिस्ट जोड़ें</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट संपादित करें</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट हटाएँ</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>M3U फ़ाइल आयात करें</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>स्थिति: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>समाप्ति: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>शेष दिन: </value></data>
+  <data name="Browse" xml:space="preserve"><value>ब्राउज़ करें</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>लाइव टीवी</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>फ़िल्में</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>सीरीज़</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>लाइव टीवी</value></data>
+  <data name="Movies" xml:space="preserve"><value>फ़िल्में</value></data>
+  <data name="Series" xml:space="preserve"><value>सीरीज़</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>प्लेलिस्ट का नाम</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>सर्वर URL</value></data>
+  <data name="Username" xml:space="preserve"><value>उपयोगकर्ता नाम</value></data>
+  <data name="Password" xml:space="preserve"><value>पासवर्ड</value></data>
+  <data name="Choose" xml:space="preserve"><value>चुनें</value></data>
+  <data name="Cancel" xml:space="preserve"><value>रद्द करें</value></data>
+  <data name="Categories" xml:space="preserve"><value>श्रेणियाँ</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>श्रेणियाँ खोजें</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>पसंदीदा चैनल दिखाएँ</value></data>
+  <data name="Favorites" xml:space="preserve"><value>पसंदीदा</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>सहेजे गए चैनल</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>खोज बंद करें</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>फ़िल्म संग्रह</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>सहेजी गई फ़िल्में दिखाएँ</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>शैली के अनुसार ब्राउज़ करें</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>सीरीज़ संग्रह</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>सहेजी गई सीरीज़ दिखाएँ</value></data>
+  <data name="Channels" xml:space="preserve"><value>चैनल</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>चैनल खोजें</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>फ़िल्में खोजें</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>देखना जारी रखें</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>सीरीज़ खोजें</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>अभी चल रहा है</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>विशेष फ़िल्म</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>चलाएँ / जारी रखें</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>सीरीज़</value></data>
+  <data name="Resume" xml:space="preserve"><value>जारी रखें</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>इस प्लेलिस्ट से कोई एपिसोड नहीं मिला।</value></data>
+  <data name="Play" xml:space="preserve"><value>चलाएँ</value></data>
+  <data name="Pause" xml:space="preserve"><value>रोकें</value></data>
+  <data name="Stop" xml:space="preserve"><value>बंद करें</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>पूर्ण स्क्रीन</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>लाइव EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>इसके बाद</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>पूर्ण स्क्रीन नियंत्रण</value></data>
+  <data name="Back" xml:space="preserve"><value>वापस</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>पूर्ण स्क्रीन प्लेयर</value></data>
+  <data name="Previous" xml:space="preserve"><value>पिछला</value></data>
+  <data name="Next" xml:space="preserve"><value>अगला</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>प्लेयर निष्क्रिय</value></data>
+  <data name="Ready" xml:space="preserve"><value>तैयार</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>प्लेबैक शुरू करने के लिए चैनल चुनें।</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>कोई चैनल चयनित नहीं</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>इस प्लेलिस्ट की फ़िल्में लोड करने के लिए फ़िल्में चुनें।</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>इस प्लेलिस्ट के कार्यक्रम लोड करने के लिए सीरीज़ चुनें।</value></data>
+  <data name="Mute" xml:space="preserve"><value>म्यूट</value></data>
+  <data name="Unmute" xml:space="preserve"><value>म्यूट हटाएँ</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>कोई फ़िल्म नहीं मिली</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>कोई सीरीज़ नहीं मिली</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>वॉचलिस्ट में जोड़ें</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>वॉचलिस्ट से हटाएँ</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>वॉचलिस्ट</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>वॉचलिस्ट में है</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>प्लेबैक शुरू हो रहा है...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>स्ट्रीम खोली जा रही है</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>प्लेबैक विफल</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>कोई सिग्नल नहीं</value></data>
+  <data name="Stopped" xml:space="preserve"><value>बंद</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>प्लेबैक बंद है</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>जारी रखने के लिए चैनल चुनें।</value></data>
+  <data name="Unknown" xml:space="preserve"><value>अज्ञात</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>उपलब्ध नहीं</value></data>
+  <data name="Expired" xml:space="preserve"><value>समाप्त</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>एक अनपेक्षित त्रुटि हुई। कार्रवाई रद्द कर दी गई। विवरण के लिए लॉग देखें।</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>M3U फ़ाइल चुनें</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U प्लेलिस्ट (*.m3u;*.m3u8)|*.m3u;*.m3u8|सभी फ़ाइलें (*.*)|*.*</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 सहेजा गया</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} सहेजे गए</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>अभी कोई सहेजी गई फ़िल्म या सीरीज़ नहीं है।</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 फ़िल्म</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} फ़िल्में</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>और दिखाएँ ({0} शेष)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>सभी फ़िल्में लोड हो गईं</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>फ़िल्म वॉचलिस्ट ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>सहेजी गई फ़िल्में: {0}</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 सीरीज़</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} सीरीज़</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>सभी सीरीज़ लोड हो गईं</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>सीरीज़ वॉचलिस्ट ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>सहेजी गई सीरीज़: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>प्लेलिस्ट संपादित करें</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Xtream प्लेलिस्ट जोड़ें</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>M3U URL जोड़ें</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>सीधे M3U8 स्ट्रीम आयात करें</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>स्रोत आयात करें</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>बदलाव सहेजें</value></data>
+  <data name="Import" xml:space="preserve"><value>आयात करें</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>प्लेलिस्ट URL</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U फ़ाइल</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8 स्ट्रीम URL</value></data>
+  <data name="Input" xml:space="preserve"><value>इनपुट</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>अपनी प्लेलिस्ट का URL दर्ज करें।</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>अपने डिवाइस से M3U फ़ाइल चुनें।</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>स्ट्रीम URL दर्ज करें।</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>प्लेयर स्क्रीन शुरू नहीं हो सकी।</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट में फ़िल्में होने पर वे यहाँ दिखाई देंगी।</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट में कार्यक्रम होने पर वे यहाँ दिखाई देंगे।</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>प्लेबैक शुरू नहीं हो सका। कोई अन्य शीर्षक आज़माएँ।</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>प्लेलिस्ट का विवरण अपडेट करें, फिर सहेजें।</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>आवश्यक आयात फ़ील्ड पूरे करें।</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>प्लेलिस्ट जोड़ी जा रही है...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>प्लेलिस्ट सफलतापूर्वक जोड़ दी गई।</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>प्लेलिस्ट का विवरण पूरा करें।</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>प्लेलिस्ट सहेजी जा रही है...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>प्लेलिस्ट सहेज दी गई।</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>स्रोत हटाया नहीं गया।</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>स्रोत हटा दिया गया।</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>कोई प्लेलिस्ट उपलब्ध नहीं है। फ़िल्में देखने के लिए प्लेलिस्ट जोड़ें।</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>कोई प्लेलिस्ट उपलब्ध नहीं है। सीरीज़ देखने के लिए प्लेलिस्ट जोड़ें।</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>कोई प्लेलिस्ट या खाता उपलब्ध नहीं है। जारी रखने के लिए एक जोड़ें।</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>कोई चैनल उपलब्ध नहीं</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>इस श्रेणी में कोई चैनल नहीं है</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट में फ़िल्में होने पर वे उपलब्ध होंगी।</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>सभी फ़िल्में</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>फ़िल्में लोड होने में बहुत समय लगा। दूसरी श्रेणी या रीफ़्रेश आज़माएँ।</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>इस प्लेलिस्ट से फ़िल्में लोड नहीं हो सकीं।</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>इस Xtream श्रेणी से फ़िल्में लोड नहीं हो सकीं।</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>अभी कोई सहेजी गई फ़िल्म नहीं है।</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>आपकी फ़िल्म वॉचलिस्ट खाली है।</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>फ़िल्म वॉचलिस्ट लोड नहीं हो सकी।</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>इस प्लेलिस्ट से कोई फ़िल्म नहीं मिली।</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>फ़िल्म का विस्तृत डेटा लोड नहीं हो सका। मूल जानकारी दिखाई जा रही है।</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>चुनी हुई प्लेलिस्ट में कार्यक्रम होने पर सीरीज़ उपलब्ध होंगी।</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>सभी सीरीज़</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>सीरीज़ लोड होने में बहुत समय लगा। दूसरी श्रेणी या रीफ़्रेश आज़माएँ।</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>इस प्लेलिस्ट से सीरीज़ लोड नहीं हो सकीं।</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>इस Xtream श्रेणी से सीरीज़ लोड नहीं हो सकीं।</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>अभी कोई सहेजी गई सीरीज़ नहीं है।</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>आपकी सीरीज़ वॉचलिस्ट खाली है।</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>सीरीज़ वॉचलिस्ट लोड नहीं हो सकी।</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>इस प्लेलिस्ट से कोई सीरीज़ नहीं मिली।</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>सीरीज़ का विस्तृत डेटा लोड नहीं हो सका। मूल जानकारी दिखाई जा रही है।</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>अभी कोई पसंदीदा चैनल नहीं है</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>चैनल चुनें</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>प्लेबैक विफल रहा। कोई अन्य स्ट्रीम आज़माएँ।</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>कोई अन्य स्ट्रीम आज़माएँ।</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>एक अनपेक्षित त्रुटि हुई। विवरण के लिए डायग्नोस्टिक्स देखें।</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>जारी रखने के लिए तैयार</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>इस शीर्षक का कोई विवरण उपलब्ध नहीं है।</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>अवधि उपलब्ध नहीं</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>रेटिंग उपलब्ध नहीं</value></data>
+  <data name="Added" xml:space="preserve"><value>जोड़ा गया</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>इस सीरीज़ का कोई विवरण उपलब्ध नहीं है।</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 एपिसोड</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} एपिसोड</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>लागू नहीं</value></data>
+</root>

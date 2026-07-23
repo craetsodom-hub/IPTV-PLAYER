@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Jazyk</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Hledat jazyky</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Oblíbený kanál</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Přejděte nahoru</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Přejděte dolů</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Přejděte doleva</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Přejděte doprava</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Zobrazit nebo skrýt Pokračovat ve sledování</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Seznam přehrávání</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Přidat seznam skladeb</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Upravit vybraný seznam skladeb</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Odebrat vybraný seznam skladeb</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Import souboru M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Stav: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Platnost vyprší: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Zbývající dny: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Procházet</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Živá TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Filmy</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Seriály</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Živá televize</value></data>
+  <data name="Movies" xml:space="preserve"><value>Filmy</value></data>
+  <data name="Series" xml:space="preserve"><value>série</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Název seznamu skladeb</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Adresa URL serveru</value></data>
+  <data name="Username" xml:space="preserve"><value>Uživatelské jméno</value></data>
+  <data name="Password" xml:space="preserve"><value>Heslo</value></data>
+  <data name="Choose" xml:space="preserve"><value>Vyberte si</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Zrušit</value></data>
+  <data name="Categories" xml:space="preserve"><value>Kategorie</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Hledat kategorie</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Zobrazit oblíbené kanály</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Oblíbené</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Uložené kanály</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Zavřít vyhledávání</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Filmové sbírky</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Zobrazit uložené filmy</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Procházet podle žánru</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Sbírky série</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Zobrazit uloženou sérii</value></data>
+  <data name="Channels" xml:space="preserve"><value>Kanály</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Hledat kanály</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Hledat filmy</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Pokračovat ve sledování</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Vyhledávací série</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>NYNÍ HRANÍ</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>HLAVNÍ FILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Přehrát / obnovit</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SÉRIE</value></data>
+  <data name="Resume" xml:space="preserve"><value>Pokračovat</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Tento seznam videí nevrátil žádné epizody.</value></data>
+  <data name="Play" xml:space="preserve"><value>hrát</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pauza</value></data>
+  <data name="Stop" xml:space="preserve"><value>Přestaň</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Celá obrazovka</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>DALŠÍ NAHORU</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Ovládání na celé obrazovce</value></data>
+  <data name="Back" xml:space="preserve"><value>Zpět</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Přehrávač na celou obrazovku</value></data>
+  <data name="Previous" xml:space="preserve"><value>Předchozí</value></data>
+  <data name="Next" xml:space="preserve"><value>Další</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Došlo k neočekávané chybě. Operace byla zrušena. Podrobnosti naleznete v protokolech.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Vyberte soubor M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>Seznamy skladeb M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|Všechny soubory (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Přehrávač je nečinný</value></data>
+  <data name="Ready" xml:space="preserve"><value>Připraveno</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Vyberte kanál pro spuštění přehrávání.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Není vybrán žádný kanál</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Vyberte Filmy, chcete-li načíst dostupné filmy z tohoto seznamu skladeb.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Vyberte Série pro načtení dostupných pořadů z tohoto seznamu skladeb.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Ztlumit</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Zapnout zvuk</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 uloženo</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} uloženo</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Zatím žádné uložené filmy nebo seriály.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Nebyly nalezeny žádné filmy</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>Filmy: {0}</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Zobrazit více (zbývá {0})</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Všechny filmy načteny</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Seznam sledovaných filmů ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Uložené filmy: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Odebrat ze seznamu sledovaných</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Přidat do seznamu sledovaných</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Nebyla nalezena žádná série</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 série</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>série {0}</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Všechny série načteny</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Seznam sledovaných seriálů ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Uložená série: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Upravit seznam skladeb</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Přidat seznam skladeb Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Přidejte adresu URL M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Importujte přímý stream M3U8</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Importovat zdroj</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Uložte změny</value></data>
+  <data name="Import" xml:space="preserve"><value>Importovat</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Adresa URL seznamu videí</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>soubor M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>Adresa URL streamu M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>Vstup</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Zadejte adresu URL seznamu videí.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Vyberte soubor M3U ze svého zařízení.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Zadejte adresu URL streamu.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Inicializace prostředí přehrávače se nezdařila.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Filmy se zde zobrazí, když vybraný seznam skladeb obsahuje filmy.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Seriály se zde zobrazí, když vybraný seznam skladeb obsahuje pořady.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Spouštění přehrávání...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Otevírání streamu</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Přehrávání se nezdařilo</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Žádný signál</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Přehrávání nelze spustit. Zkuste prosím jiný titul.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Zastaveno</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Přehrávání se zastavilo</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Pokračujte výběrem kanálu.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Aktualizujte podrobnosti seznamu skladeb a poté uložte.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Vyplňte prosím požadovaná pole importu.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Přidávání seznamu videí...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Seznam skladeb byl úspěšně přidán.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Vyplňte prosím podrobnosti o seznamu skladeb.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Ukládání playlistu...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Playlist uložen.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Zdroj nebyl smazán.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Zdroj smazán.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Není k dispozici žádný seznam skladeb. Chcete-li zobrazit filmy, přidejte seznam videí.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Není k dispozici žádný seznam skladeb. Chcete-li zobrazit seriál, přidejte seznam videí.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Nejsou k dispozici žádné seznamy skladeb ani účty. Chcete-li pokračovat, přidejte jeden.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Nejsou k dispozici žádné kanály</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>V této kategorii nejsou žádné kanály</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Filmy jsou dostupné, když vybraný seznam skladeb obsahuje filmy.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Všechny filmy</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Načítání filmů trvalo příliš dlouho. Zkuste jinou kategorii nebo obnovte stránku.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Filmy z tohoto seznamu videí nelze načíst.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Filmy z této kategorie Xtream nelze načíst.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Zatím žádné uložené filmy.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Váš seznam sledovaných filmů je prázdný.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Seznam sledovaných filmů nelze načíst.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Tento seznam videí nevrátil žádné filmy.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Nepodařilo se načíst podrobná data filmu. Zobrazí se základní informace.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Série jsou dostupné, když vybraný seznam skladeb obsahuje pořady.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Všechny série</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Série se načítala příliš dlouho. Zkuste jinou kategorii nebo obnovte stránku.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Série nelze načíst z tohoto seznamu videí.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Série z této kategorie Xtream nelze načíst.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Zatím žádná uložená série.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Váš seznam sledovaných seriálů je prázdný.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Seznam sledovaných seriálů se nepodařilo načíst.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Tento seznam videí nevrátil žádné seriály.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Podrobné údaje o sérii nelze načíst. Zobrazí se základní informace.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Zatím žádné oblíbené kanály</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Vyberte kanál</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Přehrávání se nezdařilo. Zkuste prosím jiný stream.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Zkuste jiný stream.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Došlo k neočekávané chybě. Podrobnosti najdete na diagnostice.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Připraveno k obnovení</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Pro tento titul nebyl poskytnut žádný popis.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Doba trvání není k dispozici</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Hodnocení není k dispozici</value></data>
+  <data name="Added" xml:space="preserve"><value>Přidáno</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>V seznamu sledovaných</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Seznam sledovaných</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Pro tuto sérii nebyl poskytnut žádný popis.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} – 1 epizoda</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} – {1} epizod</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Neznámý</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Není poskytnuto</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Platnost vypršela</value></data>
+</root>

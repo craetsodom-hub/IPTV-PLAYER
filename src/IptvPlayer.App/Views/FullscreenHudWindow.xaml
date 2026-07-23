@@ -1,0 +1,423 @@
+<Window x:Class="IptvPlayer.App.Views.FullscreenHudWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:IptvPlayer.App.Localization"
+        Title="{loc:Loc FullscreenControls}"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="True"
+        WindowStartupLocation="Manual"
+        PreviewKeyDown="FullscreenHudWindow_OnPreviewKeyDown"
+        MouseMove="FullscreenHudWindow_OnMouseMove">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+
+        <DataTemplate x:Key="HudButtonContentTemplate">
+            <TextBlock Text="{Binding}"
+                       TextAlignment="Center"
+                       TextWrapping="Wrap"
+                       LineHeight="16" />
+        </DataTemplate>
+
+        <Style x:Key="HudButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0,0,10,10" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Width" Value="124" />
+            <Setter Property="MinWidth" Value="124" />
+            <Setter Property="Height" Value="46" />
+            <Setter Property="MinHeight" Value="46" />
+            <Setter Property="ContentTemplate" Value="{StaticResource HudButtonContentTemplate}" />
+            <Setter Property="Foreground" Value="#FFFFFFFF" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Background" Value="#CC17243A" />
+            <Setter Property="BorderBrush" Value="#663E8BFF" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#E8233B5F" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#AA69B1FF" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="#F01B2D49" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.55" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="HudTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#FFE8F1FF" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+
+        <Style x:Key="HudTimelineSliderStyle" TargetType="Slider">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Foreground" Value="#FF4EA2FF" />
+            <Setter Property="Background" Value="#33FFFFFF" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="ClipToBounds" Value="False" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid Margin="12,0"
+                              ClipToBounds="False"
+                              SnapsToDevicePixels="True">
+                            <Track x:Name="PART_Track"
+                                   VerticalAlignment="Center"
+                                   Height="8"
+                                   ClipToBounds="False">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="Slider.DecreaseLarge"
+                                                  Background="{TemplateBinding Foreground}"
+                                                  BorderThickness="0"
+                                                  IsTabStop="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="4" />
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="Slider.IncreaseLarge"
+                                                  Background="{TemplateBinding Background}"
+                                                  BorderThickness="0"
+                                                  IsTabStop="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        CornerRadius="4" />
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Width="22" Height="22"
+                                           Cursor="Hand"
+                                           ClipToBounds="False">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Grid Width="22"
+                                                      Height="22"
+                                                      ClipToBounds="False"
+                                                      RenderTransformOrigin="0.5,0.5">
+                                                    <Ellipse Fill="#FF08101D"
+                                                             Opacity="0.9" />
+                                                    <Ellipse Stroke="#FF90C8FF"
+                                                             StrokeThickness="2"
+                                                             Margin="1">
+                                                        <Ellipse.Fill>
+                                                            <RadialGradientBrush Center="0.35,0.3"
+                                                                                 GradientOrigin="0.35,0.3"
+                                                                                 RadiusX="0.8"
+                                                                                 RadiusY="0.8">
+                                                                <GradientStop Color="#FFFFFFFF" Offset="0" />
+                                                                <GradientStop Color="#FFE8F1FF" Offset="0.55" />
+                                                                <GradientStop Color="#FF90C8FF" Offset="1" />
+                                                            </RadialGradientBrush>
+                                                        </Ellipse.Fill>
+                                                    </Ellipse>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#01000000">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.RowSpan="3"
+              Background="#FF000000"
+              Panel.ZIndex="0"
+              Visibility="{Binding IsFullscreenPlaybackLoadingVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Grid HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Width="72"
+                  Height="72"
+                  RenderTransformOrigin="0.5,0.5">
+                <Grid.RenderTransform>
+                    <RotateTransform Angle="0" />
+                </Grid.RenderTransform>
+                <Grid.Style>
+                    <Style TargetType="Grid">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsFullscreenPlaybackLoadingVisible}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard x:Name="FullscreenLoadingSpinnerStoryboard">
+                                        <Storyboard RepeatBehavior="Forever"
+                                              Timeline.DesiredFrameRate="60">
+                                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                             From="0"
+                                                             To="360"
+                                                             Duration="0:0:0.72" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="FullscreenLoadingSpinnerStoryboard" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Grid.Style>
+                <Ellipse Stroke="#244EA2FF"
+                         StrokeThickness="4" />
+                <Path Stroke="#FF69B1FF"
+                      StrokeThickness="4"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Data="M 36,6 A 30,30 0 1 1 14,56" />
+                <Path Stroke="#FFFFFFFF"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Opacity="0.38"
+                      Data="M 36,6 A 30,30 0 0 1 61,25" />
+            </Grid>
+        </Grid>
+
+        <Border x:Name="TopChrome"
+                Grid.Row="0"
+                Panel.ZIndex="1"
+                Margin="28"
+                Padding="14"
+                Background="#B20A1220"
+                BorderBrush="#553E8BFF"
+                BorderThickness="1"
+                CornerRadius="22">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button Content="{loc:Loc Back}"
+                        Style="{StaticResource HudButtonStyle}"
+                        Width="88"
+                        Margin="0,0,14,0"
+                        Click="BackButton_OnClick" />
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock Text="{loc:Loc FullscreenPlayer}"
+                               Foreground="#FF90C8FF"
+                               FontSize="12"
+                               FontWeight="SemiBold" />
+                    <TextBlock Text="{Binding CurrentChannelTitle}"
+                               Style="{StaticResource HudTextStyle}"
+                               FontSize="21"
+                               FontWeight="Bold" />
+                </StackPanel>
+
+                <Border Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Background="#6616243A"
+                        BorderBrush="#443E8BFF"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="14,8"
+                        Visibility="{Binding HasPlaybackStatusText, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Text="{Binding PlaybackStatusText}"
+                               Foreground="#FFDCE8FF"
+                               FontSize="13"
+                               FontWeight="SemiBold" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border x:Name="BottomChrome"
+                Grid.Row="2"
+                Panel.ZIndex="1"
+                Margin="28"
+                Padding="18"
+                Background="#CC08101D"
+                BorderBrush="#663E8BFF"
+                BorderThickness="1"
+                CornerRadius="26">
+            <Grid>
+                <Grid x:Name="LiveHudPanel">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOnDemandPlaybackControlVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" MinWidth="260" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Margin="0,0,24,0" VerticalAlignment="Center">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="14" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="#D61D3D63"
+                                BorderBrush="#AA69B1FF"
+                                BorderThickness="1"
+                                CornerRadius="14"
+                                Padding="14,9"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding SelectedChannel.CurrentProgramTimeRange, TargetNullValue=NOW}"
+                                       Foreground="#FFFFFFFF"
+                                       FontSize="14"
+                                       FontWeight="Bold" />
+                        </Border>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                            <TextBlock Text="{loc:Loc NowPlaying}"
+                                       Foreground="#FF90C8FF"
+                                       FontSize="12"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Text="{Binding CurrentChannelTitle}"
+                                       Style="{StaticResource HudTextStyle}"
+                                       FontSize="25"
+                                       FontWeight="Bold"
+                                       Margin="0,3,0,1" />
+                            <TextBlock Text="{Binding SelectedChannel.CurrentProgramTitle, TargetNullValue=No real EPG data available from provider.}"
+                                       Foreground="#FFFFFFFF"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{Binding SelectedChannel.CurrentProgramDescription, TargetNullValue=Provider did not include programme details.}"
+                                       Foreground="#FFC5D5EF"
+                                       FontSize="13"
+                                       TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                    </Grid>
+
+                    <WrapPanel Grid.Column="1"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Center">
+                    <Button Content="{loc:Loc Previous}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding PlayPreviousChannelCommand}" />
+                    <Button Content="{loc:Loc Play}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding PlaySelectedChannelCommand}" />
+                    <Button Content="{loc:Loc Pause}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding PauseCommand}" />
+                    <Button Content="{loc:Loc Stop}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding StopCommand}" />
+                    <Button Content="{loc:Loc Next}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding PlayNextChannelCommand}" />
+                        <Button Content="{Binding MuteButtonText}"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding ToggleMuteCommand}" />
+                    </WrapPanel>
+                </Grid>
+
+                <Grid Visibility="{Binding IsOnDemandPlaybackControlVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Slider Grid.Row="0"
+                            Minimum="0"
+                            Maximum="{Binding PlaybackDurationSeconds}"
+                            Value="{Binding PlaybackPositionSeconds, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            IsEnabled="{Binding IsPlaybackSeekAvailable}"
+                            Style="{StaticResource HudTimelineSliderStyle}"
+                            PreviewMouseLeftButtonDown="VodTimelineSlider_OnPreviewMouseLeftButtonDown"
+                            Margin="0,0,0,14" />
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Content="-10s"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding SeekBackwardCommand}" />
+                        <StackPanel Grid.Column="2"
+                                    Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="8,0,18,0">
+                        <Button Content="{loc:Loc Play}"
+                                    Style="{StaticResource HudButtonStyle}"
+                                    Command="{Binding ResumeCommand}"
+                                    Visibility="{Binding IsMoviesSection, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <Button Content="{loc:Loc Play}"
+                                    Style="{StaticResource HudButtonStyle}"
+                                    Command="{Binding ResumeCommand}"
+                                    Visibility="{Binding IsSeriesSection, Converter={StaticResource BoolToVisibilityConverter}}" />
+                        <Button Content="{loc:Loc Pause}"
+                                    Style="{StaticResource HudButtonStyle}"
+                                    Command="{Binding PauseCommand}" />
+                            <Button Content="{Binding MuteButtonText}"
+                                    Style="{StaticResource HudButtonStyle}"
+                                    Command="{Binding ToggleMuteCommand}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="3"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#FFE8F1FF"
+                                   FontSize="15"
+                                   FontWeight="SemiBold">
+                            <Run Text="{Binding PlaybackPositionText}" />
+                            <Run Text=" / " />
+                            <Run Text="{Binding PlaybackDurationText}" />
+                        </TextBlock>
+                        <Button Grid.Column="4"
+                                Content="+10s"
+                                Style="{StaticResource HudButtonStyle}"
+                                Command="{Binding SeekForwardCommand}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

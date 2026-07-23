@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Dil</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Dilleri ara</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Favori kanal</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Yukarı kaydır</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Aşağı kaydır</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Sola kaydır</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Sağa kaydır</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Göster veya gizle İzlemeye Devam Et</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Oynatma listesi</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Çalma listesi ekle</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Seçilen oynatma listesini düzenle</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Seçilen oynatma listesini kaldır</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>M3U Dosyasını İçe Aktar</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Durum: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Sona erme tarihi: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Kalan günler: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Göz at</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Canlı TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Filmler</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Diziler</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Canlı TV</value></data>
+  <data name="Movies" xml:space="preserve"><value>Filmler</value></data>
+  <data name="Series" xml:space="preserve"><value>Serisi</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Oynatma listesi adı</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Sunucu URL&apos;si</value></data>
+  <data name="Username" xml:space="preserve"><value>Kullanıcı adı</value></data>
+  <data name="Password" xml:space="preserve"><value>Şifre</value></data>
+  <data name="Choose" xml:space="preserve"><value>Seç</value></data>
+  <data name="Cancel" xml:space="preserve"><value>İptal</value></data>
+  <data name="Categories" xml:space="preserve"><value>Kategoriler</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Kategorileri ara</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Favori kanalları göster</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favoriler</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Kayıtlı kanallar</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Aramayı kapat</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Film Koleksiyonları</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Kaydedilen filmleri göster</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Türe göre göz atın</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Seri Koleksiyonları</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Kaydedilen seriyi göster</value></data>
+  <data name="Channels" xml:space="preserve"><value>Kanallar</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Kanalları ara</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Film ara</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>İzlemeye Devam Et</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Arama serisi</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>ŞİMDİ OYNANIYOR</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>UZUN Metrajlı Film</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Oynat / Devam Et</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERİ</value></data>
+  <data name="Resume" xml:space="preserve"><value>Devam et</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Bu oynatma listesinden hiçbir bölüm döndürülmedi.</value></data>
+  <data name="Play" xml:space="preserve"><value>Oyna</value></data>
+  <data name="Pause" xml:space="preserve"><value>Duraklat</value></data>
+  <data name="Stop" xml:space="preserve"><value>Durdur</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Tam ekran</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>CANLI EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>YUKARI SONRAKİ</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Tam ekran kontrolleri</value></data>
+  <data name="Back" xml:space="preserve"><value>Geri</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Tam Ekran Oynatıcı</value></data>
+  <data name="Previous" xml:space="preserve"><value>Önceki</value></data>
+  <data name="Next" xml:space="preserve"><value>Sonraki</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Beklenmeyen bir hata oluştu. Operasyon iptal edildi. Ayrıntılar için günlükleri kontrol edin.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>M3U dosyasını seçin</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U çalma listeleri (*.m3u;*.m3u8)|*.m3u;*.m3u8|Tüm dosyalar (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Oyuncu boşta</value></data>
+  <data name="Ready" xml:space="preserve"><value>Hazır</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Oynatmayı başlatmak için bir kanal seçin.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Hiçbir kanal seçilmedi</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Bu oynatma listesindeki mevcut filmleri yüklemek için Filmler&apos;i seçin.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Bu oynatma listesinden mevcut şovları yüklemek için Dizi&apos;yi seçin.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Sessiz</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Sesi aç</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 kaydedildi</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} kaydedildi</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Henüz kayıtlı film veya dizi yok.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Film Bulunamadı</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} film</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Daha fazlasını göster ({0} kaldı)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Tüm filmler yüklendi</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Film İzleme Listesi ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Kayıtlı Filmler: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>İzleme Listesinden Kaldır</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>İzleme Listesine Ekle</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Seri Bulunamadı</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 seri</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} serisi</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Tüm seriler yüklendi</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Dizi İzleme Listesi ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Kaydedilen Seri: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Çalma listesini düzenle</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Xtream oynatma listesi ekle</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>M3U URL&apos;sini ekleyin</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Doğrudan M3U8 akışını içe aktar</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Kaynağı içe aktar</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Değişiklikleri kaydet</value></data>
+  <data name="Import" xml:space="preserve"><value>İthalat</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Oynatma listesi URL&apos;si</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U dosyası</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8 akış URL&apos;si</value></data>
+  <data name="Input" xml:space="preserve"><value>Giriş</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Çalma listesi URL&apos;nizi girin.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Cihazınızdan bir M3U dosyası seçin.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Bir akış URL&apos;si girin.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Oynatıcı kabuğu başlatılamadı.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Seçilen oynatma listesi filmleri içerdiğinde filmler burada görünecektir.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Seçilen oynatma listesi gösterileri içerdiğinde dizi burada görünecektir.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Oynatma başlatılıyor...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Akış açılıyor</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Oynatma başarısız oldu</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Sinyal yok</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Oynatma başlatılamadı. Lütfen başka bir başlık deneyin.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Durduruldu</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Oynatma durduruldu</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Devam etmek için bir kanal seçin.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Çalma listesi ayrıntılarını güncelleyin ve ardından kaydedin.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Lütfen gerekli içe aktarma alanlarını doldurun.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Oynatma listesi ekleniyor...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Oynatma listesi başarıyla eklendi.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Lütfen oynatma listesi ayrıntılarını tamamlayın.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Oynatma listesi kaydediliyor...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Oynatma listesi kaydedildi.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Kaynak silinmedi.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Kaynak silindi.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Oynatma listesi mevcut değil. Filmleri görmek için bir oynatma listesi ekleyin.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Oynatma listesi mevcut değil. Diziyi görmek için bir oynatma listesi ekleyin.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Hiçbir oynatma listesi veya hesap mevcut değil. Devam etmek için bir tane ekleyin.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Kullanılabilir kanal yok</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Bu kategoride kanal yok</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Filmler, seçilen oynatma listesi filmleri içerdiğinde kullanılabilir.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Tüm Filmler</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Filmlerin yüklenmesi çok uzun sürdü. Başka bir kategori deneyin veya yenileyin.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Bu oynatma listesinden filmler yüklenemedi.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Bu Xtream kategorisinden filmler yüklenemedi.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Henüz kayıtlı film yok.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Film izleme listeniz boş.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Film izleme listesi yüklenemedi.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Bu oynatma listesinden hiçbir film döndürülmedi.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Ayrıntılı film verileri yüklenemedi. Temel bilgiler gösterilir.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Diziler, seçilen oynatma listesi gösterileri içerdiğinde kullanılabilir.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Tüm Seriler</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Serinin yüklenmesi çok uzun sürdü. Başka bir kategori deneyin veya yenileyin.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Dizi bu oynatma listesinden yüklenemedi.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Bu Xtream kategorisinden dizi yüklenemedi.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Henüz kayıtlı seri yok.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Dizi izleme listeniz boş.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Dizi izleme listesi yüklenemedi.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Bu oynatma listesinden herhangi bir dizi getirilmedi.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Ayrıntılı seri verileri yüklenemedi. Temel bilgiler gösterilir.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Henüz favori kanal yok</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Bir kanal seçin</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Oynatma başarısız oldu. Lütfen başka bir akış deneyin.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Başka bir akış deneyin.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Beklenmeyen bir hata oluştu. Ayrıntılar için teşhisleri kontrol edin.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Devam etmeye hazır</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Bu başlık için herhangi bir açıklama sağlanmadı.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Süre mevcut değil</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Derecelendirme mevcut değil</value></data>
+  <data name="Added" xml:space="preserve"><value>Eklendi</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>İzleme Listesinde</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>İzleme listesi</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Bu seri için herhangi bir açıklama sağlanmadı.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 bölüm</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} bölüm</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Bilinmiyor</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Sağlanmadı</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>Yok</value></data>
+  <data name="Expired" xml:space="preserve"><value>Süresi dolmuş</value></data>
+</root>

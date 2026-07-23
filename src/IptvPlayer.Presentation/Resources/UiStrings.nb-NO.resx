@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Språk</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Søk etter språk</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Favoritt kanal</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Rull opp</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Rull ned</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Rull til venstre</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Rull til høyre</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Vis eller skjul Fortsett å se</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Spilleliste</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Legg til spilleliste</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Rediger valgt spilleliste</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Fjern valgt spilleliste</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Importer M3U-fil</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Status: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Utløper: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Dager igjen: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Bla gjennom</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Direkte-TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Filmer</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Serier</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Direktesendt TV</value></data>
+  <data name="Movies" xml:space="preserve"><value>Filmer</value></data>
+  <data name="Series" xml:space="preserve"><value>Serie</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Spillelistenavn</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Server URL</value></data>
+  <data name="Username" xml:space="preserve"><value>Brukernavn</value></data>
+  <data name="Password" xml:space="preserve"><value>Passord</value></data>
+  <data name="Choose" xml:space="preserve"><value>Velg</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Avbryt</value></data>
+  <data name="Categories" xml:space="preserve"><value>Kategorier</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Søk i kategorier</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Vis favorittkanaler</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favoritter</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Lagrede kanaler</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Lukk søk</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Filmsamlinger</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Vis lagrede filmer</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Bla etter sjanger</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Seriesamlinger</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Vis lagrede serier</value></data>
+  <data name="Channels" xml:space="preserve"><value>Kanaler</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Søk etter kanaler</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Søk filmer</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Fortsett å se</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Søkeserie</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>SPILLER NÅ</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>FUNKSJONSFILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Spill / Fortsett</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERIE</value></data>
+  <data name="Resume" xml:space="preserve"><value>Fortsett</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Ingen episoder ble returnert av denne spillelisten.</value></data>
+  <data name="Play" xml:space="preserve"><value>Spill</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stopp</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Fullskjerm</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>OPP NESTE</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Fullskjermkontroller</value></data>
+  <data name="Back" xml:space="preserve"><value>Tilbake</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Fullskjermspiller</value></data>
+  <data name="Previous" xml:space="preserve"><value>Forrige</value></data>
+  <data name="Next" xml:space="preserve"><value>Neste</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Det oppstod en uventet feil. Operasjonen ble avbrutt. Sjekk loggene for detaljer.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Velg M3U-fil</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U-spillelister (*.m3u;*.m3u8)|*.m3u;*.m3u8|Alle filer (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Spiller inaktiv</value></data>
+  <data name="Ready" xml:space="preserve"><value>Klar</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Velg en kanal for å starte avspilling.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Ingen kanal er valgt</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Velg Filmer for å laste tilgjengelige filmer fra denne spillelisten.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Velg Series for å laste tilgjengelige programmer fra denne spillelisten.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Demp</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Slå på lyden</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 lagret</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} lagret</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Ingen lagrede filmer eller serier ennå.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Ingen filmer funnet</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} filmer</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Vis mer ({0} gjenstår)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Alle filmene er lastet inn</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Filmovervåkningsliste ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Lagrede filmer: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Fjern fra overvåkningsliste</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Legg til overvåkningsliste</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Ingen serie funnet</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 serie</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} serie</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Alle serier er lastet inn</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Serieovervåkningsliste ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Lagrede serier: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Rediger spilleliste</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Legg til Xtream-spilleliste</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Legg til M3U URL</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Importer direkte M3U8-strøm</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Importer kilde</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Lagre endringer</value></data>
+  <data name="Import" xml:space="preserve"><value>Importer</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Nettadresse for spilleliste</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U-fil</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8-strøm-URL</value></data>
+  <data name="Input" xml:space="preserve"><value>Inndata</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Skriv inn nettadressen til spillelisten din.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Velg en M3U-fil fra enheten din.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Skriv inn en strømnettadresse.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Kunne ikke initialisere spillerskallet.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Filmer vises her når den valgte spillelisten inkluderer filmer.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Serier vises her når den valgte spillelisten inkluderer programmer.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Starter avspilling...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Åpningsstrøm</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Avspilling mislyktes</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Ingen signal</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Avspillingen kunne ikke startes. Prøv en annen tittel.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Stoppet</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Avspillingen stoppet</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Velg en kanal for å fortsette.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Oppdater spillelistedetaljene, og lagre deretter.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Fyll ut de nødvendige importfeltene.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Legger til spilleliste ...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Spillelisten ble lagt til.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Fyll ut spillelistedetaljene.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Lagrer spilleliste...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Spilleliste lagret.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Kilden ble ikke slettet.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Kilden er slettet.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Ingen spilleliste er tilgjengelig. Legg til en spilleliste for å se filmer.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Ingen spilleliste er tilgjengelig. Legg til en spilleliste for å se serien.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Ingen spillelister eller kontoer er tilgjengelige. Legg til en for å fortsette.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Ingen tilgjengelige kanaler</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Ingen kanaler i denne kategorien</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Filmer er tilgjengelige når den valgte spillelisten inkluderer filmer.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Alle filmer</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Filmer tok for lang tid å laste. Prøv en annen kategori eller oppdater.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Filmer kunne ikke lastes fra denne spillelisten.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Filmer kunne ikke lastes inn fra denne Xtream-kategorien.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Ingen lagrede filmer ennå.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Filmovervåkningslisten din er tom.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Filmovervåkningslisten kunne ikke lastes inn.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Ingen filmer ble returnert av denne spillelisten.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Detaljerte filmdata kunne ikke lastes inn. Grunnleggende informasjon vises.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Serier er tilgjengelige når den valgte spillelisten inkluderer programmer.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Alle serier</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Serien tok for lang tid å laste. Prøv en annen kategori eller oppdater.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Serier kunne ikke lastes inn fra denne spillelisten.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Serier kunne ikke lastes inn fra denne Xtream-kategorien.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Ingen lagrede serier ennå.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Serieovervåkningslisten din er tom.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Serieovervåkningslisten kunne ikke lastes inn.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Ingen serier ble returnert av denne spillelisten.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Detaljerte seriedata kunne ikke lastes inn. Grunnleggende informasjon vises.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Ingen favorittkanaler ennå</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Velg en kanal</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Avspilling mislyktes. Prøv en annen strøm.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Prøv en annen strøm.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Det oppstod en uventet feil. Sjekk diagnostikk for detaljer.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Klar til å fortsette</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Ingen beskrivelse ble gitt for denne tittelen.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Varighet utilgjengelig</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Vurdering utilgjengelig</value></data>
+  <data name="Added" xml:space="preserve"><value>Lagt til</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>I overvåkningsliste</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Overvåkningsliste</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Ingen beskrivelse ble gitt for denne serien.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} – 1 episode</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} – {1} episoder</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Ukjent</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Ikke gitt</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Utløpt</value></data>
+</root>

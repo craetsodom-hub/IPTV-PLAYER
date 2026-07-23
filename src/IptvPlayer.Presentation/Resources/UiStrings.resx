@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Language</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Search languages</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Favorite channel</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Scroll up</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Scroll down</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Scroll left</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Scroll right</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Show or hide Continue Watching</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Playlist</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Add playlist</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Edit selected playlist</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Remove selected playlist</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Import M3U File</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Status: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Expires: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Days remaining: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Browse</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Live TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Movies</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Series</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Live TV</value></data>
+  <data name="Movies" xml:space="preserve"><value>Movies</value></data>
+  <data name="Series" xml:space="preserve"><value>Series</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Playlist name</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Server URL</value></data>
+  <data name="Username" xml:space="preserve"><value>Username</value></data>
+  <data name="Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Choose" xml:space="preserve"><value>Choose</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Categories" xml:space="preserve"><value>Categories</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Search categories</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Show favorite channels</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favorites</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Saved channels</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Close search</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Movie Collections</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Show saved movies</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Browse by genre</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Series Collections</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Show saved series</value></data>
+  <data name="Channels" xml:space="preserve"><value>Channels</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Search channels</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Search movies</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Continue Watching</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Search series</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>NOW PLAYING</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>FEATURE FILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Play / Resume</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERIES</value></data>
+  <data name="Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>No episodes were returned by this playlist.</value></data>
+  <data name="Play" xml:space="preserve"><value>Play</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Fullscreen</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>UP NEXT</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Fullscreen controls</value></data>
+  <data name="Back" xml:space="preserve"><value>Back</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Fullscreen Player</value></data>
+  <data name="Previous" xml:space="preserve"><value>Prev</value></data>
+  <data name="Next" xml:space="preserve"><value>Next</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>An unexpected error occurred. The operation was canceled. Check logs for details.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Select M3U file</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U playlists (*.m3u;*.m3u8)|*.m3u;*.m3u8|All files (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Player idle</value></data>
+  <data name="Ready" xml:space="preserve"><value>Ready</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Select a channel to start playback.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>No channel selected</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Select Movies to load available films from this playlist.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Select Series to load available shows from this playlist.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Mute</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Unmute</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 saved</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} saved</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>No saved movies or series yet.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>No Movies Found</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 movie</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} movies</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Show more ({0} remaining)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>All movies loaded</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Movie Watchlist ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Saved Movies: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Remove from Watchlist</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Add to Watchlist</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>No Series Found</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 series</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} series</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>All series loaded</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Series Watchlist ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Saved Series: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Edit playlist</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Add Xtream playlist</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Add M3U URL</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Import direct M3U8 stream</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Import source</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Save changes</value></data>
+  <data name="Import" xml:space="preserve"><value>Import</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Playlist URL</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U file</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8 stream URL</value></data>
+  <data name="Input" xml:space="preserve"><value>Input</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Enter your playlist URL.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Select an M3U file from your device.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Enter a stream URL.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Failed to initialize the player shell.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Movies will appear here when the selected playlist includes films.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Series will appear here when the selected playlist includes shows.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Starting playback...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Opening stream</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Playback failed</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>No signal</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Playback could not be started. Please try another title.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Playback stopped</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Select a channel to continue.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Update the playlist details, then save.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Please complete the required import fields.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Adding playlist...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Playlist added successfully.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Please complete the playlist details.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Saving playlist...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Playlist saved.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Source was not deleted.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Source deleted.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>No playlist is available. Add a playlist to see Movies.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>No playlist is available. Add a playlist to see Series.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>No playlists or accounts are available. Add one to continue.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>No channels available</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>No channels in this category</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Movies are available when the selected playlist includes films.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>All Movies</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Movies took too long to load. Try another category or refresh.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Movies could not be loaded from this playlist.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Movies could not be loaded from this Xtream category.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>No saved movies yet.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Your movie watchlist is empty.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Movie watchlist could not be loaded.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>No movies were returned by this playlist.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Detailed movie data could not be loaded. Basic information is shown.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Series are available when the selected playlist includes shows.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>All Series</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Series took too long to load. Try another category or refresh.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Series could not be loaded from this playlist.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Series could not be loaded from this Xtream category.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>No saved series yet.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Your series watchlist is empty.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Series watchlist could not be loaded.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>No series were returned by this playlist.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Detailed series data could not be loaded. Basic information is shown.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>No favorite channels yet</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Select a channel</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Playback failed. Please try another stream.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Try another stream.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>An unexpected error occurred. Check diagnostics for details.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Ready to resume</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>No description was provided for this title.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Duration unavailable</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Rating unavailable</value></data>
+  <data name="Added" xml:space="preserve"><value>Added</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>In Watchlist</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Watchlist</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>No description was provided for this series.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 episode</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} episodes</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Not provided</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Expired</value></data>
+</root>

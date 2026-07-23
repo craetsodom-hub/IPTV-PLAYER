@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Nyelv</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Nyelvek keresése</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Kedvenc csatorna</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Görgessen felfelé</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Görgessen le</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Görgessen balra</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Görgessen jobbra</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Megtekintés folytatása elem megjelenítése vagy elrejtése</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Lejátszási lista</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Lejátszási lista hozzáadása</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>A kiválasztott lejátszási lista szerkesztése</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>A kiválasztott lejátszási lista eltávolítása</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>M3U fájl importálása</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Állapot: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Lejár: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Hátralévő napok: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Tallózás</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Élő TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Filmek</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Sorozatok</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Élő TV</value></data>
+  <data name="Movies" xml:space="preserve"><value>Filmek</value></data>
+  <data name="Series" xml:space="preserve"><value>sorozat</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Lejátszási lista neve</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Szerver URL</value></data>
+  <data name="Username" xml:space="preserve"><value>Felhasználónév</value></data>
+  <data name="Password" xml:space="preserve"><value>Jelszó</value></data>
+  <data name="Choose" xml:space="preserve"><value>Válasszon</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Mégse</value></data>
+  <data name="Categories" xml:space="preserve"><value>Kategóriák</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Keresés a kategóriákban</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Kedvenc csatornák megjelenítése</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Kedvencek</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Mentett csatornák</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Keresés bezárása</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Filmgyűjtemények</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Mentett filmek megjelenítése</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Böngésszen műfaj szerint</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Sorozatgyűjtemények</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Mentett sorozatok megjelenítése</value></data>
+  <data name="Channels" xml:space="preserve"><value>Csatornák</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Csatornák keresése</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Filmek keresése</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Folytassa a nézést</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Keresés sorozat</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>MOST JÁTSZIK</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>JÁTÉKFILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Lejátszás / Folytatás</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SOROZAT</value></data>
+  <data name="Resume" xml:space="preserve"><value>Folytatás</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Ez a lejátszási lista nem adott vissza epizódot.</value></data>
+  <data name="Play" xml:space="preserve"><value>Játssz</value></data>
+  <data name="Pause" xml:space="preserve"><value>Szünet</value></data>
+  <data name="Stop" xml:space="preserve"><value>Állj</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Teljes képernyő</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>ÉLŐ EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>FEL KÖVETKEZŐ</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Teljes képernyős vezérlők</value></data>
+  <data name="Back" xml:space="preserve"><value>Vissza</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Teljes képernyős lejátszó</value></data>
+  <data name="Previous" xml:space="preserve"><value>Előző</value></data>
+  <data name="Next" xml:space="preserve"><value>Következő</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Váratlan hiba történt. A műveletet törölték. A részletekért ellenőrizze a naplókat.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Válassza ki az M3U fájlt</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U lejátszási listák (*.m3u;*.m3u8)|*.m3u;*.m3u8|Minden fájl (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>A lejátszó tétlen</value></data>
+  <data name="Ready" xml:space="preserve"><value>Kész</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Válassza ki a csatornát a lejátszás elindításához.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Nincs kiválasztva csatorna</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Válassza a Filmek lehetőséget a lejátszási listáról elérhető filmek betöltéséhez.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Válassza a Sorozat lehetőséget a lejátszási listáról elérhető műsorok betöltéséhez.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Némítás</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Némítás feloldása</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 mentve</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} mentve</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Még nincsenek mentett filmek vagy sorozatok.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Nem található film</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} film</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Továbbiak megjelenítése ({0} maradt)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Minden film betöltve</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Filmfigyelő lista ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Mentett filmek: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Eltávolítás a figyelőlistáról</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Hozzáadás a figyelőlistához</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Nem található sorozat</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 sorozat</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} sorozat</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Minden sorozat betöltve</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Sorozatfigyelő lista ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Mentett sorozat: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Lejátszási lista szerkesztése</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Xtream lejátszási lista hozzáadása</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>M3U URL hozzáadása</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Közvetlen M3U8 adatfolyam importálása</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Importálási forrás</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Módosítások mentése</value></data>
+  <data name="Import" xml:space="preserve"><value>Importálás</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Lejátszási lista URL-je</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U fájl</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8 adatfolyam URL-je</value></data>
+  <data name="Input" xml:space="preserve"><value>Bemenet</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Adja meg lejátszási listája URL-jét.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Válasszon ki egy M3U fájlt az eszközről.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Adja meg a stream URL-jét.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Nem sikerült inicializálni a lejátszó shelljét.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>A filmek itt jelennek meg, ha a kiválasztott lejátszási lista filmeket is tartalmaz.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>A sorozatok akkor jelennek meg itt, ha a kiválasztott lejátszási lista műsorokat tartalmaz.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Lejátszás indítása...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Nyitó folyam</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>A lejátszás nem sikerült</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Nincs jel</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>A lejátszást nem lehetett elindítani. Kérjük, próbáljon másik címet.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Megállt</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>A lejátszás leállt</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>A folytatáshoz válasszon egy csatornát.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Frissítse a lejátszási lista részleteit, majd mentse.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Kérjük, töltse ki a kötelező import mezőket.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Lejátszási lista hozzáadása...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>A lejátszási lista sikeresen hozzáadva.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Kérjük, töltse ki a lejátszási lista részleteit.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Lejátszási lista mentése...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Lejátszási lista mentve.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>A forrás nem lett törölve.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Forrás törölve.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Nem érhető el lejátszási lista. A filmek megtekintéséhez adj hozzá lejátszási listát.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Nem érhető el lejátszási lista. A sorozat megtekintéséhez adj hozzá lejátszási listát.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Nem állnak rendelkezésre lejátszási listák vagy fiókok. Adjon hozzá egyet a folytatáshoz.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Nincs elérhető csatorna</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Nincsenek csatornák ebben a kategóriában</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>A filmek akkor érhetők el, ha a kiválasztott lejátszási lista filmeket is tartalmaz.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Minden film</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>A filmek betöltése túl sokáig tartott. Próbáljon ki egy másik kategóriát, vagy frissítsen.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Nem lehetett filmeket betölteni erről a lejátszási listáról.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Ebből az Xtream-kategóriából nem lehetett filmeket betölteni.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Még nincsenek mentett filmek.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>A filmnézőlista üres.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>A filmnézőlistát nem sikerült betölteni.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Ez a lejátszási lista nem adott vissza filmet.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>A film részletes adatait nem sikerült betölteni. Az alapvető információk megjelennek.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>A sorozatok akkor érhetők el, ha a kiválasztott lejátszási lista műsorokat tartalmaz.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Minden sorozat</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>A sorozat betöltése túl sokáig tartott. Próbáljon ki egy másik kategóriát, vagy frissítsen.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>A sorozatot nem lehetett betölteni erről a lejátszási listáról.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>A sorozatok nem tölthetők be ebből az Xtream-kategóriából.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Még nincs mentett sorozat.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>A sorozatfigyelőlista üres.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>A sorozatfigyelő lista nem tölthető be.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Ez a lejátszási lista nem adott vissza sorozatot.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Nem sikerült betölteni a részletes sorozatadatokat. Az alapvető információk megjelennek.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Még nincsenek kedvenc csatornák</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Válasszon ki egy csatornát</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>A lejátszás nem sikerült. Kérjük, próbáljon másik adatfolyamot.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Próbáljon ki egy másik adatfolyamot.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Váratlan hiba történt. A részletekért ellenőrizze a diagnosztikát.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Folytatásra készen</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Ehhez a címhez nem adtak leírást.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Az időtartam nem érhető el</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Az értékelés nem érhető el</value></data>
+  <data name="Added" xml:space="preserve"><value>Hozzáadva</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>Figyelőlistában</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Figyelőlista</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Ehhez a sorozathoz nem adtak leírást.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} – 1 epizód</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} epizód</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Ismeretlen</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Nem biztosított</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Lejárt</value></data>
+</root>

@@ -1,0 +1,79 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+dist/
+/dist/
+/artifacts/
+/qa-artifacts/
+/logs/
+/_msixinspect/
+/_storecheck*/
+/_verifyStore*/
+
+# Published/runtime files copied to the workspace root
+/cs/
+/de/
+/es/
+/fr/
+/it/
+/ja/
+/ko/
+/pl/
+/pt-BR/
+/ru/
+/tr/
+/zh-Hans/
+/zh-Hant/
+/libvlc/
+/*.dll
+/*.exe
+/*.pdb
+/*.deps.json
+/*.runtimeconfig.json
+/*.zip
+/vlc-help.txt
+
+# Windows app packages and signing material
+*.appx
+*.appxbundle
+*.appxupload
+*.appxsym
+*.cer
+*.msix
+*.msixbundle
+*.msixupload
+*.pfx
+src/WhoseIptv.Package/AppPackages/
+src/WhoseIptv.Package/BundleArtifacts/
+
+# Visual Studio and .NET local state
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*_wpftmp.csproj
+
+# Node/Vite local state
+node_modules/
+website/node_modules/
+website/dist/
+*.log
+
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+
+# Local scratch files in this workspace
+/.codex-chrome-profile/
+/whoplaysnow - Copy/
+/multi.txt
+/patchtest.xml
+/quote-test.txt
+/test-permission.txt
+/appsettings.json
+/whose-iptv.logo.png

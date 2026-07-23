@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Bahasa</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Cari bahasa</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Saluran favorit</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Gulir ke atas</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Gulir ke bawah</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Gulir ke kiri</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Gulir ke kanan</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Tampilkan atau sembunyikan Lanjut Menonton</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Daftar putar</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Tambah daftar putar</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Edit daftar putar terpilih</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Hapus daftar putar terpilih</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Impor File M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Status: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Kedaluwarsa: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Hari tersisa: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Jelajahi</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>TV Langsung</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Film</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Serial</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>TV Langsung</value></data>
+  <data name="Movies" xml:space="preserve"><value>Film</value></data>
+  <data name="Series" xml:space="preserve"><value>Serial</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Nama daftar putar</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>URL server</value></data>
+  <data name="Username" xml:space="preserve"><value>Nama pengguna</value></data>
+  <data name="Password" xml:space="preserve"><value>Kata sandi</value></data>
+  <data name="Choose" xml:space="preserve"><value>Pilih</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Batal</value></data>
+  <data name="Categories" xml:space="preserve"><value>Kategori</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Cari kategori</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Tampilkan saluran favorit</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favorit</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Saluran tersimpan</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Tutup pencarian</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Koleksi Film</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Tampilkan film tersimpan</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Jelajahi berdasarkan genre</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Koleksi Serial</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Tampilkan serial tersimpan</value></data>
+  <data name="Channels" xml:space="preserve"><value>Saluran</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Cari saluran</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Cari film</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Lanjut Menonton</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Cari serial</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>SEDANG DIPUTAR</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>FILM UNGGULAN</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Putar / Lanjutkan</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERIAL</value></data>
+  <data name="Resume" xml:space="preserve"><value>Lanjutkan</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Tidak ada episode yang dikembalikan oleh daftar putar ini.</value></data>
+  <data name="Play" xml:space="preserve"><value>Putar</value></data>
+  <data name="Pause" xml:space="preserve"><value>Jeda</value></data>
+  <data name="Stop" xml:space="preserve"><value>Hentikan</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Layar penuh</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>EPG LANGSUNG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>BERIKUTNYA</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Kontrol layar penuh</value></data>
+  <data name="Back" xml:space="preserve"><value>Kembali</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Pemutar Layar Penuh</value></data>
+  <data name="Previous" xml:space="preserve"><value>Sebelumnya</value></data>
+  <data name="Next" xml:space="preserve"><value>Berikutnya</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Pemutar menganggur</value></data>
+  <data name="Ready" xml:space="preserve"><value>Siap</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Pilih saluran untuk memulai pemutaran.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Tidak ada saluran yang dipilih</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Pilih Film untuk memuat film yang tersedia dari daftar putar ini.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Pilih Serial untuk memuat acara yang tersedia dari daftar putar ini.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Bisukan</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Bunyikan</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Tidak Ada Film Ditemukan</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Tidak Ada Serial Ditemukan</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Tambahkan ke Daftar Tonton</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Hapus dari Daftar Tonton</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Daftar Tonton</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>Dalam Daftar Tonton</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Memulai pemutaran...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Membuka streaming</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Pemutaran gagal</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Tidak ada sinyal</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Dihentikan</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Pemutaran dihentikan</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Pilih saluran untuk melanjutkan.</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Tidak diketahui</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Tidak tersedia</value></data>
+  <data name="Expired" xml:space="preserve"><value>Kedaluwarsa</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Terjadi kesalahan tak terduga. Operasi dibatalkan. Periksa log untuk detail.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Pilih file M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>Daftar putar M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|Semua file (*.*)|*.*</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 tersimpan</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} tersimpan</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Belum ada film atau serial tersimpan.</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} film</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Tampilkan lagi ({0} tersisa)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Semua film telah dimuat</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Daftar Tonton Film ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Film Tersimpan: {0}</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 serial</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} serial</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Semua serial telah dimuat</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Daftar Tonton Serial ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Serial Tersimpan: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Edit daftar putar</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Tambah daftar putar Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Tambah URL M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Impor streaming M3U8 langsung</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Impor sumber</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Simpan perubahan</value></data>
+  <data name="Import" xml:space="preserve"><value>Impor</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>URL daftar putar</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>File M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>URL streaming M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>Masukan</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Masukkan URL daftar putar Anda.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Pilih file M3U dari perangkat Anda.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Masukkan URL streaming.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Gagal memulai tampilan pemutar.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Film akan muncul di sini jika daftar putar terpilih menyertakan film.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Serial akan muncul di sini jika daftar putar terpilih menyertakan acara.</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Pemutaran tidak dapat dimulai. Coba judul lain.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Perbarui detail daftar putar, lalu simpan.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Lengkapi kolom impor yang wajib.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Menambahkan daftar putar...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Daftar putar berhasil ditambahkan.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Lengkapi detail daftar putar.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Menyimpan daftar putar...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Daftar putar disimpan.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Sumber tidak dihapus.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Sumber dihapus.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Tidak ada daftar putar. Tambahkan daftar putar untuk melihat Film.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Tidak ada daftar putar. Tambahkan daftar putar untuk melihat Serial.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Tidak ada daftar putar atau akun. Tambahkan satu untuk melanjutkan.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Tidak ada saluran tersedia</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Tidak ada saluran dalam kategori ini</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Film tersedia jika daftar putar terpilih menyertakan film.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Semua Film</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Film terlalu lama dimuat. Coba kategori lain atau segarkan.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Film tidak dapat dimuat dari daftar putar ini.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Film tidak dapat dimuat dari kategori Xtream ini.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Belum ada film tersimpan.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Daftar tonton film Anda kosong.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Daftar tonton film tidak dapat dimuat.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Tidak ada film yang dikembalikan oleh daftar putar ini.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Detail film tidak dapat dimuat. Informasi dasar ditampilkan.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Serial tersedia jika daftar putar terpilih menyertakan acara.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Semua Serial</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Serial terlalu lama dimuat. Coba kategori lain atau segarkan.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Serial tidak dapat dimuat dari daftar putar ini.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Serial tidak dapat dimuat dari kategori Xtream ini.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Belum ada serial tersimpan.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Daftar tonton serial Anda kosong.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Daftar tonton serial tidak dapat dimuat.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Tidak ada serial yang dikembalikan oleh daftar putar ini.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Detail serial tidak dapat dimuat. Informasi dasar ditampilkan.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Belum ada saluran favorit</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Pilih saluran</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Pemutaran gagal. Coba streaming lain.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Coba streaming lain.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Terjadi kesalahan tak terduga. Periksa diagnostik untuk detail.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Siap dilanjutkan</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Tidak ada deskripsi untuk judul ini.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Durasi tidak tersedia</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Peringkat tidak tersedia</value></data>
+  <data name="Added" xml:space="preserve"><value>Ditambahkan</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Tidak ada deskripsi untuk serial ini.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 episode</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} episode</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>Tidak tersedia</value></data>
+</root>

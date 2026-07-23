@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>语言</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>搜索语言</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>最喜欢的频道</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>向上滚动</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>向下滚动</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>向左滚动</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>向右滚动</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>显示或隐藏 继续观看</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>播放列表</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>添加播放列表</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>编辑选定的播放列表</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>删除选定的播放列表</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>导入 M3U 文件</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>状态： </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>到期时间： </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>剩余天数： </value></data>
+  <data name="Browse" xml:space="preserve"><value>浏览</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>直播</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>电影</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>剧集</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>电视直播</value></data>
+  <data name="Movies" xml:space="preserve"><value>电影</value></data>
+  <data name="Series" xml:space="preserve"><value>系列</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>播放列表名称</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>服务器地址</value></data>
+  <data name="Username" xml:space="preserve"><value>用户名</value></data>
+  <data name="Password" xml:space="preserve"><value>密码</value></data>
+  <data name="Choose" xml:space="preserve"><value>选择</value></data>
+  <data name="Cancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Categories" xml:space="preserve"><value>类别</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>搜索类别</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>显示喜爱的频道</value></data>
+  <data name="Favorites" xml:space="preserve"><value>收藏夹</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>已保存的频道</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>关闭搜索</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>电影收藏</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>显示保存的电影</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>按类型浏览</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>系列收藏</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>显示已保存的系列</value></data>
+  <data name="Channels" xml:space="preserve"><value>渠道</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>搜索频道</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>搜索电影</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>继续观看</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>搜索系列</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>正在播放</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>故事片</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>播放/继续</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>系列</value></data>
+  <data name="Resume" xml:space="preserve"><value>简历</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>此播放列表未返回任何剧集。</value></data>
+  <data name="Play" xml:space="preserve"><value>玩</value></data>
+  <data name="Pause" xml:space="preserve"><value>暂停</value></data>
+  <data name="Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>全屏</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>直播电子节目指南</value></data>
+  <data name="UpNext" xml:space="preserve"><value>上一个</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>全屏控制</value></data>
+  <data name="Back" xml:space="preserve"><value>返回</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>全屏播放器</value></data>
+  <data name="Previous" xml:space="preserve"><value>上一篇</value></data>
+  <data name="Next" xml:space="preserve"><value>下一页</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>发生意外错误。操作被取消。检查日志以获取详细信息。</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>选择M3U文件</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U 播放列表 (*.m3u;*.m3u8)|*.m3u;*.m3u8|所有文件 (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>玩家闲置</value></data>
+  <data name="Ready" xml:space="preserve"><value>准备好</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>选择一个频道开始播放。</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>未选择频道</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>选择电影以从此播放列表加载可用电影。</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>选择系列以从此播放列表加载可用节目。</value></data>
+  <data name="Mute" xml:space="preserve"><value>静音</value></data>
+  <data name="Unmute" xml:space="preserve"><value>取消静音</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 已保存</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0}已保存</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>尚未保存电影或连续剧。</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>没有找到电影</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 部电影</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} 部电影</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>显示更多（剩余 {0} 个）</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>所有电影已加载</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>电影观看列表 ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>已保存的电影：{0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>从监视列表中删除</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>添加到关注列表</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>未找到系列</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1个系列</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0}系列</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>全系列已加载</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>系列观看列表 ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>已保存系列：{0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>编辑播放列表</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>添加 Xtream 播放列表</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>添加 M3U 网址</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>直接导入M3U8流</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>导入源码</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>保存更改</value></data>
+  <data name="Import" xml:space="preserve"><value>进口</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>播放列表网址</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U文件</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8 流媒体 URL</value></data>
+  <data name="Input" xml:space="preserve"><value>输入</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>输入您的播放列表 URL。</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>从您的设备中选择 M3U 文件。</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>输入流 URL。</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>无法初始化播放器 shell。</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>当选定的播放列表包含电影时，电影将出现在此处。</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>当选定的播放列表包含节目时，系列将出现在此处。</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>开始播放...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>开场直播</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>播放失败</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>无信号</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>无法开始播放。请尝试其他标题。</value></data>
+  <data name="Stopped" xml:space="preserve"><value>已停止</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>播放停止</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>选择一个频道继续。</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>更新播放列表详细信息，然后保存。</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>请填写必填的导入字段。</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>添加播放列表...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>播放列表添加成功。</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>请填写播放列表详细信息。</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>正在保存播放列表...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>播放列表已保存。</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>源没有被删除。</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>来源已删除。</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>没有可用的播放列表。添加播放列表以观看电影。</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>没有可用的播放列表。添加播放列表以查看系列。</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>没有可用的播放列表或帐户。添加一个以继续。</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>无可用频道</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>此类别中没有频道</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>当所选播放列表包含电影时，电影可用。</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>所有电影</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>电影加载时间太长。尝试其他类别或刷新。</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>无法从此播放列表加载电影。</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>无法从此 Xtream 类别加载电影。</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>还没有保存的电影。</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>您的电影观看列表是空的。</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>无法加载电影观看列表。</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>此播放列表未返回任何电影。</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>无法加载详细的电影数据。显示基本信息。</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>当选定的播放列表包含节目时，系列可用。</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>全系列</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>系列加载时间太长。尝试其他类别或刷新。</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>无法从此播放列表加载系列。</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>无法从此 Xtream 类别加载系列。</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>尚未保存系列。</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>您的系列观看列表为空。</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>无法加载系列观看列表。</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>此播放列表未返回任何系列。</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>无法加载详细的系列数据。显示基本信息。</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>还没有喜欢的频道</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>选择频道</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>播放失败。请尝试另一个流。</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>尝试另一个流。</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>发生意外错误。检查诊断以了解详细信息。</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>准备恢复</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>没有为此标题提供任何描述。</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>持续时间不可用</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>无法评级</value></data>
+  <data name="Added" xml:space="preserve"><value>已添加</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>在关注列表中</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>关注列表</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>没有提供该系列的描述。</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 集</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} 集</value></data>
+  <data name="Unknown" xml:space="preserve"><value>未知</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>未提供</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>不适用</value></data>
+  <data name="Expired" xml:space="preserve"><value>已过期</value></data>
+</root>

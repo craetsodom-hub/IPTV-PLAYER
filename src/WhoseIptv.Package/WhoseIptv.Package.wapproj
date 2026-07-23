@@ -1,0 +1,55 @@
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>d9d5ba5d-4b45-4fa0-9a65-9170ed6d89c3</ProjectGuid>
+    <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <EntryPointProjectUniqueName>..\IptvPlayer.App\IptvPlayer.App.csproj</EntryPointProjectUniqueName>
+    <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
+    <GenerateAppInstallerFile>false</GenerateAppInstallerFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Configuration Condition="&apos;$(Configuration)&apos; == &apos;&apos;">Debug</Configuration>
+    <Platform Condition="&apos;$(Platform)&apos; == &apos;&apos;">x64</Platform>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <WapProjPath Condition="&apos;$(WapProjPath)&apos; == &apos;&apos;">$(MSBuildExtensionsPath)\Microsoft\DesktopBridge\</WapProjPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="&apos;$(Configuration)&apos; == &apos;Release&apos;">
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x64</AppxBundlePlatforms>
+    <UapAppxPackageBuildMode>StoreUpload</UapAppxPackageBuildMode>
+    <StoreArtifactDesktopDir Condition="&apos;$(USERPROFILE)&apos; != &apos;&apos;">$(USERPROFILE)\Desktop\</StoreArtifactDesktopDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Square44x44Logo.png" />
+    <Content Include="Assets\Square150x150Logo.png" />
+    <Content Include="Assets\StoreLogo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IptvPlayer.App\IptvPlayer.App.csproj">
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
+  </ItemGroup>
+
+  <Import Project="$(WapProjPath)Microsoft.DesktopBridge.props" />
+  <Import Project="$(WapProjPath)Microsoft.DesktopBridge.targets" />
+
+  <Target Name="CopyStoreArtifactsToDesktop" AfterTargets="Build" Condition="&apos;$(Configuration)&apos; == &apos;Release&apos; and &apos;$(StoreArtifactDesktopDir)&apos; != &apos;&apos;">
+    <ItemGroup>
+      <DesktopStoreArtifacts Include="$(AppxPackageDir)**\*.msixupload" />
+      <DesktopStoreArtifacts Include="$(AppxPackageDir)**\*.msixbundle" />
+      <DesktopStoreArtifacts Include="$(AppxPackageDir)**\*.appxsym" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DesktopStoreArtifacts)" DestinationFiles="@(DesktopStoreArtifacts->&apos;$(StoreArtifactDesktopDir)%(Filename)%(Extension)&apos;)" SkipUnchangedFiles="false" OverwriteReadOnlyFiles="true" />
+  </Target>
+</Project>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Kieli</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Hae kieliä</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Suosikki kanava</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Vieritä ylös</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Vieritä alas</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Vieritä vasemmalle</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Vieritä oikealle</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Näytä tai piilota Jatka katselua</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Soittolista</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Lisää soittolista</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Muokkaa valittua soittolistaa</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Poista valittu soittolista</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Tuo M3U-tiedosto</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Tila: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Vanhenee: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Päiviä jäljellä: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Selaa</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Live-TV</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Elokuvat</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Sarjat</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Live-TV</value></data>
+  <data name="Movies" xml:space="preserve"><value>Elokuvat</value></data>
+  <data name="Series" xml:space="preserve"><value>sarja</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Soittolistan nimi</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Palvelimen URL-osoite</value></data>
+  <data name="Username" xml:space="preserve"><value>Käyttäjätunnus</value></data>
+  <data name="Password" xml:space="preserve"><value>Salasana</value></data>
+  <data name="Choose" xml:space="preserve"><value>Valitse</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Peruuta</value></data>
+  <data name="Categories" xml:space="preserve"><value>Luokat</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Hae luokkia</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Näytä suosikkikanavat</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Suosikit</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Tallennetut kanavat</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Sulje haku</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Elokuvakokoelmat</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Näytä tallennetut elokuvat</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Selaa genren mukaan</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Sarjan kokoelmat</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Näytä tallennetut sarjat</value></data>
+  <data name="Channels" xml:space="preserve"><value>Kanavat</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Hae kanavia</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Etsi elokuvia</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Jatka katselua</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Etsi sarja</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>NYT PELAAN</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>FETURE FILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Toista / Jatka</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SARJA</value></data>
+  <data name="Resume" xml:space="preserve"><value>Jatka</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Tämä soittolista ei palauttanut yhtään jaksoa.</value></data>
+  <data name="Play" xml:space="preserve"><value>Pelaa</value></data>
+  <data name="Pause" xml:space="preserve"><value>Tauko</value></data>
+  <data name="Stop" xml:space="preserve"><value>Pysähdy</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Koko näyttö</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>SEURAAVAN YLÖS</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Koko näytön säätimet</value></data>
+  <data name="Back" xml:space="preserve"><value>Takaisin</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Koko näytön soitin</value></data>
+  <data name="Previous" xml:space="preserve"><value>Ed</value></data>
+  <data name="Next" xml:space="preserve"><value>Seuraavaksi</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Tapahtui odottamaton virhe. Operaatio peruttiin. Tarkista tiedot lokeista.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Valitse M3U-tiedosto</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U-soittolistat (*.m3u;*.m3u8)|*.m3u;*.m3u8|Kaikki tiedostot (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Soitin tyhjäkäynnillä</value></data>
+  <data name="Ready" xml:space="preserve"><value>Valmis</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Aloita toisto valitsemalla kanava.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Kanavaa ei ole valittu</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Valitse Elokuvat ladataksesi saatavilla olevat elokuvat tästä soittolistasta.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Valitse Sarja ladataksesi saatavilla olevat ohjelmat tästä soittolistasta.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Mykistä</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Poista mykistys</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 tallennettu</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} tallennettu</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Ei vielä tallennettuja elokuvia tai sarjoja.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Elokuvia ei löytynyt</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 elokuva</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} elokuvaa</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Näytä lisää ({0} jäljellä)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Kaikki elokuvat ladattu</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Elokuvien katselulista ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Tallennetut elokuvat: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Poista tarkkailulistalta</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Lisää tarkkailulistalle</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Sarjaa ei löytynyt</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 sarja</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} sarja</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Kaikki sarjat ladattu</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Sarjan tarkkailulista ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Tallennettu sarja: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Muokkaa soittolistaa</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Lisää Xtream-soittolista</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Lisää M3U:n URL-osoite</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Tuo suora M3U8-stream</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Tuo lähde</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Tallenna muutokset</value></data>
+  <data name="Import" xml:space="preserve"><value>Tuo</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Soittolistan URL-osoite</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U tiedosto</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8-streamin URL-osoite</value></data>
+  <data name="Input" xml:space="preserve"><value>Syöte</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Anna soittolistasi URL-osoite.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Valitse M3U-tiedosto laitteestasi.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Anna streamin URL-osoite.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Soittimen kuoren alustaminen epäonnistui.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Elokuvat näkyvät tässä, kun valittu soittolista sisältää elokuvia.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Sarjat näkyvät tässä, kun valittu soittolista sisältää ohjelmia.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Aloitetaan toistoa...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Avausvirta</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Toisto epäonnistui</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Ei signaalia</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Toistoa ei voitu aloittaa. Kokeile toista otsikkoa.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Pysähtynyt</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Toisto pysähtyi</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Valitse kanava jatkaaksesi.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Päivitä soittolistan tiedot ja tallenna.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Täytä vaaditut tuontikentät.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Lisätään soittolistaa...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Soittolista lisätty onnistuneesti.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Täytä soittolistan tiedot.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Tallennetaan soittolistaa…</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Soittolista tallennettu.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Lähdettä ei poistettu.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Lähde poistettu.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Soittolistaa ei ole saatavilla. Lisää soittolista nähdäksesi elokuvat.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Soittolistaa ei ole saatavilla. Lisää soittolista nähdäksesi sarja.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Soittolistoja tai tilejä ei ole saatavilla. Lisää yksi jatkaaksesi.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Ei kanavia saatavilla</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Ei kanavia tässä luokassa</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Elokuvat ovat saatavilla, kun valittu soittolista sisältää elokuvia.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Kaikki elokuvat</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Elokuvien lataaminen kesti liian kauan. Kokeile toista luokkaa tai päivitä.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Elokuvia ei voitu ladata tästä soittolistasta.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Elokuvia ei voitu ladata tästä Xtream-luokasta.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Ei vielä tallennettuja elokuvia.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Elokuvien katselulistasi on tyhjä.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Elokuvan katselulistaa ei voitu ladata.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Tämä soittolista ei palauttanut elokuvia.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Yksityiskohtaisia elokuvatietoja ei voitu ladata. Perustiedot näytetään.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Sarjat ovat saatavilla, kun valittu soittolista sisältää ohjelmia.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Kaikki sarjat</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Sarjan lataaminen kesti liian kauan. Kokeile toista luokkaa tai päivitä.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Sarjaa ei voitu ladata tästä soittolistasta.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Sarjaa ei voitu ladata tästä Xtream-luokasta.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Ei vielä tallennettuja sarjoja.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Sarjan katselulistasi on tyhjä.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Sarjan tarkkailuluetteloa ei voitu ladata.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Tämä soittolista ei palauttanut yhtään sarjaa.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Yksityiskohtaisia sarjatietoja ei voitu ladata. Perustiedot näytetään.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Ei vielä suosikkikanavia</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Valitse kanava</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Toisto epäonnistui. Kokeile toista suoratoistoa.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Kokeile toista streamia.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Tapahtui odottamaton virhe. Katso lisätietoja diagnostiikasta.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Valmiina jatkamaan</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Tälle otsikolle ei annettu kuvausta.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Kesto ei ole käytettävissä</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Luokitus ei ole saatavilla</value></data>
+  <data name="Added" xml:space="preserve"><value>Lisätty</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>Seurantalistalla</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Tarkkailulista</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Tälle sarjalle ei annettu kuvausta.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 jakso</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} jaksoa</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Tuntematon</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Ei tarjota</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>Ei käytössä</value></data>
+  <data name="Expired" xml:space="preserve"><value>Vanhentunut</value></data>
+</root>

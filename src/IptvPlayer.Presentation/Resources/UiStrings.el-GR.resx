@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Γλώσσα</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Αναζήτηση γλωσσών</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Αγαπημένο κανάλι</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Κάντε κύλιση προς τα πάνω</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Κάντε κύλιση προς τα κάτω</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Κάντε κύλιση αριστερά</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Κάντε κύλιση προς τα δεξιά</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Εμφάνιση ή απόκρυψη Συνέχεια παρακολούθησης</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Λίστα αναπαραγωγής</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Προσθήκη λίστας αναπαραγωγής</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Επεξεργασία επιλεγμένης λίστας αναπαραγωγής</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Κατάργηση επιλεγμένης λίστας αναπαραγωγής</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Εισαγωγή αρχείου M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Κατάσταση: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Λήγει: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Μέρες που απομένουν: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Περιήγηση</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Ζωντανά</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Ταινίες</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Σειρές</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Ζωντανή τηλεόραση</value></data>
+  <data name="Movies" xml:space="preserve"><value>Ταινίες</value></data>
+  <data name="Series" xml:space="preserve"><value>Σειρά</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Όνομα λίστας αναπαραγωγής</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>URL διακομιστή</value></data>
+  <data name="Username" xml:space="preserve"><value>Όνομα χρήστη</value></data>
+  <data name="Password" xml:space="preserve"><value>Κωδικός πρόσβασης</value></data>
+  <data name="Choose" xml:space="preserve"><value>Επιλέξτε</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="Categories" xml:space="preserve"><value>Κατηγορίες</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Κατηγορίες αναζήτησης</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Εμφάνιση αγαπημένων καναλιών</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Αγαπημένα</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Αποθηκευμένα κανάλια</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Κλείσιμο αναζήτησης</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Συλλογές ταινιών</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Εμφάνιση αποθηκευμένων ταινιών</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Περιήγηση ανά είδος</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Συλλογές σειρών</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Εμφάνιση αποθηκευμένων σειρών</value></data>
+  <data name="Channels" xml:space="preserve"><value>Κανάλια</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Αναζήτηση καναλιών</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Αναζήτηση ταινιών</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Συνεχίστε την παρακολούθηση</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Αναζήτηση σειρών</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>ΤΩΡΑ ΠΑΙΖΕΙ</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>ΤΑΙΝΙΑ ΜΙΚΡΟΥ</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Παίξτε / Συνέχιση</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>ΣΕΙΡΑ</value></data>
+  <data name="Resume" xml:space="preserve"><value>Βιογραφικό</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Δεν επιστράφηκαν επεισόδια από αυτό το playlist.</value></data>
+  <data name="Play" xml:space="preserve"><value>Παίξτε</value></data>
+  <data name="Pause" xml:space="preserve"><value>Παύση</value></data>
+  <data name="Stop" xml:space="preserve"><value>Σταμάτα</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Πλήρης οθόνη</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>ΕΠΟΜΕΝΟ</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Χειριστήρια πλήρους οθόνης</value></data>
+  <data name="Back" xml:space="preserve"><value>Πίσω</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Πρόγραμμα αναπαραγωγής πλήρους οθόνης</value></data>
+  <data name="Previous" xml:space="preserve"><value>Προηγ</value></data>
+  <data name="Next" xml:space="preserve"><value>Επόμενο</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Παρουσιάστηκε απροσδόκητο σφάλμα. Η επιχείρηση ακυρώθηκε. Ελέγξτε τα αρχεία καταγραφής για λεπτομέρειες.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Επιλέξτε αρχείο M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>Λίστες αναπαραγωγής M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|Όλα τα αρχεία (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Παίκτης σε αδράνεια</value></data>
+  <data name="Ready" xml:space="preserve"><value>Έτοιμοι</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Επιλέξτε ένα κανάλι για να ξεκινήσει η αναπαραγωγή.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Δεν έχει επιλεγεί κανάλι</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Επιλέξτε Ταινίες για να φορτώσετε διαθέσιμες ταινίες από αυτήν τη λίστα αναπαραγωγής.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Επιλέξτε Σειρά για να φορτώσετε τις διαθέσιμες εκπομπές από αυτήν τη λίστα αναπαραγωγής.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Σίγαση</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Κατάργηση σίγασης</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 αποθηκεύτηκε</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} αποθηκεύτηκε</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Δεν υπάρχουν ακόμα αποθηκευμένες ταινίες ή σειρές.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Δεν βρέθηκαν ταινίες</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 ταινία</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} ταινίες</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Εμφάνιση περισσότερων (απομένουν {0})</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Όλες οι ταινίες έχουν φορτωθεί</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Λίστα παρακολούθησης ταινιών ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Αποθηκευμένες ταινίες: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Κατάργηση από τη λίστα παρακολούθησης</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Προσθήκη στη λίστα παρακολούθησης</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Δεν βρέθηκε σειρά</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 σειρά</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} σειρά</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Όλες οι σειρές έχουν φορτωθεί</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Λίστα παρακολούθησης σειράς ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Αποθηκευμένη σειρά: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Επεξεργασία λίστας αναπαραγωγής</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Προσθήκη λίστας αναπαραγωγής Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Προσθήκη διεύθυνσης URL M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Εισαγάγετε απευθείας ροή M3U8</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Πηγή εισαγωγής</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Αποθήκευση αλλαγών</value></data>
+  <data name="Import" xml:space="preserve"><value>Εισαγωγή</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>URL λίστας αναπαραγωγής</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>αρχείο M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>URL ροής M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>Εισαγωγή</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Εισαγάγετε τη διεύθυνση URL της λίστας αναπαραγωγής σας.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Επιλέξτε ένα αρχείο M3U από τη συσκευή σας.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Εισαγάγετε μια διεύθυνση URL ροής.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Απέτυχε η προετοιμασία του κελύφους του προγράμματος αναπαραγωγής.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Οι ταινίες θα εμφανίζονται εδώ όταν η επιλεγμένη λίστα αναπαραγωγής περιλαμβάνει ταινίες.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Οι σειρές θα εμφανίζονται εδώ όταν η επιλεγμένη λίστα αναπαραγωγής περιλαμβάνει εκπομπές.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Έναρξη αναπαραγωγής...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Άνοιγμα ροής</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Η αναπαραγωγή απέτυχε</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Χωρίς σήμα</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Δεν ήταν δυνατή η έναρξη της αναπαραγωγής. Δοκιμάστε άλλον τίτλο.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Σταμάτησε</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Η αναπαραγωγή σταμάτησε</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Επιλέξτε ένα κανάλι για να συνεχίσετε.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Ενημερώστε τις λεπτομέρειες της λίστας αναπαραγωγής και, στη συνέχεια, αποθηκεύστε.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Συμπληρώστε τα απαιτούμενα πεδία εισαγωγής.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Προσθήκη playlist...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Η λίστα αναπαραγωγής προστέθηκε με επιτυχία.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Συμπληρώστε τα στοιχεία της λίστας αναπαραγωγής.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Αποθήκευση λίστας αναπαραγωγής...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Η λίστα αναπαραγωγής αποθηκεύτηκε.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Η πηγή δεν διαγράφηκε.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Η πηγή διαγράφηκε.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Δεν υπάρχει διαθέσιμη λίστα αναπαραγωγής. Προσθέστε μια λίστα αναπαραγωγής για να δείτε Ταινίες.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Δεν υπάρχει διαθέσιμη λίστα αναπαραγωγής. Προσθέστε μια λίστα αναπαραγωγής για να δείτε τη σειρά.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Δεν υπάρχουν διαθέσιμες λίστες αναπαραγωγής ή λογαριασμοί. Προσθέστε ένα για να συνεχίσετε.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Δεν υπάρχουν διαθέσιμα κανάλια</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Δεν υπάρχουν κανάλια σε αυτήν την κατηγορία</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Οι ταινίες είναι διαθέσιμες όταν η επιλεγμένη λίστα αναπαραγωγής περιλαμβάνει ταινίες.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Όλες οι ταινίες</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Οι ταινίες άργησαν να φορτώσουν. Δοκιμάστε άλλη κατηγορία ή ανανεώστε.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση ταινιών από αυτό το playlist.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση ταινιών από αυτήν την κατηγορία Xtream.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Δεν υπάρχουν ακόμα αποθηκευμένες ταινίες.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Η λίστα παρακολούθησης της ταινίας σας είναι κενή.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση της λίστας παρακολούθησης ταινιών.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Δεν επιστράφηκαν ταινίες από αυτό το playlist.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση λεπτομερών δεδομένων ταινίας. Εμφανίζονται βασικές πληροφορίες.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Οι σειρές είναι διαθέσιμες όταν η επιλεγμένη λίστα αναπαραγωγής περιλαμβάνει εκπομπές.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Όλες οι σειρές</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Η φόρτωση της σειράς πήρε πολύ χρόνο. Δοκιμάστε άλλη κατηγορία ή ανανεώστε.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση της σειράς από αυτήν τη λίστα αναπαραγωγής.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση της σειράς από αυτήν την κατηγορία Xtream.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Δεν υπάρχει ακόμα αποθηκευμένη σειρά.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Η λίστα παρακολούθησης της σειράς σας είναι κενή.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση της λίστας παρακολούθησης σειράς.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Δεν επιστράφηκαν σειρές από αυτό το playlist.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Δεν ήταν δυνατή η φόρτωση λεπτομερών δεδομένων σειράς. Εμφανίζονται βασικές πληροφορίες.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Δεν υπάρχουν ακόμα αγαπημένα κανάλια</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Επιλέξτε ένα κανάλι</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Η αναπαραγωγή απέτυχε. Δοκιμάστε άλλη ροή.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Δοκιμάστε άλλη ροή.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Παρουσιάστηκε απροσδόκητο σφάλμα. Ελέγξτε τα διαγνωστικά για λεπτομέρειες.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Έτοιμο για συνέχιση</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Δεν δόθηκε περιγραφή για αυτόν τον τίτλο.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Η διάρκεια δεν είναι διαθέσιμη</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Η βαθμολογία δεν είναι διαθέσιμη</value></data>
+  <data name="Added" xml:space="preserve"><value>Προστέθηκε</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>Στη λίστα παρακολούθησης</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Λίστα παρακολούθησης</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Δεν δόθηκε περιγραφή για αυτήν τη σειρά.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 επεισόδιο</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} επεισόδια</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Άγνωστο</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Δεν παρέχεται</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Λήξη</value></data>
+</root>

@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Limba</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Căutați limbi</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Canalul preferat</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Derulați în sus</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Derulați în jos</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Derulați spre stânga</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Derulați spre dreapta</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Afișați sau ascundeți Continuați vizionarea</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Listă de redare</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Adaugă playlist</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Editați lista de redare selectată</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Eliminați lista de redare selectată</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Importați fișierul M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Stare: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Expiră: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Zile rămase: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Răsfoiește</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>TV live</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Filme</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Seriale</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>TV în direct</value></data>
+  <data name="Movies" xml:space="preserve"><value>Filme</value></data>
+  <data name="Series" xml:space="preserve"><value>Seria</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Numele listei de redare</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Adresa URL a serverului</value></data>
+  <data name="Username" xml:space="preserve"><value>Nume de utilizator</value></data>
+  <data name="Password" xml:space="preserve"><value>Parolă</value></data>
+  <data name="Choose" xml:space="preserve"><value>Alege</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Anulează</value></data>
+  <data name="Categories" xml:space="preserve"><value>Categorii</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Caută categorii</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Afișează canalele preferate</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favorite</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Canale salvate</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Închide căutarea</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Colecții de filme</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Afișează filmele salvate</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Răsfoiți după gen</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Colecții de serie</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Afișează seriale salvate</value></data>
+  <data name="Channels" xml:space="preserve"><value>Canale</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Căutați canale</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Caută filme</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Continuați vizionarea</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Căutați seriale</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>ACUM SE JOACĂ</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>LUNGmetraj</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Redare / Reluare</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERIA</value></data>
+  <data name="Resume" xml:space="preserve"><value>Reluați</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Acest playlist nu a returnat niciun episod.</value></data>
+  <data name="Play" xml:space="preserve"><value>Joacă</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pauză</value></data>
+  <data name="Stop" xml:space="preserve"><value>Opreste-te</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Ecran complet</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>EPG LIVE</value></data>
+  <data name="UpNext" xml:space="preserve"><value>URMĂTORUL</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Comenzi pe ecran complet</value></data>
+  <data name="Back" xml:space="preserve"><value>Înapoi</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Player cu ecran complet</value></data>
+  <data name="Previous" xml:space="preserve"><value>Prev</value></data>
+  <data name="Next" xml:space="preserve"><value>În continuare</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>A apărut o eroare neașteptată. Operațiunea a fost anulată. Verificați jurnalele pentru detalii.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Selectați fișierul M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>Liste de redare M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|Toate fișierele (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Jucătorul inactiv</value></data>
+  <data name="Ready" xml:space="preserve"><value>Gata</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Selectați un canal pentru a începe redarea.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Niciun canal selectat</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Selectați Filme pentru a încărca filme disponibile din această listă de redare.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Selectați Seria pentru a încărca emisiunile disponibile din această listă de redare.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Mut</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Activați sunetul</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 salvat</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} salvate</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Niciun film sau serial salvat încă.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Nu s-au găsit filme</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} filme</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Afișați mai multe ({0} rămase)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Toate filmele au fost încărcate</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Lista filmelor urmărite ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Filme salvate: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Eliminați din Lista de urmărire</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Adaugă la Lista de urmărire</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Nu a fost găsită nicio serie</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 serie</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} serie</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Toate serialele sunt încărcate</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Lista de urmărire a serii ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Seria salvată: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Editați lista de redare</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Adăugați lista de redare Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Adăugați adresa URL M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Importați fluxul direct M3U8</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Sursa de import</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Salvați modificările</value></data>
+  <data name="Import" xml:space="preserve"><value>Import</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>Adresa URL a listei de redare</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>fișier M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>Adresa URL a fluxului M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>Intrare</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Introduceți adresa URL a listei dvs. de redare.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Selectați un fișier M3U de pe dispozitiv.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Introduceți o adresă URL a fluxului.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Nu s-a inițializat shell-ul playerului.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Filmele vor apărea aici când lista de redare selectată include filme.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Seriale va apărea aici când lista de redare selectată include emisiuni.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Se începe redarea...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Flux de deschidere</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Redarea a eșuat</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Fără semnal</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Redarea nu a putut fi începută. Vă rugăm să încercați un alt titlu.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>oprit</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Redarea sa oprit</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Selectați un canal pentru a continua.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Actualizați detaliile listei de redare, apoi salvați.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Vă rugăm să completați câmpurile de import obligatorii.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Se adaugă lista de redare...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Lista de redare a fost adăugată cu succes.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Vă rugăm să completați detaliile playlistului.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Se salvează lista de redare...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Lista de redare a fost salvată.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Sursa nu a fost ștearsă.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Sursa a fost ștearsă.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Nu este disponibilă nicio listă de redare. Adăugați o listă de redare pentru a vedea filme.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Nu este disponibilă nicio listă de redare. Adăugați o listă de redare pentru a vedea seria.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Nu sunt disponibile liste de redare sau conturi. Adăugați unul pentru a continua.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Nu există canale disponibile</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Nu există canale în această categorie</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Filmele sunt disponibile atunci când lista de redare selectată include filme.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Toate filmele</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Încărcarea filmelor a durat prea mult. Încercați o altă categorie sau reîmprospătați.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Filmele nu au putut fi încărcate din această listă de redare.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Filmele nu au putut fi încărcate din această categorie Xtream.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Niciun film salvat încă.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Lista dvs. de vizionare a filmului este goală.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Lista filmelor urmărite nu a putut fi încărcată.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Acest playlist nu a returnat niciun film.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Datele detaliate ale filmului nu au putut fi încărcate. Sunt afișate informații de bază.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Serii sunt disponibile atunci când lista de redare selectată include emisiuni.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Toate Seriile</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Seria a durat prea mult să se încarce. Încercați o altă categorie sau reîmprospătați.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Seriale nu au putut fi încărcate din această listă de redare.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Seriale nu au putut fi încărcate din această categorie Xtream.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Nicio serie salvată încă.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Lista dvs. de urmărire a serialului este goală.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Lista de urmărire a seriei nu a putut fi încărcată.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Niciun serial nu a fost returnat de această listă de redare.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Datele detaliate ale seriei nu au putut fi încărcate. Sunt afișate informații de bază.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Nu există încă canale preferate</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Selectați un canal</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Redarea a eșuat. Vă rugăm să încercați un alt flux.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Încercați un alt flux.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>A apărut o eroare neașteptată. Verificați diagnosticul pentru detalii.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Gata de reluat</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Nu a fost furnizată nicio descriere pentru acest titlu.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Durată indisponibilă</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Evaluare indisponibilă</value></data>
+  <data name="Added" xml:space="preserve"><value>Adăugat</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>În Lista de urmărire</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Lista de urmărire</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Nu a fost furnizată nicio descriere pentru această serie.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 episod</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} episoade</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Necunoscut</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Nu este furnizat</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>A expirat</value></data>
+</root>

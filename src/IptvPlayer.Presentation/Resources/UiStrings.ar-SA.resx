@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>اللغة</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>لغات البحث</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>القناة المفضلة</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>قم بالتمرير لأعلى</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>قم بالتمرير لأسفل</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>قم بالتمرير إلى اليسار</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>قم بالتمرير إلى اليمين</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>إظهار أو إخفاء متابعة المشاهدة</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>قائمة التشغيل</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>إضافة قائمة التشغيل</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>تحرير قائمة التشغيل المحددة</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>إزالة قائمة التشغيل المحددة</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>استيراد ملف M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>الحالة: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>تنتهي: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>الأيام المتبقية: </value></data>
+  <data name="Browse" xml:space="preserve"><value>تصفح</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>البث المباشر</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>أفلام</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>مسلسلات</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>البث المباشر</value></data>
+  <data name="Movies" xml:space="preserve"><value>أفلام</value></data>
+  <data name="Series" xml:space="preserve"><value>مسلسلات</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>اسم قائمة التشغيل</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>عنوان URL للخادم</value></data>
+  <data name="Username" xml:space="preserve"><value>اسم المستخدم</value></data>
+  <data name="Password" xml:space="preserve"><value>كلمة المرور</value></data>
+  <data name="Choose" xml:space="preserve"><value>اختر</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Categories" xml:space="preserve"><value>الفئات</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>فئات البحث</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>عرض القنوات المفضلة</value></data>
+  <data name="Favorites" xml:space="preserve"><value>المفضلة</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>القنوات المحفوظة</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>إغلاق البحث</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>مجموعات الأفلام</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>عرض الأفلام المحفوظة</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>تصفح حسب النوع</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>مجموعات السلسلة</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>عرض المسلسلات المحفوظة</value></data>
+  <data name="Channels" xml:space="preserve"><value>القنوات</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>قنوات البحث</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>بحث في الأفلام</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>مواصلة المشاهدة</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>سلسلة بحث</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>العب الآن</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>فيلم روائي طويل</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>تشغيل / استئناف</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>سلسلة</value></data>
+  <data name="Resume" xml:space="preserve"><value>استئناف</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>لم يتم إرجاع أي حلقات من خلال قائمة التشغيل هذه.</value></data>
+  <data name="Play" xml:space="preserve"><value>العب</value></data>
+  <data name="Pause" xml:space="preserve"><value>وقفة</value></data>
+  <data name="Stop" xml:space="preserve"><value>توقف</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>ملء الشاشة</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>دليل البرامج الإلكتروني المباشر</value></data>
+  <data name="UpNext" xml:space="preserve"><value>التالي</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>ضوابط ملء الشاشة</value></data>
+  <data name="Back" xml:space="preserve"><value>العودة</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>مشغل ملء الشاشة</value></data>
+  <data name="Previous" xml:space="preserve"><value>السابق</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>حدث خطأ غير متوقع. تم إلغاء العملية. تحقق من السجلات للحصول على التفاصيل.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>حدد ملف M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>قوائم تشغيل M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|جميع الملفات (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>اللاعب خاملاً</value></data>
+  <data name="Ready" xml:space="preserve"><value>جاهز</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>حدد قناة لبدء التشغيل.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>لم يتم تحديد أي قناة</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>حدد الأفلام لتحميل الأفلام المتاحة من قائمة التشغيل هذه.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>حدد السلسلة لتحميل العروض المتاحة من قائمة التشغيل هذه.</value></data>
+  <data name="Mute" xml:space="preserve"><value>كتم الصوت</value></data>
+  <data name="Unmute" xml:space="preserve"><value>إلغاء كتم الصوت</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 تم الحفظ</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>تم حفظ {0}.</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>لا توجد أفلام أو مسلسلات محفوظة حتى الآن.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>لم يتم العثور على أفلام</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 فيلم</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} أفلام</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>عرض المزيد (يتبقى {0})</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>تم تحميل جميع الأفلام</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>قائمة مشاهدة الأفلام ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>الأفلام المحفوظة: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>إزالة من قائمة المراقبة</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>أضف إلى قائمة المراقبة</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>لم يتم العثور على سلسلة</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 سلسلة</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>سلسلة {0}.</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>تم تحميل جميع المسلسلات</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>قائمة مراقبة السلسلة ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>السلسلة المحفوظة: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>تحرير قائمة التشغيل</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>أضف قائمة تشغيل Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>أضف عنوان URL لـ M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>استيراد تيار M3U8 المباشر</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>مصدر الاستيراد</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>حفظ التغييرات</value></data>
+  <data name="Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>عنوان URL لقائمة التشغيل</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>ملف M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>عنوان URL للدفق M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>الإدخال</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>أدخل عنوان URL لقائمة التشغيل الخاصة بك.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>حدد ملف M3U من جهازك.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>أدخل عنوان URL للبث.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>فشل في تهيئة غلاف اللاعب.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>ستظهر الأفلام هنا عندما تتضمن قائمة التشغيل المحددة أفلامًا.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>ستظهر المسلسلات هنا عندما تتضمن قائمة التشغيل المحددة عروضًا.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>جارٍ بدء التشغيل...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>تيار الافتتاح</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>فشل التشغيل</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>لا توجد إشارة</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>لا يمكن بدء التشغيل. يرجى تجربة عنوان آخر.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>توقف</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>توقف التشغيل</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>حدد قناة للمتابعة.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>قم بتحديث تفاصيل قائمة التشغيل، ثم احفظها.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>يرجى إكمال حقول الاستيراد المطلوبة.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>جارٍ إضافة قائمة التشغيل...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>تمت إضافة قائمة التشغيل بنجاح.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>يرجى إكمال تفاصيل قائمة التشغيل.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>جارٍ حفظ قائمة التشغيل...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>تم حفظ قائمة التشغيل.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>لم يتم حذف المصدر.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>تم حذف المصدر.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>لا توجد قائمة تشغيل متاحة. أضف قائمة تشغيل لمشاهدة الأفلام.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>لا توجد قائمة تشغيل متاحة. أضف قائمة تشغيل لمشاهدة السلسلة.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>لا توجد قوائم تشغيل أو حسابات متاحة. أضف واحدًا للمتابعة.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>لا توجد قنوات متاحة</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>لا توجد قنوات في هذه الفئة</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>تتوفر الأفلام عندما تتضمن قائمة التشغيل المحددة أفلامًا.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>جميع الأفلام</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>استغرق تحميل الأفلام وقتا طويلا. جرب فئة أخرى أو قم بالتحديث.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>لا يمكن تحميل الأفلام من قائمة التشغيل هذه.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>لا يمكن تحميل الأفلام من فئة Xtream هذه.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>لا توجد أفلام محفوظة حتى الآن.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>قائمة مشاهدة الأفلام الخاصة بك فارغة.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>لا يمكن تحميل قائمة مشاهدة الأفلام.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>لم يتم إرجاع أي أفلام بواسطة قائمة التشغيل هذه.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>لا يمكن تحميل بيانات الفيلم التفصيلية. يتم عرض المعلومات الأساسية.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>تتوفر المسلسلات عندما تتضمن قائمة التشغيل المحددة عروضًا.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>كل السلسلة</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>استغرق تحميل السلسلة وقتا طويلا. جرب فئة أخرى أو قم بالتحديث.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>تعذر تحميل السلسلة من قائمة التشغيل هذه.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>تعذر تحميل السلسلة من فئة Xtream هذه.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>لا توجد سلسلة محفوظة حتى الآن.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>قائمة مشاهدة المسلسلات الخاصة بك فارغة.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>تعذر تحميل قائمة مراقبة السلسلة.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>لم يتم إرجاع أي سلسلة من خلال قائمة التشغيل هذه.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>لا يمكن تحميل بيانات السلسلة التفصيلية. يتم عرض المعلومات الأساسية.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>لا توجد قنوات مفضلة حتى الآن</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>اختر قناة</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>فشل التشغيل. يرجى تجربة دفق آخر.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>حاول دفق آخر.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>حدث خطأ غير متوقع. تحقق من التشخيص للحصول على التفاصيل.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>جاهز للاستئناف</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>لم يتم تقديم وصف لهذا العنوان.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>المدة غير متاحة</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>التقييم غير متاح</value></data>
+  <data name="Added" xml:space="preserve"><value>تمت الإضافة</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>في قائمة المراقبة</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>قائمة المراقبة</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>لم يتم تقديم وصف لهذه السلسلة.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - حلقة واحدة</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} حلقة</value></data>
+  <data name="Unknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>غير متوفر</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>لا يوجد</value></data>
+  <data name="Expired" xml:space="preserve"><value>انتهت صلاحيتها</value></data>
+</root>

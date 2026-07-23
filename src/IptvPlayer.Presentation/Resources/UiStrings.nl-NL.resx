@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Taal</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Zoek talen</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Favoriete zender</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Scroll omhoog</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Scroll naar beneden</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Scroll naar links</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Scroll naar rechts</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Toon of verberg Doorgaan met kijken</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Afspeellijst</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Voeg afspeellijst toe</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Bewerk de geselecteerde afspeellijst</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Geselecteerde afspeellijst verwijderen</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>M3U-bestand importeren</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Status: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Verloopt: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Resterende dagen: </value></data>
+  <data name="Browse" xml:space="preserve"><value>Blader</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Live-tv</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Films</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Series</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Live-tv</value></data>
+  <data name="Movies" xml:space="preserve"><value>Films</value></data>
+  <data name="Series" xml:space="preserve"><value>Serie</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Naam van afspeellijst</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>Server-URL</value></data>
+  <data name="Username" xml:space="preserve"><value>Gebruikersnaam</value></data>
+  <data name="Password" xml:space="preserve"><value>Wachtwoord</value></data>
+  <data name="Choose" xml:space="preserve"><value>Kies</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Annuleer</value></data>
+  <data name="Categories" xml:space="preserve"><value>Categorieën</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Zoek categorieën</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Toon favoriete kanalen</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Favorieten</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Opgeslagen kanalen</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Zoekopdracht sluiten</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Filmcollecties</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Toon opgeslagen films</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Blader op genre</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Serie collecties</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Toon opgeslagen series</value></data>
+  <data name="Channels" xml:space="preserve"><value>Kanalen</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Zoek kanalen</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Zoek films</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Ga door met kijken</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Zoek serie</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>NU SPEELT</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>SPEELFILM</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Afspelen / hervatten</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>SERIE</value></data>
+  <data name="Resume" xml:space="preserve"><value>Hervatten</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Er zijn geen afleveringen geretourneerd door deze afspeellijst.</value></data>
+  <data name="Play" xml:space="preserve"><value>Spelen</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pauze</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Volledig scherm</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>LIVE-EPG</value></data>
+  <data name="UpNext" xml:space="preserve"><value>VOLGENDE</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Bedieningselementen op volledig scherm</value></data>
+  <data name="Back" xml:space="preserve"><value>Terug</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Speler op volledig scherm</value></data>
+  <data name="Previous" xml:space="preserve"><value>Vorige</value></data>
+  <data name="Next" xml:space="preserve"><value>Volgende</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Er is een onverwachte fout opgetreden. De operatie is geannuleerd. Controleer de logboeken voor details.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Selecteer M3U-bestand</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>M3U-afspeellijsten (*.m3u;*.m3u8)|*.m3u;*.m3u8|Alle bestanden (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Speler inactief</value></data>
+  <data name="Ready" xml:space="preserve"><value>Klaar</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Selecteer een kanaal om het afspelen te starten.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Geen kanaal geselecteerd</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Selecteer Films om beschikbare films uit deze afspeellijst te laden.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Selecteer Serie om beschikbare programma&apos;s uit deze afspeellijst te laden.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Dempen</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Dempen opheffen</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 opgeslagen</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} opgeslagen</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Nog geen opgeslagen films of series.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Geen films gevonden</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 film</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} films</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Meer weergeven ({0} resterend)</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Alle films geladen</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Filmkijklijst ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Opgeslagen films: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Verwijderen uit volglijst</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Toevoegen aan volglijst</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Geen serie gevonden</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 serie</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>{0} serie</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Alle series geladen</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Series-kijklijst ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Opgeslagen serie: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Bewerk afspeellijst</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Voeg Xtream-afspeellijst toe</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>M3U-URL toevoegen</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Importeer directe M3U8-stream</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Bron importeren</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Wijzigingen opslaan</value></data>
+  <data name="Import" xml:space="preserve"><value>Importeren</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>URL van afspeellijst</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>M3U-bestand</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>M3U8-stream-URL</value></data>
+  <data name="Input" xml:space="preserve"><value>Invoer</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Voer de URL van uw afspeellijst in.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Selecteer een M3U-bestand op uw apparaat.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Voer een stream-URL in.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Kan de spelershell niet initialiseren.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Hier verschijnen films als de geselecteerde afspeellijst films bevat.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Series verschijnen hier als de geselecteerde afspeellijst shows bevat.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Afspelen starten...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Stroom openen</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Afspelen mislukt</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Geen signaal</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Het afspelen kon niet worden gestart. Probeer een andere titel.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Gestopt</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Het afspelen is gestopt</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Selecteer een kanaal om door te gaan.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Werk de details van de afspeellijst bij en sla deze vervolgens op.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Vul de verplichte importvelden in.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Afspeellijst toevoegen...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Afspeellijst succesvol toegevoegd.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Vul de details van de afspeellijst in.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Afspeellijst opslaan...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Afspeellijst opgeslagen.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Bron is niet verwijderd.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Bron verwijderd.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Er is geen afspeellijst beschikbaar. Voeg een afspeellijst toe om films te bekijken.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Er is geen afspeellijst beschikbaar. Voeg een afspeellijst toe om Series te bekijken.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Er zijn geen afspeellijsten of accounts beschikbaar. Voeg er een toe om door te gaan.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Geen kanalen beschikbaar</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>Geen kanalen in deze categorie</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Films zijn beschikbaar als de geselecteerde afspeellijst films bevat.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Alle films</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Het laden van films duurde te lang. Probeer een andere categorie of vernieuw.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Er konden geen films uit deze afspeellijst worden geladen.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Films konden niet worden geladen vanuit deze Xtream-categorie.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Nog geen opgeslagen films.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Je filmkijklijst is leeg.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>De filmkijklijst kan niet worden geladen.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Er zijn geen films geretourneerd door deze afspeellijst.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Gedetailleerde filmgegevens konden niet worden geladen. Basisinformatie wordt getoond.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Series zijn beschikbaar als de geselecteerde afspeellijst shows bevat.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Alle series</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Het laden van series duurde te lang. Probeer een andere categorie of vernieuw.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Serie kan niet worden geladen vanuit deze afspeellijst.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Serie kan niet worden geladen vanuit deze Xtream-categorie.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Nog geen opgeslagen serie.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Je serievolglijst is leeg.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Serievolglijst kan niet worden geladen.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Er zijn geen series teruggestuurd door deze afspeellijst.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Gedetailleerde seriegegevens konden niet worden geladen. Basisinformatie wordt getoond.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Nog geen favoriete kanalen</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Selecteer een kanaal</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Afspelen mislukt. Probeer een andere stream.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Probeer een andere stream.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Er is een onverwachte fout opgetreden. Controleer de diagnostiek voor meer informatie.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Klaar om te hervatten</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Er is geen beschrijving opgegeven voor deze titel.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Duur niet beschikbaar</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Beoordeling niet beschikbaar</value></data>
+  <data name="Added" xml:space="preserve"><value>Toegevoegd</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>In Volglijst</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Volglijst</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Er is geen beschrijving gegeven voor deze serie.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 aflevering</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} afleveringen</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Onbekend</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Niet voorzien</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N.v.t</value></data>
+  <data name="Expired" xml:space="preserve"><value>Verlopen</value></data>
+</root>

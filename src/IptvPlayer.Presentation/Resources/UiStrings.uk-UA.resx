@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="LanguageButtonToolTip" xml:space="preserve"><value>Мова</value></data>
+  <data name="SearchLanguages" xml:space="preserve"><value>Пошук мов</value></data>
+  <data name="FavoriteChannel" xml:space="preserve"><value>Улюблений канал</value></data>
+  <data name="ScrollUp" xml:space="preserve"><value>Прокрутіть вгору</value></data>
+  <data name="ScrollDown" xml:space="preserve"><value>Прокрутіть вниз</value></data>
+  <data name="ScrollLeft" xml:space="preserve"><value>Прокрутіть вліво</value></data>
+  <data name="ScrollRight" xml:space="preserve"><value>Прокрутіть праворуч</value></data>
+  <data name="ToggleContinueWatching" xml:space="preserve"><value>Показати або приховати Продовжити перегляд</value></data>
+  <data name="CurrentIptv" xml:space="preserve"><value>Плейлист</value></data>
+  <data name="AddPlaylist" xml:space="preserve"><value>Додати список відтворення</value></data>
+  <data name="EditSelectedPlaylist" xml:space="preserve"><value>Редагувати вибраний список відтворення</value></data>
+  <data name="RemoveSelectedPlaylist" xml:space="preserve"><value>Видалити вибраний список відтворення</value></data>
+  <data name="ImportM3uFile" xml:space="preserve"><value>Імпорт файлу M3U</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Статус: </value></data>
+  <data name="ExpiresLabel" xml:space="preserve"><value>Термін дії: </value></data>
+  <data name="DaysRemainingLabel" xml:space="preserve"><value>Залишилося днів: </value></data>
+  <data name="Browse" xml:space="preserve"><value>переглядати</value></data>
+  <data name="BrowseLiveTvTab" xml:space="preserve"><value>Наживо</value></data>
+  <data name="BrowseMoviesTab" xml:space="preserve"><value>Фільми</value></data>
+  <data name="BrowseSeriesTab" xml:space="preserve"><value>Серіали</value></data>
+  <data name="LiveTv" xml:space="preserve"><value>Пряме телебачення</value></data>
+  <data name="Movies" xml:space="preserve"><value>фільми</value></data>
+  <data name="Series" xml:space="preserve"><value>Серія</value></data>
+  <data name="PlaylistName" xml:space="preserve"><value>Назва списку відтворення</value></data>
+  <data name="ServerUrl" xml:space="preserve"><value>URL-адреса сервера</value></data>
+  <data name="Username" xml:space="preserve"><value>Ім&apos;я користувача</value></data>
+  <data name="Password" xml:space="preserve"><value>Пароль</value></data>
+  <data name="Choose" xml:space="preserve"><value>Виберіть</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Categories" xml:space="preserve"><value>Категорії</value></data>
+  <data name="SearchCategories" xml:space="preserve"><value>Категорії пошуку</value></data>
+  <data name="ShowFavoriteChannels" xml:space="preserve"><value>Показати улюблені канали</value></data>
+  <data name="Favorites" xml:space="preserve"><value>Вибране</value></data>
+  <data name="SavedChannels" xml:space="preserve"><value>Збережені канали</value></data>
+  <data name="CloseSearch" xml:space="preserve"><value>Закрити пошук</value></data>
+  <data name="MovieCollections" xml:space="preserve"><value>Збірники фільмів</value></data>
+  <data name="ShowSavedMovies" xml:space="preserve"><value>Показати збережені фільми</value></data>
+  <data name="BrowseByGenre" xml:space="preserve"><value>Перегляньте за жанром</value></data>
+  <data name="SeriesCollections" xml:space="preserve"><value>Колекції серій</value></data>
+  <data name="ShowSavedSeries" xml:space="preserve"><value>Показати збережені серії</value></data>
+  <data name="Channels" xml:space="preserve"><value>Канали</value></data>
+  <data name="SearchChannels" xml:space="preserve"><value>Пошук каналів</value></data>
+  <data name="SearchMovies" xml:space="preserve"><value>Пошук фільмів</value></data>
+  <data name="ContinueWatching" xml:space="preserve"><value>Продовжити перегляд</value></data>
+  <data name="SearchSeries" xml:space="preserve"><value>Пошукова серія</value></data>
+  <data name="NowPlaying" xml:space="preserve"><value>ЗАРАЗ ГРАЄТЬСЯ</value></data>
+  <data name="FeatureFilm" xml:space="preserve"><value>ХУДОЖНІЙ ФІЛЬМ</value></data>
+  <data name="PlayResume" xml:space="preserve"><value>Відтворити / Відновити</value></data>
+  <data name="SeriesUpper" xml:space="preserve"><value>СЕРІЯ</value></data>
+  <data name="Resume" xml:space="preserve"><value>Резюме</value></data>
+  <data name="NoEpisodesReturned" xml:space="preserve"><value>Цей список відтворення не повернув жодного епізоду.</value></data>
+  <data name="Play" xml:space="preserve"><value>грати</value></data>
+  <data name="Pause" xml:space="preserve"><value>Пауза</value></data>
+  <data name="Stop" xml:space="preserve"><value>Стоп</value></data>
+  <data name="Fullscreen" xml:space="preserve"><value>Повний екран</value></data>
+  <data name="LiveEpg" xml:space="preserve"><value>EPG в прямому ефірі</value></data>
+  <data name="UpNext" xml:space="preserve"><value>ДАЛІ</value></data>
+  <data name="FullscreenControls" xml:space="preserve"><value>Елементи керування на весь екран</value></data>
+  <data name="Back" xml:space="preserve"><value>Назад</value></data>
+  <data name="FullscreenPlayer" xml:space="preserve"><value>Повноекранний програвач</value></data>
+  <data name="Previous" xml:space="preserve"><value>попередня</value></data>
+  <data name="Next" xml:space="preserve"><value>Далі</value></data>
+  <data name="UnexpectedErrorDialog" xml:space="preserve"><value>Сталася неочікувана помилка. Операцію скасували. Подробиці перевірте в журналах.</value></data>
+  <data name="SelectM3uFile" xml:space="preserve"><value>Виберіть файл M3U</value></data>
+  <data name="M3uFileFilter" xml:space="preserve"><value>Списки відтворення M3U (*.m3u;*.m3u8)|*.m3u;*.m3u8|Усі файли (*.*)|*.*</value></data>
+  <data name="PlayerIdle" xml:space="preserve"><value>Плеєр неактивний</value></data>
+  <data name="Ready" xml:space="preserve"><value>Готовий</value></data>
+  <data name="SelectChannelToStart" xml:space="preserve"><value>Виберіть канал, щоб почати відтворення.</value></data>
+  <data name="NoChannelSelected" xml:space="preserve"><value>Канал не вибрано</value></data>
+  <data name="SelectMoviesToLoad" xml:space="preserve"><value>Виберіть Фільми, щоб завантажити доступні фільми з цього списку відтворення.</value></data>
+  <data name="SelectSeriesToLoad" xml:space="preserve"><value>Виберіть серіал, щоб завантажити доступні шоу з цього списку відтворення.</value></data>
+  <data name="Mute" xml:space="preserve"><value>Вимкнути звук</value></data>
+  <data name="Unmute" xml:space="preserve"><value>Увімкнути звук</value></data>
+  <data name="OneSaved" xml:space="preserve"><value>1 збережено</value></data>
+  <data name="SavedCount" xml:space="preserve"><value>{0} збережено</value></data>
+  <data name="NoSavedMoviesOrSeries" xml:space="preserve"><value>Ще немає збережених фільмів чи серіалів.</value></data>
+  <data name="NoMoviesFound" xml:space="preserve"><value>Фільми не знайдено</value></data>
+  <data name="OneMovie" xml:space="preserve"><value>1 фільм</value></data>
+  <data name="MovieCount" xml:space="preserve"><value>{0} фільмів</value></data>
+  <data name="ShowMoreRemaining" xml:space="preserve"><value>Показати більше (залишилося {0})</value></data>
+  <data name="AllMoviesLoaded" xml:space="preserve"><value>Усі фільми завантажено</value></data>
+  <data name="MovieWatchlistHeader" xml:space="preserve"><value>Список перегляду фільмів ({0})</value></data>
+  <data name="SavedMoviesCount" xml:space="preserve"><value>Збережені фільми: {0}</value></data>
+  <data name="RemoveFromWatchlist" xml:space="preserve"><value>Видалити зі списку спостереження</value></data>
+  <data name="AddToWatchlist" xml:space="preserve"><value>Додати до списку перегляду</value></data>
+  <data name="NoSeriesFound" xml:space="preserve"><value>Серії не знайдено</value></data>
+  <data name="OneSeries" xml:space="preserve"><value>1 серія</value></data>
+  <data name="SeriesCount" xml:space="preserve"><value>Серія {0}</value></data>
+  <data name="AllSeriesLoaded" xml:space="preserve"><value>Всі серії завантажені</value></data>
+  <data name="SeriesWatchlistHeader" xml:space="preserve"><value>Список перегляду серіалів ({0})</value></data>
+  <data name="SavedSeriesCount" xml:space="preserve"><value>Збережена серія: {0}</value></data>
+  <data name="EditPlaylist" xml:space="preserve"><value>Редагувати список відтворення</value></data>
+  <data name="AddXtreamPlaylist" xml:space="preserve"><value>Додати список відтворення Xtream</value></data>
+  <data name="AddM3uUrl" xml:space="preserve"><value>Додайте URL-адресу M3U</value></data>
+  <data name="ImportDirectM3u8" xml:space="preserve"><value>Імпорт прямого потоку M3U8</value></data>
+  <data name="ImportSource" xml:space="preserve"><value>Джерело імпорту</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Зберегти зміни</value></data>
+  <data name="Import" xml:space="preserve"><value>Імпорт</value></data>
+  <data name="PlaylistUrl" xml:space="preserve"><value>URL-адреса списку відтворення</value></data>
+  <data name="M3uFile" xml:space="preserve"><value>файл M3U</value></data>
+  <data name="M3u8StreamUrl" xml:space="preserve"><value>URL-адреса потоку M3U8</value></data>
+  <data name="Input" xml:space="preserve"><value>Введення</value></data>
+  <data name="EnterPlaylistUrl" xml:space="preserve"><value>Введіть URL-адресу списку відтворення.</value></data>
+  <data name="SelectM3uFileDevice" xml:space="preserve"><value>Виберіть файл M3U на своєму пристрої.</value></data>
+  <data name="EnterStreamUrl" xml:space="preserve"><value>Введіть URL-адресу потоку.</value></data>
+  <data name="FailedInitializeShell" xml:space="preserve"><value>Не вдалося ініціалізувати оболонку програвача.</value></data>
+  <data name="MoviesAppearWhenIncluded" xml:space="preserve"><value>Фільми з’являться тут, якщо вибраний список відтворення містить фільми.</value></data>
+  <data name="SeriesAppearWhenIncluded" xml:space="preserve"><value>Серіал з’явиться тут, якщо вибраний список відтворення містить шоу.</value></data>
+  <data name="StartingPlayback" xml:space="preserve"><value>Початок відтворення...</value></data>
+  <data name="OpeningStream" xml:space="preserve"><value>Відкриття потоку</value></data>
+  <data name="PlaybackFailed" xml:space="preserve"><value>Помилка відтворення</value></data>
+  <data name="NoSignal" xml:space="preserve"><value>Немає сигналу</value></data>
+  <data name="PlaybackCouldNotStart" xml:space="preserve"><value>Не вдалося почати відтворення. Спробуйте іншу назву.</value></data>
+  <data name="Stopped" xml:space="preserve"><value>Зупинився</value></data>
+  <data name="PlaybackStopped" xml:space="preserve"><value>Відтворення зупинено</value></data>
+  <data name="SelectChannelToContinue" xml:space="preserve"><value>Щоб продовжити, виберіть канал.</value></data>
+  <data name="UpdatePlaylistThenSave" xml:space="preserve"><value>Оновіть деталі списку відтворення та збережіть.</value></data>
+  <data name="CompleteRequiredFields" xml:space="preserve"><value>Будь ласка, заповніть необхідні поля імпорту.</value></data>
+  <data name="AddingPlaylist" xml:space="preserve"><value>Додавання списку відтворення...</value></data>
+  <data name="PlaylistAdded" xml:space="preserve"><value>Список відтворення успішно додано.</value></data>
+  <data name="CompletePlaylistDetails" xml:space="preserve"><value>Заповніть деталі списку відтворення.</value></data>
+  <data name="SavingPlaylist" xml:space="preserve"><value>Збереження списку відтворення...</value></data>
+  <data name="PlaylistSaved" xml:space="preserve"><value>Список відтворення збережено.</value></data>
+  <data name="SourceNotDeleted" xml:space="preserve"><value>Джерело не було видалено.</value></data>
+  <data name="SourceDeleted" xml:space="preserve"><value>Джерело видалено.</value></data>
+  <data name="NoPlaylistMovies" xml:space="preserve"><value>Список відтворення недоступний. Додайте список відтворення, щоб переглянути фільми.</value></data>
+  <data name="NoPlaylistSeries" xml:space="preserve"><value>Список відтворення недоступний. Додайте список відтворення, щоб переглянути серіал.</value></data>
+  <data name="NoPlaylistsAvailable" xml:space="preserve"><value>Немає доступних списків відтворення чи облікових записів. Додайте один, щоб продовжити.</value></data>
+  <data name="NoChannelsAvailable" xml:space="preserve"><value>Немає доступних каналів</value></data>
+  <data name="NoChannelsInCategory" xml:space="preserve"><value>У цій категорії немає каналів</value></data>
+  <data name="MoviesAvailableWhenIncluded" xml:space="preserve"><value>Фільми доступні, якщо вибраний список відтворення містить фільми.</value></data>
+  <data name="AllMovies" xml:space="preserve"><value>Всі фільми</value></data>
+  <data name="MoviesLoadTimeout" xml:space="preserve"><value>Фільми завантажувалися надто довго. Спробуйте іншу категорію або оновіть.</value></data>
+  <data name="MoviesLoadFailed" xml:space="preserve"><value>Не вдалося завантажити фільми з цього списку відтворення.</value></data>
+  <data name="MoviesCategoryLoadFailed" xml:space="preserve"><value>Не вдалося завантажити фільми з цієї категорії Xtream.</value></data>
+  <data name="NoSavedMovies" xml:space="preserve"><value>Ще немає збережених фільмів.</value></data>
+  <data name="MovieWatchlistEmpty" xml:space="preserve"><value>Ваш список перегляду фільмів порожній.</value></data>
+  <data name="MovieWatchlistLoadFailed" xml:space="preserve"><value>Не вдалося завантажити список перегляду фільмів.</value></data>
+  <data name="NoMoviesReturned" xml:space="preserve"><value>Цей список відтворення не показав жодного фільму.</value></data>
+  <data name="MovieDetailsLoadFailed" xml:space="preserve"><value>Не вдалося завантажити докладні дані фільму. Показана основна інформація.</value></data>
+  <data name="SeriesAvailableWhenIncluded" xml:space="preserve"><value>Серіали доступні, якщо вибраний список відтворення містить шоу.</value></data>
+  <data name="AllSeries" xml:space="preserve"><value>Всі серії</value></data>
+  <data name="SeriesLoadTimeout" xml:space="preserve"><value>Серіал завантажувався занадто довго. Спробуйте іншу категорію або оновіть.</value></data>
+  <data name="SeriesLoadFailed" xml:space="preserve"><value>Не вдалося завантажити серіал із цього списку відтворення.</value></data>
+  <data name="SeriesCategoryLoadFailed" xml:space="preserve"><value>Не вдалося завантажити серію з цієї категорії Xtream.</value></data>
+  <data name="NoSavedSeries" xml:space="preserve"><value>Ще немає збережених серій.</value></data>
+  <data name="SeriesWatchlistEmpty" xml:space="preserve"><value>Ваш список перегляду серіалів порожній.</value></data>
+  <data name="SeriesWatchlistLoadFailed" xml:space="preserve"><value>Не вдалося завантажити список перегляду серіалів.</value></data>
+  <data name="NoSeriesReturned" xml:space="preserve"><value>Цей список відтворення не повернув жодного серіалу.</value></data>
+  <data name="SeriesDetailsLoadFailed" xml:space="preserve"><value>Не вдалося завантажити докладні дані серії. Показана основна інформація.</value></data>
+  <data name="NoFavoriteChannels" xml:space="preserve"><value>Вибраних каналів ще немає</value></data>
+  <data name="SelectAChannel" xml:space="preserve"><value>Виберіть канал</value></data>
+  <data name="PlaybackFailedTryAnother" xml:space="preserve"><value>Помилка відтворення. Спробуйте інший потік.</value></data>
+  <data name="TryAnotherStream" xml:space="preserve"><value>Спробуйте інший потік.</value></data>
+  <data name="UnexpectedErrorDiagnostics" xml:space="preserve"><value>Сталася неочікувана помилка. Подробиці перевірте на діагностиці.</value></data>
+  <data name="ReadyToResume" xml:space="preserve"><value>Готовий до відновлення</value></data>
+  <data name="NoMovieDescription" xml:space="preserve"><value>Для цієї назви не надано опису.</value></data>
+  <data name="DurationUnavailable" xml:space="preserve"><value>Тривалість недоступна</value></data>
+  <data name="RatingUnavailable" xml:space="preserve"><value>Рейтинг недоступний</value></data>
+  <data name="Added" xml:space="preserve"><value>Додано</value></data>
+  <data name="InWatchlist" xml:space="preserve"><value>У списку спостереження</value></data>
+  <data name="Watchlist" xml:space="preserve"><value>Список спостереження</value></data>
+  <data name="NoSeriesDescription" xml:space="preserve"><value>Для цієї серії не надано опису.</value></data>
+  <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 епізод</value></data>
+  <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} серій</value></data>
+  <data name="Unknown" xml:space="preserve"><value>Невідомий</value></data>
+  <data name="NotProvided" xml:space="preserve"><value>Не передбачено</value></data>
+  <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
+  <data name="Expired" xml:space="preserve"><value>Термін дії минув</value></data>
+</root>
