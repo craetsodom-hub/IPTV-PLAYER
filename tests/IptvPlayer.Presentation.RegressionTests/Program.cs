@@ -94,10 +94,10 @@ if (EventPopularityRanker.Score(titleOnly) != 0)
 
 var manchesterUnitedU23 = TeamEvent("development", "Manchester United U23 vs Club F", [], "football", "Manchester United U23", "Club F");
 var unsupportedSport = TeamEvent("basketball", "Los Angeles Lakers vs Club E", [], "basketball", "Los Angeles Lakers", "Club E");
-if (EventPopularityRanker.Score(unsupportedSport) != 0
+if (EventPopularityRanker.Score(unsupportedSport) <= 0
     || EventPopularityRanker.Score(manchesterUnitedU23) >= EventPopularityRanker.Score(realMadrid))
 {
-    failures.Add("Football-only CIES popularity or exact development-team matching produced an invalid score");
+    failures.Add("Sport-specific popularity or exact development-team matching produced an invalid score");
 }
 
 if (failures.Count > 0)

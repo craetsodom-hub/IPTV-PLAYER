@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "sports": {
+    "basketball": {
+      "source": "https://www.statista.com/statistics/1120282/instagram-followers-nba-by-team/",
+      "sourceDate": "2026-06-17",
+      "platform": "Official Instagram follower count",
+      "entries": [
+        { "canonicalName": "Golden State Warriors", "aliases": ["Golden State Warriors", "GSW", "Warriors"], "raw": 31600000 },
+        { "canonicalName": "Los Angeles Lakers", "aliases": ["Los Angeles Lakers", "LA Lakers", "Lakers"], "raw": 24800000 },
+        { "canonicalName": "Boston Celtics", "aliases": ["Boston Celtics", "Celtics"], "raw": 8470000 }
+      ]
+    },
+    "tennis": {
+      "source": "https://hafi.pro/top/most-followed-instagram/tennis-players",
+      "sourceDate": "2026-07-29",
+      "platform": "Official Instagram follower count",
+      "entries": [
+        { "canonicalName": "Rafael Nadal", "aliases": ["Rafael Nadal", "Rafa Nadal"], "raw": 21100000 },
+        { "canonicalName": "Novak Djokovic", "aliases": ["Novak Djokovic", "Djokovic"], "raw": 16500000 },
+        { "canonicalName": "Roger Federer", "aliases": ["Roger Federer", "Federer"], "raw": 13200000 },
+        { "canonicalName": "Carlos Alcaraz", "aliases": ["Carlos Alcaraz", "Alcaraz"], "raw": 8800000 },
+        { "canonicalName": "Jannik Sinner", "aliases": ["Jannik Sinner", "Sinner"], "raw": 5700000 }
+      ]
+    },
+    "formula1": {
+      "source": "https://www.pitdebrief.com/post/f1-2026-social-media-following-stats-of-teams-drivers/",
+      "sourceDate": "2026-03-01",
+      "platform": "Official Facebook, Instagram and X follower totals",
+      "entries": [
+        { "canonicalName": "Red Bull Racing", "aliases": ["Red Bull Racing", "Oracle Red Bull Racing", "Red Bull"], "raw": 31000000 },
+        { "canonicalName": "Ferrari", "aliases": ["Ferrari", "Scuderia Ferrari"], "raw": 31700000 }
+      ]
+    },
+    "cricket": {
+      "source": "https://www.sportingnews.com/in/cricket/news/most-followed-ipl-team-social-media-instagram-x-facebook",
+      "sourceDate": "2025-04-01",
+      "platform": "Combined official Instagram, Facebook and X follower count",
+      "entries": [
+        { "canonicalName": "Chennai Super Kings", "aliases": ["Chennai Super Kings", "CSK"], "raw": 41900000 },
+        { "canonicalName": "Mumbai Indians", "aliases": ["Mumbai Indians", "MI"], "raw": 37900000 }
+      ]
+    },
+    "rugby": {
+      "source": "",
+      "sourceDate": "",
+      "platform": "No verified current public follower dataset available",
+      "entries": []
+    }
+  }
+}
