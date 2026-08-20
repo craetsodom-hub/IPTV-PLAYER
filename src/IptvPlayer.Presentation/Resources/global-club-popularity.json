@@ -1,0 +1,1293 @@
+{
+  "schemaVersion": 3,
+  "indicator": "CIES Football Observatory global social-media followers",
+  "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/",
+  "sourceData": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+  "sourceDate": "2026-05-27",
+  "platforms": [
+    "Facebook",
+    "Instagram",
+    "TikTok",
+    "YouTube",
+    "X"
+  ],
+  "normalization": "socialScore = rawFollowers / maxFollowers * 1000",
+  "maxFollowers": 487605211,
+  "entries": [
+    {
+      "canonicalName": "Real Madrid",
+      "aliases": [
+        "Real Madrid",
+        "Real Madrid CF",
+        "Real Madrid C.F."
+      ],
+      "social": {
+        "raw": 487605211,
+        "normalized": 1000.0,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "FC Barcelona",
+      "aliases": [
+        "FC Barcelona",
+        "Barcelona",
+        "Barcelona FC"
+      ],
+      "social": {
+        "raw": 441769456,
+        "normalized": 905.998226,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Manchester United",
+      "aliases": [
+        "Manchester United"
+      ],
+      "social": {
+        "raw": 238559097,
+        "normalized": 489.246406,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Paris St-Germain",
+      "aliases": [
+        "Paris St-Germain",
+        "PSG",
+        "Paris Saint-Germain",
+        "Paris Saint-Germain FC",
+        "Paris SG"
+      ],
+      "social": {
+        "raw": 208074123,
+        "normalized": 426.726619,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Manchester City",
+      "aliases": [
+        "Manchester City",
+        "Manchester City FC",
+        "Manchester City F.C."
+      ],
+      "social": {
+        "raw": 187774504,
+        "normalized": 385.095359,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Liverpool FC",
+      "aliases": [
+        "Liverpool FC",
+        "Liverpool",
+        "Liverpool F.C."
+      ],
+      "social": {
+        "raw": 179150479,
+        "normalized": 367.408869,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Juventus FC",
+      "aliases": [
+        "Juventus FC",
+        "Juventus",
+        "Juventus F.C."
+      ],
+      "social": {
+        "raw": 178255834,
+        "normalized": 365.574096,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Bayern München",
+      "aliases": [
+        "Bayern München",
+        "Bayern Munich",
+        "Bayern Munchen",
+        "FC Bayern Munich",
+        "FC Bayern Munchen"
+      ],
+      "social": {
+        "raw": 165172500,
+        "normalized": 338.742278,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Chelsea FC",
+      "aliases": [
+        "Chelsea FC",
+        "Chelsea"
+      ],
+      "social": {
+        "raw": 156512114,
+        "normalized": 320.981217,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Arsenal FC",
+      "aliases": [
+        "Arsenal FC",
+        "Arsenal"
+      ],
+      "social": {
+        "raw": 118511614,
+        "normalized": 243.048293,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Tottenham Hotspur",
+      "aliases": [
+        "Tottenham Hotspur",
+        "Tottenham"
+      ],
+      "social": {
+        "raw": 112238083,
+        "normalized": 230.182288,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Atlético Madrid",
+      "aliases": [
+        "Atlético Madrid",
+        "Atletico Madrid"
+      ],
+      "social": {
+        "raw": 91404516,
+        "normalized": 187.455987,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "FC Inter",
+      "aliases": [
+        "FC Inter",
+        "Inter Milan",
+        "Inter",
+        "Internazionale",
+        "Inter Milano"
+      ],
+      "social": {
+        "raw": 82686345,
+        "normalized": 169.576418,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "AC Milan",
+      "aliases": [
+        "AC Milan",
+        "Milan",
+        "A.C. Milan",
+        "Milan AC"
+      ],
+      "social": {
+        "raw": 81044235,
+        "normalized": 166.208714,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "CR Flamengo",
+      "aliases": [
+        "CR Flamengo"
+      ],
+      "social": {
+        "raw": 71610000,
+        "normalized": 146.860613,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Al-Nassr FC",
+      "aliases": [
+        "Al-Nassr FC",
+        "Al Nassr",
+        "Al-Nassr",
+        "Al Nassr FC"
+      ],
+      "social": {
+        "raw": 66030000,
+        "normalized": 135.416929,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Borussia Dortmund",
+      "aliases": [
+        "Borussia Dortmund"
+      ],
+      "social": {
+        "raw": 64569200,
+        "normalized": 132.421062,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Al-Ahly SC",
+      "aliases": [
+        "Al-Ahly SC"
+      ],
+      "social": {
+        "raw": 60090000,
+        "normalized": 123.234942,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Galatasaray SK",
+      "aliases": [
+        "Galatasaray SK",
+        "Galatasaray",
+        "Galatasaray S.K."
+      ],
+      "social": {
+        "raw": 54600000,
+        "normalized": 111.975834,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "AS Roma",
+      "aliases": [
+        "AS Roma",
+        "Roma",
+        "A.S. Roma",
+        "ASR"
+      ],
+      "social": {
+        "raw": 43442160,
+        "normalized": 89.092895,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Inter Miami",
+      "aliases": [
+        "Inter Miami"
+      ],
+      "social": {
+        "raw": 43207000,
+        "normalized": 88.61062,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "SC Corinthians",
+      "aliases": [
+        "SC Corinthians"
+      ],
+      "social": {
+        "raw": 43102348,
+        "normalized": 88.395995,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Fenerbahçe SK",
+      "aliases": [
+        "Fenerbahçe SK",
+        "Fenerbahçe",
+        "Fenerbahce",
+        "Fenerbahce SK",
+        "Fenerbahçe S.K."
+      ],
+      "social": {
+        "raw": 39270895,
+        "normalized": 80.5383,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Al-Hilal SFC",
+      "aliases": [
+        "Al-Hilal SFC",
+        "Al Hilal",
+        "Al-Hilal",
+        "Al Hilal FC",
+        "Al-Hilal Saudi FC"
+      ],
+      "social": {
+        "raw": 36060000,
+        "normalized": 73.95327,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Persib Bandung",
+      "aliases": [
+        "Persib Bandung"
+      ],
+      "social": {
+        "raw": 35581043,
+        "normalized": 72.971006,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Boca Juniors",
+      "aliases": [
+        "Boca Juniors"
+      ],
+      "social": {
+        "raw": 30957000,
+        "normalized": 63.487837,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "River Plate",
+      "aliases": [
+        "River Plate"
+      ],
+      "social": {
+        "raw": 30251079,
+        "normalized": 62.040106,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "CF América",
+      "aliases": [
+        "CF América"
+      ],
+      "social": {
+        "raw": 29680959,
+        "normalized": 60.870881,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Real Betis",
+      "aliases": [
+        "Real Betis"
+      ],
+      "social": {
+        "raw": 29053789,
+        "normalized": 59.584656,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Sevilla FC",
+      "aliases": [
+        "Sevilla FC",
+        "Sevilla",
+        "Seville"
+      ],
+      "social": {
+        "raw": 28550616,
+        "normalized": 58.552729,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "AFC Ajax",
+      "aliases": [
+        "AFC Ajax"
+      ],
+      "social": {
+        "raw": 26880000,
+        "normalized": 55.126564,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Santos FC",
+      "aliases": [
+        "Santos FC"
+      ],
+      "social": {
+        "raw": 26840000,
+        "normalized": 55.044531,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "AS Monaco",
+      "aliases": [
+        "AS Monaco",
+        "Monaco",
+        "AS Monaco FC"
+      ],
+      "social": {
+        "raw": 25025959,
+        "normalized": 51.324224,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Real Sociedad",
+      "aliases": [
+        "Real Sociedad"
+      ],
+      "social": {
+        "raw": 24499416,
+        "normalized": 50.244369,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Leicester City",
+      "aliases": [
+        "Leicester City"
+      ],
+      "social": {
+        "raw": 24311000,
+        "normalized": 49.857958,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "SE Palmeiras",
+      "aliases": [
+        "SE Palmeiras"
+      ],
+      "social": {
+        "raw": 24140000,
+        "normalized": 49.507264,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Olympique Marseille",
+      "aliases": [
+        "Olympique Marseille",
+        "Marseille",
+        "Olympique de Marseille",
+        "OM"
+      ],
+      "social": {
+        "raw": 23835089,
+        "normalized": 48.881941,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Beşiktaş JK",
+      "aliases": [
+        "Beşiktaş JK",
+        "Beşiktaş",
+        "Besiktas",
+        "Besiktas JK",
+        "Beşiktaş J.K."
+      ],
+      "social": {
+        "raw": 22338664,
+        "normalized": 45.813013,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "São Paulo FC",
+      "aliases": [
+        "São Paulo FC"
+      ],
+      "social": {
+        "raw": 22320000,
+        "normalized": 45.774736,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Newcastle United",
+      "aliases": [
+        "Newcastle United"
+      ],
+      "social": {
+        "raw": 21297751,
+        "normalized": 43.678268,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Chivas Guadalajara",
+      "aliases": [
+        "Chivas Guadalajara"
+      ],
+      "social": {
+        "raw": 20810000,
+        "normalized": 42.677969,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "West Ham United",
+      "aliases": [
+        "West Ham United"
+      ],
+      "social": {
+        "raw": 20268555,
+        "normalized": 41.567552,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "SSC Napoli",
+      "aliases": [
+        "SSC Napoli",
+        "Napoli",
+        "S.S.C. Napoli"
+      ],
+      "social": {
+        "raw": 20127313,
+        "normalized": 41.277887,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Aston Villa",
+      "aliases": [
+        "Aston Villa"
+      ],
+      "social": {
+        "raw": 19563946,
+        "normalized": 40.122512,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Valencia CF",
+      "aliases": [
+        "Valencia CF",
+        "Valencia",
+        "Valencia C.F."
+      ],
+      "social": {
+        "raw": 19226296,
+        "normalized": 39.430046,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Athletic Club",
+      "aliases": [
+        "Athletic Club"
+      ],
+      "social": {
+        "raw": 18967245,
+        "normalized": 38.898774,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Bayer Leverkusen",
+      "aliases": [
+        "Bayer Leverkusen",
+        "Bayer 04 Leverkusen",
+        "Bayer 04",
+        "Leverkusen"
+      ],
+      "social": {
+        "raw": 18593479,
+        "normalized": 38.13224,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Everton FC",
+      "aliases": [
+        "Everton FC"
+      ],
+      "social": {
+        "raw": 17689214,
+        "normalized": 36.277738,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Zamalek SC",
+      "aliases": [
+        "Zamalek SC"
+      ],
+      "social": {
+        "raw": 17352315,
+        "normalized": 35.586812,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Cádiz CF",
+      "aliases": [
+        "Cádiz CF"
+      ],
+      "social": {
+        "raw": 17076644,
+        "normalized": 35.021455,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Celta Vigo",
+      "aliases": [
+        "Celta Vigo"
+      ],
+      "social": {
+        "raw": 16575614,
+        "normalized": 33.993923,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Al-Ittihad Club",
+      "aliases": [
+        "Al-Ittihad Club",
+        "Al Ittihad",
+        "Al-Ittihad",
+        "Al Ittihad Club"
+      ],
+      "social": {
+        "raw": 14648487,
+        "normalized": 30.041695,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Olympique Lyonnais",
+      "aliases": [
+        "Olympique Lyonnais",
+        "Lyon",
+        "Olympique Lyon",
+        "OL"
+      ],
+      "social": {
+        "raw": 14623797,
+        "normalized": 29.99106,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Simba SC",
+      "aliases": [
+        "Simba SC"
+      ],
+      "social": {
+        "raw": 14550662,
+        "normalized": 29.841072,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Vasco da Gama",
+      "aliases": [
+        "Vasco da Gama"
+      ],
+      "social": {
+        "raw": 13900000,
+        "normalized": 28.506668,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Raja CA",
+      "aliases": [
+        "Raja CA"
+      ],
+      "social": {
+        "raw": 12969700,
+        "normalized": 26.598772,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "SL Benfica",
+      "aliases": [
+        "SL Benfica"
+      ],
+      "social": {
+        "raw": 12967677,
+        "normalized": 26.594623,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Persija Jakarta",
+      "aliases": [
+        "Persija Jakarta"
+      ],
+      "social": {
+        "raw": 12890000,
+        "normalized": 26.43532,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "RCD Mallorca",
+      "aliases": [
+        "RCD Mallorca"
+      ],
+      "social": {
+        "raw": 12749968,
+        "normalized": 26.148137,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Wolverhampton FC",
+      "aliases": [
+        "Wolverhampton FC"
+      ],
+      "social": {
+        "raw": 12319257,
+        "normalized": 25.264818,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "RCD Espanyol",
+      "aliases": [
+        "RCD Espanyol"
+      ],
+      "social": {
+        "raw": 12096976,
+        "normalized": 24.808956,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "FC Porto",
+      "aliases": [
+        "FC Porto"
+      ],
+      "social": {
+        "raw": 12059000,
+        "normalized": 24.731073,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Grêmio FBPA",
+      "aliases": [
+        "Grêmio FBPA"
+      ],
+      "social": {
+        "raw": 11964027,
+        "normalized": 24.536298,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Atlético Mineiro",
+      "aliases": [
+        "Atlético Mineiro"
+      ],
+      "social": {
+        "raw": 11801327,
+        "normalized": 24.202627,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Sporting CP",
+      "aliases": [
+        "Sporting CP"
+      ],
+      "social": {
+        "raw": 11714502,
+        "normalized": 24.024563,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Atlético Nacional",
+      "aliases": [
+        "Atlético Nacional"
+      ],
+      "social": {
+        "raw": 11216000,
+        "normalized": 23.002215,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Cruzeiro EC",
+      "aliases": [
+        "Cruzeiro EC"
+      ],
+      "social": {
+        "raw": 11071000,
+        "normalized": 22.704843,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "FK Zenit",
+      "aliases": [
+        "FK Zenit"
+      ],
+      "social": {
+        "raw": 10487144,
+        "normalized": 21.507449,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Kaizer Chiefs",
+      "aliases": [
+        "Kaizer Chiefs"
+      ],
+      "social": {
+        "raw": 10436600,
+        "normalized": 21.403791,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Girona FC",
+      "aliases": [
+        "Girona FC"
+      ],
+      "social": {
+        "raw": 10414947,
+        "normalized": 21.359384,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Orlando Pirates",
+      "aliases": [
+        "Orlando Pirates"
+      ],
+      "social": {
+        "raw": 10335000,
+        "normalized": 21.195426,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Persepolis FC",
+      "aliases": [
+        "Persepolis FC"
+      ],
+      "social": {
+        "raw": 10325916,
+        "normalized": 21.176796,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Al-Ahli SFC",
+      "aliases": [
+        "Al-Ahli SFC",
+        "Al Ahli",
+        "Al-Ahli",
+        "Al Ahli Saudi FC"
+      ],
+      "social": {
+        "raw": 10283361,
+        "normalized": 21.089522,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "CA Osasuna",
+      "aliases": [
+        "CA Osasuna"
+      ],
+      "social": {
+        "raw": 10265714,
+        "normalized": 21.053331,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "UD Las Palmas",
+      "aliases": [
+        "UD Las Palmas"
+      ],
+      "social": {
+        "raw": 9991770,
+        "normalized": 20.491516,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "UD Almería",
+      "aliases": [
+        "UD Almería"
+      ],
+      "social": {
+        "raw": 9776175,
+        "normalized": 20.049365,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Fluminense FC",
+      "aliases": [
+        "Fluminense FC"
+      ],
+      "social": {
+        "raw": 9730000,
+        "normalized": 19.954668,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Brighton & Hove",
+      "aliases": [
+        "Brighton & Hove"
+      ],
+      "social": {
+        "raw": 9669646,
+        "normalized": 19.830891,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Deportivo Alavés",
+      "aliases": [
+        "Deportivo Alavés"
+      ],
+      "social": {
+        "raw": 8959681,
+        "normalized": 18.374867,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Getafe CF",
+      "aliases": [
+        "Getafe CF"
+      ],
+      "social": {
+        "raw": 8819119,
+        "normalized": 18.086597,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Villarreal CF",
+      "aliases": [
+        "Villarreal CF"
+      ],
+      "social": {
+        "raw": 8788478,
+        "normalized": 18.023757,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Young Africans SC",
+      "aliases": [
+        "Young Africans SC"
+      ],
+      "social": {
+        "raw": 8707701,
+        "normalized": 17.858097,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Cruz Azul",
+      "aliases": [
+        "Cruz Azul"
+      ],
+      "social": {
+        "raw": 8531200,
+        "normalized": 17.496121,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Real Valladolid",
+      "aliases": [
+        "Real Valladolid"
+      ],
+      "social": {
+        "raw": 8392348,
+        "normalized": 17.211358,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Crystal Palace",
+      "aliases": [
+        "Crystal Palace"
+      ],
+      "social": {
+        "raw": 8375000,
+        "normalized": 17.17578,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Wydad Athletic Club",
+      "aliases": [
+        "Wydad Athletic Club"
+      ],
+      "social": {
+        "raw": 8308226,
+        "normalized": 17.038838,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "RB Leipzig",
+      "aliases": [
+        "RB Leipzig",
+        "Leipzig"
+      ],
+      "social": {
+        "raw": 8251314,
+        "normalized": 16.92212,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Tigres UANL",
+      "aliases": [
+        "Tigres UANL"
+      ],
+      "social": {
+        "raw": 8196000,
+        "normalized": 16.80868,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "LOSC Lille",
+      "aliases": [
+        "LOSC Lille",
+        "Lille",
+        "Lille OSC"
+      ],
+      "social": {
+        "raw": 8020691,
+        "normalized": 16.449149,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Kerala Blasters",
+      "aliases": [
+        "Kerala Blasters"
+      ],
+      "social": {
+        "raw": 7771400,
+        "normalized": 15.937894,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Southampton FC",
+      "aliases": [
+        "Southampton FC"
+      ],
+      "social": {
+        "raw": 7747000,
+        "normalized": 15.887853,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Barcelona SC",
+      "aliases": [
+        "Barcelona SC"
+      ],
+      "social": {
+        "raw": 7734000,
+        "normalized": 15.861192,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "SC Internacional",
+      "aliases": [
+        "SC Internacional"
+      ],
+      "social": {
+        "raw": 7714200,
+        "normalized": 15.820586,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "CD Leganés",
+      "aliases": [
+        "CD Leganés"
+      ],
+      "social": {
+        "raw": 7297971,
+        "normalized": 14.966967,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Pumas UNAM",
+      "aliases": [
+        "Pumas UNAM"
+      ],
+      "social": {
+        "raw": 7282500,
+        "normalized": 14.935238,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Mamelodi Sundowns",
+      "aliases": [
+        "Mamelodi Sundowns"
+      ],
+      "social": {
+        "raw": 7228000,
+        "normalized": 14.823468,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Sunderland AFC",
+      "aliases": [
+        "Sunderland AFC"
+      ],
+      "social": {
+        "raw": 7156615,
+        "normalized": 14.677068,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Colo Colo",
+      "aliases": [
+        "Colo Colo"
+      ],
+      "social": {
+        "raw": 7122300,
+        "normalized": 14.606694,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Alianza Lima",
+      "aliases": [
+        "Alianza Lima"
+      ],
+      "social": {
+        "raw": 7091800,
+        "normalized": 14.544143,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    },
+    {
+      "canonicalName": "Leeds United",
+      "aliases": [
+        "Leeds United"
+      ],
+      "social": {
+        "raw": 7018239,
+        "normalized": 14.393281,
+        "source": "https://football-observatory.com/IMG/sites/b5wp/2025/wp548/en/data/data.js",
+        "date": "2026-05-27"
+      }
+    }
+  ]
+}
