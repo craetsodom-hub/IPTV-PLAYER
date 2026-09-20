@@ -76,6 +76,12 @@ public sealed partial class MovieItemViewModel : ObservableObject
             model.Rating,
             model.PlaybackUri);
 
+    public void RefreshLocalizedText()
+    {
+        OnPropertyChanged(nameof(WatchlistGlyph));
+        OnPropertyChanged(nameof(WatchlistText));
+    }
+
     public static MovieItemViewModel FromWatchlistItem(OnDemandWatchlistItem item)
         => new(
             item.Id,

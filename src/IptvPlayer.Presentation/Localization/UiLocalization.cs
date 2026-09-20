@@ -128,7 +128,7 @@ public sealed class UiLocalization : INotifyPropertyChanged
     }
 
     public string Format(string key, params object?[] arguments)
-        => string.Format(CultureInfo.CurrentCulture, GetString(key), arguments);
+        => string.Format(CultureInfo.CurrentUICulture, GetString(key), arguments);
 
     public string Relocalize(string value)
     {

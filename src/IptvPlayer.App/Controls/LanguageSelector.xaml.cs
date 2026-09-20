@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using IptvPlayer.Presentation.Localization;
@@ -13,6 +14,7 @@ public partial class LanguageSelector : UserControl, INotifyPropertyChanged
     private readonly UiLocalization _localization = UiLocalization.Current;
     private readonly ObservableCollection<LanguageRow> _rows = [];
     private bool _isSubscribed;
+    private Window? _ownerWindow;
 
     public LanguageSelector()
     {
@@ -41,6 +43,14 @@ public partial class LanguageSelector : UserControl, INotifyPropertyChanged
         }
 
         _localization.CultureChanged += Localization_OnCultureChanged;
+        HeaderPopoverCoordinator.PopoverOpened += HeaderPopoverCoordinator_OnPopoverOpened;
+        InputManager.Current.PreProcessInput += InputManager_OnPreProcessInput;
+        _ownerWindow = Window.GetWindow(this);
+        if (_ownerWindow is not null)
+        {
+            _ownerWindow.Deactivated += OwnerWindow_OnDeactivated;
+        }
+
         _isSubscribed = true;
     }
 
@@ -52,6 +62,15 @@ public partial class LanguageSelector : UserControl, INotifyPropertyChanged
         }
 
         _localization.CultureChanged -= Localization_OnCultureChanged;
+        HeaderPopoverCoordinator.PopoverOpened -= HeaderPopoverCoordinator_OnPopoverOpened;
+        InputManager.Current.PreProcessInput -= InputManager_OnPreProcessInput;
+        if (_ownerWindow is not null)
+        {
+            _ownerWindow.Deactivated -= OwnerWindow_OnDeactivated;
+            _ownerWindow = null;
+        }
+
+        LanguagePopup.IsOpen = false;
         _isSubscribed = false;
     }
 
@@ -60,8 +79,70 @@ public partial class LanguageSelector : UserControl, INotifyPropertyChanged
 
     private void LanguagePopup_OnOpened(object? sender, EventArgs e)
     {
+        LanguageButton.Tag = true;
+        HeaderPopoverCoordinator.NotifyOpened(this);
         LanguageSearchBox.Focus();
         LanguageSearchBox.SelectAll();
+    }
+
+    private void LanguagePopup_OnClosed(object? sender, EventArgs e)
+        => LanguageButton.Tag = false;
+
+    private CustomPopupPlacement[] LanguagePopup_OnCustomPlacement(
+        Size popupSize,
+        Size targetSize,
+        Point offset)
+        =>
+        [
+            new CustomPopupPlacement(
+                new Point(targetSize.Width - popupSize.Width, targetSize.Height + 3),
+                PopupPrimaryAxis.Horizontal),
+            new CustomPopupPlacement(
+                new Point(0, targetSize.Height + 3),
+                PopupPrimaryAxis.Horizontal),
+            new CustomPopupPlacement(
+                new Point(targetSize.Width - popupSize.Width, -popupSize.Height - 3),
+                PopupPrimaryAxis.Horizontal),
+            new CustomPopupPlacement(
+                new Point(0, -popupSize.Height - 3),
+                PopupPrimaryAxis.Horizontal),
+        ];
+
+    private void HeaderPopoverCoordinator_OnPopoverOpened(object owner)
+    {
+        if (!ReferenceEquals(owner, this))
+        {
+            LanguagePopup.IsOpen = false;
+        }
+    }
+
+    private void OwnerWindow_OnDeactivated(object? sender, EventArgs e)
+        => LanguagePopup.IsOpen = false;
+
+    private void InputManager_OnPreProcessInput(object sender, PreProcessInputEventArgs e)
+    {
+        if (!LanguagePopup.IsOpen)
+        {
+            return;
+        }
+
+        if (e.StagingItem.Input is KeyEventArgs { Key: Key.Escape } keyEvent)
+        {
+            LanguagePopup.IsOpen = false;
+            LanguageButton.Focus();
+            keyEvent.Handled = true;
+            return;
+        }
+
+        if (e.StagingItem.Input is not MouseButtonEventArgs mouseEvent
+            || mouseEvent.ButtonState != MouseButtonState.Pressed
+            || LanguageButton.IsMouseOver
+            || LanguagePopup.Child is UIElement popupChild && popupChild.IsMouseOver)
+        {
+            return;
+        }
+
+        LanguagePopup.IsOpen = false;
     }
 
     private void LanguageSearchBox_OnTextChanged(object sender, TextChangedEventArgs e)

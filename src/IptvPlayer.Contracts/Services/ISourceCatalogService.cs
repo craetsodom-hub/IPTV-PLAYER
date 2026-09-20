@@ -13,6 +13,11 @@ public interface ISourceCatalogService
         string categoryId,
         CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<ChannelModel>> GetChannelVariantsAsync(
+        Guid sourceId,
+        string selectedChannelName,
+        CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<ChannelModel>> GetFavoriteChannelsAsync(
         Guid sourceId,
         IReadOnlyCollection<string> favoriteChannelIds,

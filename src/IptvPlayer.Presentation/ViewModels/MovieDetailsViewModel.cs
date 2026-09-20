@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Models;
 using IptvPlayer.Presentation.Localization;
 
 namespace IptvPlayer.Presentation.ViewModels;
 
-public sealed class MovieDetailsViewModel
+public sealed class MovieDetailsViewModel : ObservableObject
 {
     private MovieDetailsViewModel(
         string id,
@@ -59,6 +60,13 @@ public sealed class MovieDetailsViewModel
 
     public string MetadataLine
         => string.Join("  ", new[] { Year, Duration, Rating }.Where(value => !string.IsNullOrWhiteSpace(value)));
+
+    public void RefreshLocalizedText()
+    {
+        OnPropertyChanged(nameof(DescriptionText));
+        OnPropertyChanged(nameof(DurationLabel));
+        OnPropertyChanged(nameof(RatingLabel));
+    }
 
     public static MovieDetailsViewModel FromModel(MovieDetailsModel model)
         => new(

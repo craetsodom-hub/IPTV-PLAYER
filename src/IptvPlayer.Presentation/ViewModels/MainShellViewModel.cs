@@ -1,9 +1,13 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IptvPlayer.Application.Services;
+using IptvPlayer.Contracts.Channels;
 using IptvPlayer.Contracts.Import;
+using IptvPlayer.Contracts.Models;
 using IptvPlayer.Contracts.Player;
 using IptvPlayer.Contracts.Services;
 using IptvPlayer.Presentation.Localization;
@@ -18,6 +22,7 @@ public sealed partial class MainShellViewModel : ObservableObject
     private readonly SourceImportOrchestrator _sourceImport;
     private readonly SessionOrchestrator _session;
     private readonly IOnDemandStateStore _onDemandStateStore;
+    private readonly ISportsEventService _sportsEvents;
     private readonly PlaybackOrchestrator _playback;
     private readonly ILogger<MainShellViewModel> _logger;
     private readonly SynchronizationContext _uiContext;
@@ -25,31 +30,44 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     private readonly List<CategoryItemViewModel> _allCategories = [];
     private readonly List<ChannelItemViewModel> _allChannels = [];
+    private readonly Dictionary<string, IReadOnlyList<ChannelItemViewModel>> _quickQualityVariantsByIdentity = new(StringComparer.Ordinal);
     private readonly List<ChannelItemViewModel> _favoriteChannels = [];
     private readonly List<MovieItemViewModel> _allMovies = [];
+    private readonly List<MovieItemViewModel> _playlistSearchMovies = [];
     private List<MovieItemViewModel> _filteredMovies = [];
     private readonly List<SeriesItemViewModel> _allSeries = [];
+    private readonly List<SeriesItemViewModel> _playlistSearchSeries = [];
     private List<SeriesItemViewModel> _filteredSeries = [];
+    private List<SportsEventModel> _eventModels = [];
+    private readonly List<ChannelItemViewModel> _eventPlaylistChannels = [];
     private readonly object _syncRoot = new();
-    private const int MaxConcurrentVisibleEpgRefreshes = 1;
-    private const int MaxVisibleEpgRefreshChannels = 18;
+    private readonly SemaphoreSlim _playlistChannelsLoadGate = new(1, 1);
+    private readonly SemaphoreSlim _movieSearchCacheLoadGate = new(1, 1);
+    private readonly SemaphoreSlim _seriesSearchCacheLoadGate = new(1, 1);
+    private const int MaxConcurrentVisibleEpgRefreshes = 6;
+    private const int MaxVisibleEpgRefreshChannels = 500;
     private const int OnDemandPageSize = 72;
     private const string AllMoviesCategoryId = "__all_movies";
     private const string AllSeriesCategoryId = "__all_series";
     private static readonly TimeSpan PlaybackProgressRefreshInterval = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan LiveSessionTimerInterval = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan PlaybackProgressPersistenceInterval = TimeSpan.FromSeconds(15);
     private static readonly TimeSpan PlaybackSeekStep = TimeSpan.FromSeconds(10);
     private static readonly TimeSpan PlaybackSeekDebounce = TimeSpan.FromMilliseconds(90);
     private static readonly TimeSpan ResumeSeekRetryInterval = TimeSpan.FromMilliseconds(250);
     private const int ResumeSeekMaxAttempts = 20;
-    private static readonly TimeSpan VisibleEpgRefreshAfterPlaybackStableDelay = TimeSpan.FromSeconds(10);
-    private static readonly TimeSpan VisibleEpgRefreshBetweenRequests = TimeSpan.FromMilliseconds(900);
+    private static readonly TimeSpan VisibleEpgRefreshAfterPlaybackStableDelay = TimeSpan.FromMilliseconds(500);
+    private static readonly TimeSpan VisibleEpgRefreshBetweenRequests = TimeSpan.FromMilliseconds(20);
+    private static readonly TimeSpan AllChannelsEpgSyncBetweenRequests = TimeSpan.FromMilliseconds(1000);
     private static readonly TimeSpan SuccessNotificationDuration = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan ImportProgressFrameInterval = TimeSpan.FromMilliseconds(8);
+    private static readonly TimeSpan ImportProgressFastCompletionDuration = TimeSpan.FromMilliseconds(500);
+    private const double ImportProgressMaximumBeforeCompletion = 99.4d;
     private static readonly TimeSpan[] LivePlaybackRecoveryDelays =
     [
-        TimeSpan.Zero,
-        TimeSpan.FromSeconds(1),
+        TimeSpan.FromSeconds(1.5),
         TimeSpan.FromSeconds(2),
+        TimeSpan.FromSeconds(3),
         TimeSpan.FromSeconds(5),
         TimeSpan.FromSeconds(10),
     ];
@@ -62,37 +80,63 @@ public sealed partial class MainShellViewModel : ObservableObject
     private CancellationTokenSource? _movieDetailsCts;
     private CancellationTokenSource? _loadSeriesCts;
     private CancellationTokenSource? _seriesDetailsCts;
+    private CancellationTokenSource? _eventsCts;
+    private CancellationTokenSource? _quickQualityVariantsCts;
     private CancellationTokenSource? _channelFilterCts;
     private CancellationTokenSource? _movieFilterCts;
     private CancellationTokenSource? _seriesFilterCts;
+    private CancellationTokenSource? _movieSearchCacheCts;
+    private CancellationTokenSource? _seriesSearchCacheCts;
+    private Task? _movieSearchCacheWarmupTask;
+    private Task? _seriesSearchCacheWarmupTask;
     private CancellationTokenSource? _selectedEpgRefreshCts;
     private CancellationTokenSource? _visibleEpgRefreshCts;
     private CancellationTokenSource? _deferredVisibleEpgRefreshCts;
     private CancellationTokenSource? _livePlaybackCts;
+    private CancellationTokenSource? _liveSessionTimerCts;
     private CancellationTokenSource? _playbackProgressCts;
     private CancellationTokenSource? _playbackSeekCts;
     private CancellationTokenSource? _notificationClearCts;
+    private CancellationTokenSource? _importCts;
     private readonly SemaphoreSlim _onDemandPlaybackGate = new(1, 1);
     private long _livePlaybackRequestVersion;
     private long _livePlaybackStartupVersion;
     private int _livePlaybackRecoveryInFlight;
     private int _livePlaybackRecoveryAttempt;
     private UserSessionState _sessionSnapshot = UserSessionState.Empty;
+    private readonly List<RecentChannelHistoryEntry> _recentChannelHistory = [];
+    private ChannelItemViewModel? _activeRecentPlaybackChannel;
+    private DateTimeOffset _activeRecentPlaybackStartedUtc = DateTimeOffset.MinValue;
+    private long _activeRecentPlaybackStartedTimestamp;
+    private long _liveSessionTimerVersion;
+    private ChannelItemViewModel? _pendingRecentPlaybackChannel;
+    private long _pendingRecentPlaybackRequestVersion;
+    private long _lastRecordedRecentPlaybackRequestVersion;
     private Guid? _restoredSourceId;
     private string? _restoredCategoryId;
     private string? _restoredChannelId;
     private OnDemandState _onDemandState = OnDemandState.Empty;
     private Guid? _liveLoadedSourceId;
     private Guid? _favoriteChannelsLoadedSourceId;
+    private Guid? _recentChannelsLoadedSourceId;
     private Guid? _moviesLoadedSourceId;
     private Guid? _seriesLoadedSourceId;
+    private Guid? _movieSearchCacheSourceId;
+    private Guid? _seriesSearchCacheSourceId;
+    private Guid? _eventsMatchedSourceId;
+    private Guid? _eventsMatchingSourceId;
+    private bool _isEventChannelPresentationLoading;
+    private Guid? _quickQualityVariantsCacheSourceId;
+    private int _selectedEventChannelMatchVersion;
     private Guid? _moviesLoadingSourceId;
     private Guid? _seriesLoadingSourceId;
     private bool _isInitializing;
     private bool _isImporting;
     private bool _isLoadingMovieCatalog;
     private bool _isLoadingSeriesCatalog;
+    private bool _eventsLoaded;
     private bool _isStartingOnDemandPlayback;
+    private bool _isApplyingExternalAudioState;
     private bool _suppressMovieCategoryReload;
     private bool _suppressSeriesCategoryReload;
     private bool _isUpdatingPlaybackProgress;
@@ -107,12 +151,19 @@ public sealed partial class MainShellViewModel : ObservableObject
     private DateTimeOffset _lastPlaybackStateLogUtc = DateTimeOffset.MinValue;
     private DateTimeOffset _lastBufferingLogUtc = DateTimeOffset.MinValue;
     private DateTimeOffset _lastLivePlaybackPlayingUtc = DateTimeOffset.MinValue;
+    private ShellSection _eventsReturnSection = ShellSection.LiveTv;
+
+    [ObservableProperty]
+    private double importProgressPercent;
+
+    public bool IsImporting => _isImporting;
 
     public MainShellViewModel(
         CatalogOrchestrator catalog,
         SourceImportOrchestrator sourceImport,
         SessionOrchestrator session,
         IOnDemandStateStore onDemandStateStore,
+        ISportsEventService sportsEvents,
         PlaybackOrchestrator playback,
         IConfiguration configuration,
         ILogger<MainShellViewModel> logger)
@@ -121,6 +172,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         _sourceImport = sourceImport;
         _session = session;
         _onDemandStateStore = onDemandStateStore;
+        _sportsEvents = sportsEvents;
         _playback = playback;
         _logger = logger;
         _uiContext = SynchronizationContext.Current ?? new SynchronizationContext();
@@ -128,10 +180,15 @@ public sealed partial class MainShellViewModel : ObservableObject
             && diagnosticsEnabled;
 
         _playback.StatusChanged += OnPlaybackStatusChanged;
+        _playback.AudioStateChanged += OnAudioStateChanged;
         UiLocalization.Current.CultureChanged += UiLocalization_OnCultureChanged;
+        StartupLoadingMessage = L("LoadingPlaylist");
+        IsStartupLoading = false;
 
         RefreshCommand = new AsyncRelayCommand(RefreshAsync);
         PlaySelectedChannelCommand = new AsyncRelayCommand(PlaySelectedChannelAsync, CanPlaySelectedChannel);
+        ResumeRecentChannelCommand = new AsyncRelayCommand<RecentChannelItemViewModel?>(ResumeRecentChannelAsync);
+        SelectQuickQualityVariantCommand = new RelayCommand<QuickQualityVariantViewModel?>(SelectQuickQualityVariant);
         PlaySelectedMovieCommand = new AsyncRelayCommand(PlaySelectedMovieAsync, CanPlaySelectedMovie);
         PlaySelectedSeriesCommand = new AsyncRelayCommand(PlaySelectedSeriesAsync, CanPlaySelectedSeries);
         ResumeSelectedMovieCommand = new AsyncRelayCommand(ResumeSelectedMovieAsync, CanResumeSelectedMovie);
@@ -149,6 +206,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         ToggleMovieWatchlistCommand = new AsyncRelayCommand(ToggleSelectedMovieWatchlistAsync);
         ToggleSeriesWatchlistCommand = new AsyncRelayCommand(ToggleSelectedSeriesWatchlistAsync);
         ResumeCommand = new AsyncRelayCommand(ResumeAsync, () => IsOnDemandPlaybackActive);
+        TogglePlayPauseCommand = new AsyncRelayCommand(TogglePlayPauseAsync);
         PauseCommand = new AsyncRelayCommand(PauseAsync);
         StopCommand = new AsyncRelayCommand(StopAsync);
         PlayPreviousChannelCommand = new RelayCommand(PlayPreviousChannel);
@@ -159,7 +217,17 @@ public sealed partial class MainShellViewModel : ObservableObject
         SelectLiveTvSectionCommand = new RelayCommand(() => ActiveSection = ShellSection.LiveTv);
         SelectMoviesSectionCommand = new RelayCommand(() => ActiveSection = ShellSection.Movies);
         SelectSeriesSectionCommand = new RelayCommand(() => ActiveSection = ShellSection.Series);
+        SelectEventsSectionCommand = new RelayCommand(SelectEventsSection);
+        ReturnFromEventsCommand = new RelayCommand(ReturnFromEvents);
+        RefreshEventsCommand = new AsyncRelayCommand(() => LoadEventsAsync(forceRefresh: true), () => !IsEventsLoading && !IsEventsRefreshing);
+        SelectEventCommand = new RelayCommand<SportsEventItemViewModel?>(SelectEvent);
+        BackToEventsCommand = new RelayCommand(() => SelectedSportsEvent = null);
+        PlayEventChannelCommand = new AsyncRelayCommand<EventChannelOptionViewModel?>(PlayEventChannelAsync);
+        SelectEventSportCategoryCommand = new RelayCommand<EventSportCategoryViewModel?>(SelectEventSportCategory);
+        SelectEventSortModeCommand = new RelayCommand<EventFilterOptionViewModel?>(SelectEventSortMode);
+        SelectEventTimeFilterCommand = new RelayCommand<EventFilterOptionViewModel?>(SelectEventTimeFilter);
         ToggleImportMenuCommand = new RelayCommand(() => IsImportMenuOpen = !IsImportMenuOpen);
+        TogglePlaylistSidebarCommand = new RelayCommand(() => IsPlaylistSidebarOpen = !IsPlaylistSidebarOpen);
         ShowCategorySearchCommand = new RelayCommand(() => IsCategorySearchVisible = true);
         CloseCategorySearchCommand = new RelayCommand(CloseCategorySearch);
         ShowChannelSearchCommand = new RelayCommand(() => IsChannelSearchVisible = true);
@@ -177,7 +245,11 @@ public sealed partial class MainShellViewModel : ObservableObject
         SubmitImportCommand = new AsyncRelayCommand(SubmitImportAsync, CanSubmitImport);
         EditSelectedSourceCommand = new RelayCommand(EditSelectedSource, CanEditSelectedSource);
         DeleteSelectedSourceCommand = new AsyncRelayCommand(DeleteSelectedSourceAsync, CanDeleteSelectedSource);
+        RefreshSelectedSourceCommand = new AsyncRelayCommand(RefreshSelectedSourceAsync, CanRefreshSelectedSource);
         CancelImportCommand = new RelayCommand(CancelImport);
+
+        InitializeEventSportCategories();
+        InitializeEventFilters();
     }
 
     public ObservableCollection<SourceItemViewModel> Sources { get; } = new RangeObservableCollection<SourceItemViewModel>();
@@ -186,7 +258,23 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public ObservableCollection<ChannelItemViewModel> VisibleChannels { get; } = new RangeObservableCollection<ChannelItemViewModel>();
 
+    public ObservableCollection<QuickQualityVariantViewModel> QuickQualityVariants { get; } = new RangeObservableCollection<QuickQualityVariantViewModel>();
+
     public ObservableCollection<ChannelItemViewModel> RecentChannels { get; } = new RangeObservableCollection<ChannelItemViewModel>();
+
+    public ObservableCollection<RecentChannelItemViewModel> CompactRecentChannels { get; } = new RangeObservableCollection<RecentChannelItemViewModel>();
+
+    [ObservableProperty]
+    private RecentChannelItemViewModel? resumeLastChannel;
+
+    public bool HasRecentChannels => ResumeLastChannel is not null;
+
+    public bool HasCompactRecentChannels => CompactRecentChannels.Count > 0;
+
+    public bool IsRecentChannelsEmptyStateVisible
+        => SelectedSource is not null
+           && _recentChannelsLoadedSourceId == SelectedSource.Id
+           && !HasRecentChannels;
 
     public ObservableCollection<CategoryItemViewModel> MovieCategories { get; } = new RangeObservableCollection<CategoryItemViewModel>();
 
@@ -199,6 +287,14 @@ public sealed partial class MainShellViewModel : ObservableObject
     public ObservableCollection<SeriesItemViewModel> VisibleSeries { get; } = new RangeObservableCollection<SeriesItemViewModel>();
 
     public ObservableCollection<ContinueWatchingItemViewModel> ContinueWatchingSeries { get; } = new RangeObservableCollection<ContinueWatchingItemViewModel>();
+
+    public ObservableCollection<SportsEventItemViewModel> TodayEvents { get; } = new RangeObservableCollection<SportsEventItemViewModel>();
+
+    public ObservableCollection<EventSportCategoryViewModel> EventSportCategories { get; } = new RangeObservableCollection<EventSportCategoryViewModel>();
+ 
+    public ObservableCollection<EventFilterOptionViewModel> EventSortModes { get; } = new RangeObservableCollection<EventFilterOptionViewModel>();
+
+    public ObservableCollection<EventFilterOptionViewModel> EventTimeFilters { get; } = new RangeObservableCollection<EventFilterOptionViewModel>();
 
     [ObservableProperty]
     private ShellSection activeSection = ShellSection.LiveTv;
@@ -246,6 +342,20 @@ public sealed partial class MainShellViewModel : ObservableObject
     private bool isLoading;
 
     [ObservableProperty]
+    private bool isStartupLoading;
+
+    [ObservableProperty]
+    private string startupLoadingMessage = "Loading your playlist...";
+
+    private bool _hasSavedPlaylists;
+
+    public void SetStartupLoadingInitialState(bool hasSavedPlaylists)
+    {
+        _hasSavedPlaylists = hasSavedPlaylists;
+        IsStartupLoading = hasSavedPlaylists;
+    }
+
+    [ObservableProperty]
     private bool isMovieCatalogLoading;
 
     [ObservableProperty]
@@ -264,12 +374,51 @@ public sealed partial class MainShellViewModel : ObservableObject
     private int visibleSeriesLimit = OnDemandPageSize;
 
     [ObservableProperty]
+    private bool isEventsLoading;
+
+    [ObservableProperty]
+    private bool isEventsRefreshing;
+
+    [ObservableProperty]
+    private string eventsErrorMessage = string.Empty;
+
+    [ObservableProperty]
+    private EventSportCategoryViewModel? selectedEventSportCategory;
+
+    [ObservableProperty]
+    private EventFilterOptionViewModel? selectedEventSortMode;
+
+    [ObservableProperty]
+    private EventFilterOptionViewModel? selectedEventTimeFilter;
+
+    [ObservableProperty]
+    private SportsEventItemViewModel? selectedSportsEvent;
+
+    [ObservableProperty]
+    private bool isPlaylistSidebarOpen;
+
+    [ObservableProperty]
     private bool isMuted;
+
+    [ObservableProperty]
+    private double volume = 100d;
 
     [ObservableProperty]
     private string playbackStatusText = L("PlayerIdle");
 
     public bool HasPlaybackStatusText => !string.IsNullOrWhiteSpace(PlaybackStatusText);
+
+    public bool IsNoSignalStatusVisible
+        => string.Equals(PlaybackStatusText, L("NoSignal"), StringComparison.OrdinalIgnoreCase);
+
+    public bool IsFullscreenNoSignalVisible
+        => IsNoSignalStatusVisible
+           && !IsFullscreenPlaybackLoadingVisible
+           && !IsNativeVideoSurfaceVisible;
+
+    public bool IsFullscreenHeaderTitleVisible
+        => !IsNoSignalStatusVisible
+            && !string.Equals(CurrentChannelTitle, L("NoSignal"), StringComparison.OrdinalIgnoreCase);
 
     [ObservableProperty]
     private bool isPlayerSurfaceOverlayVisible = true;
@@ -288,6 +437,9 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     [ObservableProperty]
     private string playerSurfaceOverlayTitle = L("Ready");
+
+    public bool IsPlayerSurfaceReady
+        => string.Equals(PlayerSurfaceOverlayTitle, L("Ready"), StringComparison.Ordinal);
 
     [ObservableProperty]
     private string playerSurfaceOverlayMessage = L("SelectChannelToStart");
@@ -310,10 +462,42 @@ public sealed partial class MainShellViewModel : ObservableObject
     [ObservableProperty]
     private string playbackDurationText = "00:00";
 
+    [ObservableProperty]
+    private string livePlaybackElapsedText = "00:00";
+
+    [ObservableProperty]
+    private double livePlaybackProgressPercent;
+
     public bool IsOnDemandPlaybackControlVisible => IsOnDemandPlaybackActive;
+
+    public bool IsLivePlaybackActive => !IsOnDemandPlaybackActive && SelectedChannel is not null;
 
     [ObservableProperty]
     private string currentChannelTitle = L("NoChannelSelected");
+
+    public string CurrentChannelDisplayTitle
+        => (IsLiveTvSection || IsEventsSection)
+            ? SelectedChannel?.CountryPrefixFreeDisplayName
+              ?? ChannelItemViewModel.StripChannelDisplayPrefix(CurrentChannelTitle)
+            : CurrentChannelTitle;
+
+    public bool HasQuickQualityVariants
+        => (IsLiveTvSection || IsEventsSection) && SelectedChannel is not null && QuickQualityVariants.Count > 0;
+
+    public bool HasMultipleQuickQualityVariants => QuickQualityVariants.Count > 1;
+
+    public string QuickQualityTitle
+    {
+        get
+        {
+            var verifiedQualifier = SelectedChannel is null
+                ? null
+                : StreamVariantIdentityNormalizer.Normalize(SelectedChannel.Name).VerifiedLocaleQualifier;
+            return string.IsNullOrWhiteSpace(verifiedQualifier)
+                ? L("QualityBestMatch")
+                : LF("QualityBestMatchOnly", verifiedQualifier);
+        }
+    }
 
     [ObservableProperty]
     private string notificationMessage = string.Empty;
@@ -394,11 +578,55 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public string MuteButtonText => IsMuted ? L("Unmute") : L("Mute");
 
+    public bool IsPlaybackPlaying => _currentPlaybackState == PlaybackState.Playing;
+
+    public bool IsPlayerPauseIndicatorVisible => _currentPlaybackState == PlaybackState.Paused;
+
+    public bool IsPlayerStopIndicatorVisible => _currentPlaybackState == PlaybackState.Stopped;
+
+    public bool IsPlayerActionIndicatorVisible
+        => IsPlayerPauseIndicatorVisible || IsPlayerStopIndicatorVisible;
+
+    public string PlayPauseIconGlyph => IsPlaybackPlaying ? "\uE769" : "\uE768";
+
+    public string PlayPauseIconGeometry => IsPlaybackPlaying
+        ? "M4.5,3 L8,3 L8,15 L4.5,15 Z M10,3 L13.5,3 L13.5,15 L10,15 Z"
+        : "M5,3.5 L15,9 L5,14.5 Z";
+
+    public string PlayPauseToolTip => IsPlaybackPlaying ? L("Pause") : L("Play");
+
+    public string VolumeIconGlyph => IsMuted
+        ? "\uE74F"
+        : Volume switch
+        {
+            <= 0d => "\uE992",
+            <= 33d => "\uE993",
+            <= 66d => "\uE994",
+            _ => "\uE995",
+        };
+
+    public string VolumeIconGeometry => IsMuted
+        ? "M2.5,7 L5.5,7 L9.5,3.5 L9.5,14.5 L5.5,11 L2.5,11 Z M12,6 L16,12 M16,6 L12,12"
+        : Volume switch
+        {
+            <= 0d => "M2.5,7 L5.5,7 L9.5,3.5 L9.5,14.5 L5.5,11 L2.5,11 Z",
+            <= 33d => "M2.5,7 L5.5,7 L9.5,3.5 L9.5,14.5 L5.5,11 L2.5,11 Z M11.5,7.5 C12.6,8.3 12.6,9.7 11.5,10.5",
+            <= 66d => "M2.5,7 L5.5,7 L9.5,3.5 L9.5,14.5 L5.5,11 L2.5,11 Z M12,7 C13.5,8.2 13.5,9.8 12,11",
+            _ => "M2.5,7 L5.5,7 L9.5,3.5 L9.5,14.5 L5.5,11 L2.5,11 Z M12,7 C13.5,8.2 13.5,9.8 12,11 M14,5 C17,7 17,11 14,13",
+        };
+
+    public string VolumeToolTip => IsMuted ? L("Unmute") : L("Mute");
+
     public bool IsLiveTvSection => ActiveSection == ShellSection.LiveTv;
 
     public bool IsMoviesSection => ActiveSection == ShellSection.Movies;
 
     public bool IsSeriesSection => ActiveSection == ShellSection.Series;
+
+    public bool IsEventsSection => ActiveSection == ShellSection.Events;
+
+    public bool IsPlaylistCategoriesVisible => IsLiveTvSection || IsEventsSection;
+    public bool IsLiveTvOrEventsSection => IsLiveTvSection || IsEventsSection;
 
     public bool IsOnDemandSection => ActiveSection is ShellSection.Movies or ShellSection.Series;
 
@@ -409,6 +637,8 @@ public sealed partial class MainShellViewModel : ObservableObject
     public string FavoritesCategorySummary => GetFavoriteChannelIds().Count == 1
         ? L("OneSaved")
         : LF("SavedCount", GetFavoriteChannelIds().Count);
+
+    public int FavoriteChannelsCount => GetFavoriteChannelIds().Count;
 
     public bool HasMovieError => !string.IsNullOrWhiteSpace(MovieErrorMessage);
 
@@ -502,6 +732,45 @@ public sealed partial class MainShellViewModel : ObservableObject
         ? L("RemoveFromWatchlist")
         : L("AddToWatchlist");
 
+    public bool HasEventsError => !string.IsNullOrWhiteSpace(EventsErrorMessage);
+
+    public bool IsEventsEmpty => !IsEventsLoading && !HasEventsError && TodayEvents.Count == 0;
+
+    public bool HasSelectedSportsEvent => SelectedSportsEvent is not null;
+
+    public bool IsEventsListVisible => !HasSelectedSportsEvent;
+
+    public string EventsEmptyTitle => L("NoEventsToday");
+
+    public string EventsMatchScopeText => HasLoadedLiveTvPlaylist
+        ? L("EventsMatchCurrentCategory")
+        : L("EventsMatchLoadPlaylist");
+
+    public bool IsSelectedEventChannelsLoading =>
+        EventChannelPresentationState.IsLoading(
+            SelectedSportsEvent != null,
+            _isEventChannelPresentationLoading,
+            _eventsMatchingSourceId,
+            _eventsMatchedSourceId);
+
+    private bool HasFinalEventChannelMatch =>
+        SelectedSource != null && _eventsMatchedSourceId == SelectedSource.Id;
+
+    public bool IsEventChannelContentVisible =>
+        HasFinalEventChannelMatch && !IsSelectedEventChannelsLoading && (SelectedSportsEvent?.HasVisibleChannelOptions ?? false);
+
+    public bool IsEventCountrySelectorVisible =>
+        HasFinalEventChannelMatch && (SelectedSportsEvent?.HasVisibleCountrySelector ?? false);
+
+    public bool IsNoMatchingEventChannelVisible =>
+        EventChannelPresentationState.IsNoMatchVisible(
+            SelectedSportsEvent != null,
+            HasFinalEventChannelMatch,
+            SelectedSportsEvent?.HasChannelOptions ?? false,
+            _isEventChannelPresentationLoading,
+            _eventsMatchingSourceId,
+            _eventsMatchedSourceId);
+
     public bool IsSeriesDetailsEmpty => !IsSeriesDetailsLoading
         && SelectedSeriesDetails is not null
         && !SelectedSeriesDetails.HasEpisodes;
@@ -549,6 +818,10 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public IAsyncRelayCommand PlaySelectedChannelCommand { get; }
 
+    public IAsyncRelayCommand<RecentChannelItemViewModel?> ResumeRecentChannelCommand { get; }
+
+    public IRelayCommand<QuickQualityVariantViewModel?> SelectQuickQualityVariantCommand { get; }
+
     public IAsyncRelayCommand PlaySelectedMovieCommand { get; }
 
     public IAsyncRelayCommand PlaySelectedSeriesCommand { get; }
@@ -583,6 +856,8 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public IAsyncRelayCommand ResumeCommand { get; }
 
+    public IAsyncRelayCommand TogglePlayPauseCommand { get; }
+
     public IAsyncRelayCommand PauseCommand { get; }
 
     public IAsyncRelayCommand StopCommand { get; }
@@ -603,7 +878,27 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public IRelayCommand SelectSeriesSectionCommand { get; }
 
+    public IRelayCommand SelectEventsSectionCommand { get; }
+
+    public IRelayCommand ReturnFromEventsCommand { get; }
+
+    public IAsyncRelayCommand RefreshEventsCommand { get; }
+
+    public IRelayCommand<SportsEventItemViewModel?> SelectEventCommand { get; }
+
+    public IRelayCommand BackToEventsCommand { get; }
+
+    public IAsyncRelayCommand<EventChannelOptionViewModel?> PlayEventChannelCommand { get; }
+
+    public IRelayCommand<EventSportCategoryViewModel?> SelectEventSportCategoryCommand { get; }
+ 
+    public IRelayCommand<EventFilterOptionViewModel?> SelectEventSortModeCommand { get; }
+
+    public IRelayCommand<EventFilterOptionViewModel?> SelectEventTimeFilterCommand { get; }
+
     public IRelayCommand ToggleImportMenuCommand { get; }
+
+    public IRelayCommand TogglePlaylistSidebarCommand { get; }
 
     public IRelayCommand ShowCategorySearchCommand { get; }
 
@@ -635,6 +930,8 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     public IAsyncRelayCommand DeleteSelectedSourceCommand { get; }
 
+    public IAsyncRelayCommand RefreshSelectedSourceCommand { get; }
+
     public IRelayCommand CancelImportCommand { get; }
 
     public async Task InitializeAsync()
@@ -650,6 +947,11 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             IsLoading = true;
             NotificationMessage = string.Empty;
+            if (_hasSavedPlaylists)
+            {
+                IsStartupLoading = true;
+                StartupLoadingMessage = L("LoadingPlaylist");
+            }
 
             _ = Task.Run(async () =>
             {
@@ -664,7 +966,7 @@ public sealed partial class MainShellViewModel : ObservableObject
                 }
             });
 
-            var playbackInitializeTask = _playback.InitializeAsync();
+            var playbackInitializeTask = Task.Run(() => _playback.InitializeAsync());
             var sessionLoadTask = _session.LoadAsync();
             var onDemandStateLoadTask = _onDemandStateStore.LoadAsync();
 
@@ -678,6 +980,21 @@ public sealed partial class MainShellViewModel : ObservableObject
             _restoredCategoryId = _sessionSnapshot.LastCategoryId;
             _restoredChannelId = _sessionSnapshot.LastChannelId;
 
+            if (_restoredSourceId.HasValue && _hasSavedPlaylists)
+            {
+                IsStartupLoading = true;
+                StartupLoadingMessage = L("LoadingPlaylist");
+            }
+
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(6)).ConfigureAwait(false);
+                if (IsStartupLoading)
+                {
+                    _uiContext.Post(_ => IsStartupLoading = false, null);
+                }
+            });
+
             IsMuted = _sessionSnapshot.IsMuted;
             await _playback.SetMutedAsync(IsMuted);
 
@@ -687,11 +1004,20 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             _logger.LogError(exception, "Failed during shell initialization");
             NotificationMessage = L("FailedInitializeShell");
+            IsStartupLoading = false;
         }
         finally
         {
             IsLoading = false;
             _isInitializing = false;
+            if (!_hasSavedPlaylists || Sources.Count == 0)
+            {
+                IsStartupLoading = false;
+            }
+
+            DeleteSelectedSourceCommand.NotifyCanExecuteChanged();
+            EditSelectedSourceCommand.NotifyCanExecuteChanged();
+            RefreshSelectedSourceCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -700,32 +1026,54 @@ public sealed partial class MainShellViewModel : ObservableObject
         OnPropertyChanged(nameof(IsLiveTvSection));
         OnPropertyChanged(nameof(IsMoviesSection));
         OnPropertyChanged(nameof(IsSeriesSection));
+        OnPropertyChanged(nameof(IsEventsSection));
+        OnPropertyChanged(nameof(IsPlaylistCategoriesVisible));
+        OnPropertyChanged(nameof(IsLiveTvOrEventsSection));
         OnPropertyChanged(nameof(IsOnDemandSection));
+        OnPropertyChanged(nameof(CurrentChannelDisplayTitle));
         NotifyLiveTvFavoritesStateChanged();
+        NotifyQuickQualityStateChanged();
         NotifyMovieStateChanged();
         NotifySeriesStateChanged();
+        NotifyEventsStateChanged();
 
-        if (value != ShellSection.LiveTv)
+        if (value != ShellSection.LiveTv && value != ShellSection.Events)
         {
             CancelSelectedEpgRefresh();
             CancelVisibleEpgRefresh();
+        }
+        else if (value == ShellSection.Events)
+        {
+            CancelVisibleEpgRefresh();
+            if (SelectedChannel is not null && SelectedChannel.CurrentProgram is null)
+            {
+                BeginEpgRefresh(SelectedChannel);
+            }
         }
 
         _ = ExecuteAndReportAsync(async () =>
         {
             if (SelectedSource is null)
             {
+                if (value == ShellSection.Events)
+                {
+                    await LoadEventsAsync();
+                }
+
                 return;
             }
 
-            if (value == ShellSection.LiveTv)
+            if (value is ShellSection.LiveTv or ShellSection.Events)
             {
                 if (_liveLoadedSourceId != SelectedSource.Id)
                 {
                     await LoadCategoriesAsync(SelectedSource);
                 }
 
-                return;
+                if (value == ShellSection.LiveTv)
+                {
+                    return;
+                }
             }
 
             if (value == ShellSection.Movies)
@@ -734,17 +1082,27 @@ public sealed partial class MainShellViewModel : ObservableObject
                 return;
             }
 
-            await EnsureSeriesLoadedAsync(SelectedSource);
+            if (value == ShellSection.Series)
+            {
+                await EnsureSeriesLoadedAsync(SelectedSource);
+                return;
+            }
+
+            await LoadEventsAsync(loadPlaylistChannels: true);
         });
     }
 
     partial void OnSelectedSourceChanged(SourceItemViewModel? value)
     {
+        CancelAllChannelsEpgSync();
         DeleteSelectedSourceCommand.NotifyCanExecuteChanged();
         EditSelectedSourceCommand.NotifyCanExecuteChanged();
+        RefreshSelectedSourceCommand.NotifyCanExecuteChanged();
         SelectMovieWatchlistCommand.NotifyCanExecuteChanged();
         SelectSeriesWatchlistCommand.NotifyCanExecuteChanged();
         ClearLiveTvState();
+
+        RefreshEventItems();
         ClearFavoriteChannelCache();
         ClearMovieState(L("MoviesAppearWhenIncluded"));
         ClearSeriesState(L("SeriesAppearWhenIncluded"));
@@ -754,6 +1112,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         NotifyLiveTvFavoritesStateChanged();
         NotifyMovieStateChanged();
         NotifySeriesStateChanged();
+        NotifyEventsStateChanged();
 
         _ = ExecuteAndReportAsync(async () =>
         {
@@ -784,19 +1143,33 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     partial void OnSelectedChannelChanged(ChannelItemViewModel? value)
     {
+        OnPropertyChanged(nameof(CurrentChannelDisplayTitle));
+        OnPropertyChanged(nameof(IsLivePlaybackActive));
         PlaySelectedChannelCommand.NotifyCanExecuteChanged();
         CancelSelectedEpgRefresh();
+        RefreshQuickQualityVariants(value);
 
         if (value is null)
         {
             CancelLivePlaybackRequest();
-        ShowPlayerSurfaceOverlay(L("Ready"), L("SelectChannelToStart"));
+            ShowPlayerSurfaceOverlay(L("Ready"), L("SelectChannelToStart"));
             return;
+        }
+
+        if (SelectedSource is not null)
+        {
+            _ = EnsureQuickQualityVariantsLoadedAsync(SelectedSource, value);
         }
 
         var (requestVersion, cancellationToken) = StartLivePlaybackRequest();
         _ = ExecuteAndReportAsync(() => PlayChannelInternalAsync(value, requestVersion, cancellationToken));
         BeginEpgRefresh(value);
+    }
+
+    partial void OnCurrentChannelTitleChanged(string value)
+    {
+        OnPropertyChanged(nameof(CurrentChannelDisplayTitle));
+        OnPropertyChanged(nameof(IsFullscreenHeaderTitleVisible));
     }
 
     partial void OnSelectedMovieCategoryChanged(CategoryItemViewModel? value)
@@ -923,10 +1296,68 @@ public sealed partial class MainShellViewModel : ObservableObject
     partial void OnSeriesDetailsErrorMessageChanged(string value)
         => NotifySeriesStateChanged();
 
+    partial void OnIsEventsLoadingChanged(bool value)
+    {
+        NotifyEventsStateChanged();
+        RefreshEventsCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnIsEventsRefreshingChanged(bool value)
+    {
+        NotifyEventsStateChanged();
+        RefreshEventsCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnEventsErrorMessageChanged(string value)
+        => NotifyEventsStateChanged();
+
+    partial void OnSelectedEventSportCategoryChanged(EventSportCategoryViewModel? value)
+    {
+        SelectedSportsEvent = null;
+        UpdateEventCategorySelection();
+        RefreshEventItems();
+    }
+
+    partial void OnSelectedEventSortModeChanged(EventFilterOptionViewModel? value)
+    {
+        UpdateEventFilterSelection();
+        RefreshEventItems();
+    }
+
+    partial void OnSelectedEventTimeFilterChanged(EventFilterOptionViewModel? value)
+    {
+        UpdateEventFilterSelection();
+        RefreshEventItems();
+    }
+
+    partial void OnSelectedSportsEventChanged(SportsEventItemViewModel? value)
+    {
+        _isEventChannelPresentationLoading = value is not null;
+        OnPropertyChanged(nameof(HasSelectedSportsEvent));
+        OnPropertyChanged(nameof(IsEventsListVisible));
+        NotifyEventsStateChanged();
+    }
+
     partial void OnIsMutedChanged(bool value)
     {
         OnPropertyChanged(nameof(MuteButtonText));
+        OnPropertyChanged(nameof(VolumeIconGlyph));
+        OnPropertyChanged(nameof(VolumeIconGeometry));
+        OnPropertyChanged(nameof(VolumeToolTip));
         SubmitImportCommand.NotifyCanExecuteChanged();
+    }
+
+    partial void OnVolumeChanged(double value)
+    {
+        OnPropertyChanged(nameof(VolumeIconGlyph));
+        OnPropertyChanged(nameof(VolumeIconGeometry));
+        if (_isApplyingExternalAudioState)
+        {
+            return;
+        }
+
+        var requestedVolume = (int)Math.Round(Math.Clamp(value, 0d, 100d));
+        _ = ExecuteAndReportAsync(() => _playback.SetVolumeAsync(requestedVolume));
     }
 
     partial void OnActiveImportModeChanged(SourceImportMode value)
@@ -1014,6 +1445,9 @@ public sealed partial class MainShellViewModel : ObservableObject
     private bool CanEditSelectedSource()
         => SelectedSource is not null;
 
+    private bool CanRefreshSelectedSource()
+        => SelectedSource is not null && !_isRefreshingSource;
+
     private bool CanSubmitImport()
     {
         if (_isImporting)
@@ -1076,6 +1510,51 @@ public sealed partial class MainShellViewModel : ObservableObject
         _logger.LogInformation("Play command invoked for channel {ChannelId} - {ChannelName}", SelectedChannel.Id, SelectedChannel.Name);
         var (requestVersion, cancellationToken) = StartLivePlaybackRequest();
         await PlayChannelInternalAsync(SelectedChannel, requestVersion, cancellationToken);
+    }
+
+    private async Task ResumeRecentChannelAsync(RecentChannelItemViewModel? recent)
+    {
+        if (recent is null || SelectedSource is null)
+        {
+            return;
+        }
+
+        var channel = VisibleChannels.FirstOrDefault(item =>
+                          string.Equals(item.Id, recent.Id, StringComparison.OrdinalIgnoreCase))
+                      ?? recent.Channel;
+
+        _logger.LogInformation(
+            "Resuming recent channel {ChannelId} - {ChannelName}",
+            channel.Id,
+            channel.Name);
+
+        if (!ReferenceEquals(SelectedChannel, channel))
+        {
+            SelectedChannel = channel;
+            return;
+        }
+
+        var (requestVersion, cancellationToken) = StartLivePlaybackRequest();
+        await PlayChannelInternalAsync(channel, requestVersion, cancellationToken);
+    }
+
+    private void SelectQuickQualityVariant(QuickQualityVariantViewModel? variant)
+    {
+        if (variant is null
+            || SelectedChannel is null
+            || string.Equals(SelectedChannel.Id, variant.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _logger.LogInformation(
+            "Quick Quality switching directly to stream {ChannelId} - {ChannelName} ({QualityLabel})",
+            variant.Channel.Id,
+            variant.Channel.Name,
+            variant.QualityLabel);
+        SelectedChannel = VisibleChannels.FirstOrDefault(channel =>
+                              string.Equals(channel.Id, variant.Channel.Id, StringComparison.OrdinalIgnoreCase))
+                          ?? variant.Channel;
     }
 
     private async Task PlaySelectedMovieAsync()
@@ -1189,6 +1668,11 @@ public sealed partial class MainShellViewModel : ObservableObject
         string logLabel,
         double? resumeProgressPercent = null)
     {
+        if (TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: true))
+        {
+            await PersistStateAsync();
+        }
+
         CancelLivePlaybackRequest();
 
         if (!await _onDemandPlaybackGate.WaitAsync(0))
@@ -1500,6 +1984,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         SelectedMovie.IsInWatchlist = !SelectedMovie.IsInWatchlist;
+        UpdateMovieWatchlistCacheState(SelectedMovie.Id, SelectedMovie.IsInWatchlist);
         await PersistOnDemandStateAsync();
         if (IsMovieWatchlistSelected && SelectedSource is not null)
         {
@@ -1517,6 +2002,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         SelectedSeries.IsInWatchlist = !SelectedSeries.IsInWatchlist;
+        UpdateSeriesWatchlistCacheState(SelectedSeries.Id, SelectedSeries.IsInWatchlist);
         await PersistOnDemandStateAsync();
         if (IsSeriesWatchlistSelected && SelectedSource is not null)
         {
@@ -1530,6 +2016,42 @@ public sealed partial class MainShellViewModel : ObservableObject
     {
         _logger.LogInformation("Pause command invoked");
         await _playback.PauseAsync();
+    }
+
+    private async Task TogglePlayPauseAsync()
+    {
+        if (IsMoviesSection && !IsOnDemandPlaybackActive)
+        {
+            await PlaySelectedMovieAsync();
+            return;
+        }
+
+        if (IsSeriesSection && !IsOnDemandPlaybackActive)
+        {
+            await PlaySelectedSeriesAsync();
+            return;
+        }
+
+        if (_currentPlaybackState == PlaybackState.Playing)
+        {
+            await PauseAsync();
+            return;
+        }
+
+        if (_currentPlaybackState == PlaybackState.Paused)
+        {
+            _logger.LogInformation("Resume command invoked from player control bar");
+            await _playback.ResumeAsync();
+            return;
+        }
+
+        if (IsLiveTvOrEventsSection)
+        {
+            await PlaySelectedChannelAsync();
+            return;
+        }
+
+        await ResumeAsync();
     }
 
     private async Task ResumeAsync()
@@ -1564,13 +2086,19 @@ public sealed partial class MainShellViewModel : ObservableObject
     private async Task StopAsync()
     {
         _logger.LogInformation("Stop command invoked");
+        var recentHistoryChanged = TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: true);
         CancelLivePlaybackRequest();
         await PersistActiveOnDemandProgressAsync();
         await _playback.StopAsync();
+        if (recentHistoryChanged)
+        {
+            await PersistStateAsync();
+        }
+
         SetOnDemandPlaybackActive(false);
         PlaybackStatusText = L("Stopped");
         IsNativeVideoSurfaceVisible = false;
-        ShowPlayerSurfaceOverlay(L("PlaybackStopped"), L("SelectChannelToContinue"));
+        ShowPlayerSurfaceOverlay(string.Empty, string.Empty, showText: false);
     }
 
     private void ToggleMute()
@@ -1658,6 +2186,12 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     private void CancelImport()
     {
+        if (_isImporting)
+        {
+            _importCts?.Cancel();
+            return;
+        }
+
         IsImportMenuOpen = false;
         ActiveImportMode = SourceImportMode.None;
         IsEditingSource = false;
@@ -1706,13 +2240,19 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         _isImporting = true;
+        OnPropertyChanged(nameof(IsImporting));
+        ImportProgressPercent = 0;
         SubmitImportCommand.NotifyCanExecuteChanged();
         IsLoading = true;
-        ImportFeedback = L("AddingPlaylist");
+        ImportFeedback = string.Empty;
+        _importCts = new CancellationTokenSource();
+        var progress = new ImportProgressTarget();
+        using var progressAnimationCts = CancellationTokenSource.CreateLinkedTokenSource(_importCts.Token);
+        var progressAnimationTask = AnimateImportProgressAsync(progress, progressAnimationCts.Token);
 
         try
         {
-            var result = await _sourceImport.ImportAsync(request);
+            var result = await _sourceImport.ImportAsync(request, progress, _importCts.Token);
             if (!result.Success || result.Source is null)
             {
                 ImportFeedback = result.Message;
@@ -1721,14 +2261,26 @@ public sealed partial class MainShellViewModel : ObservableObject
             }
 
             await LoadSourcesAsync(result.Source.Id);
+            progress.Report(new SourceImportProgress(100));
+            await progressAnimationTask;
             ImportFeedback = L("PlaylistAdded");
             NotificationMessage = L("PlaylistAdded");
             ActiveImportMode = SourceImportMode.None;
             ClearImportInputs();
+            StartAllChannelsEpgSync(result.Source.Id);
+        }
+        catch (OperationCanceledException) when (_importCts.IsCancellationRequested)
+        {
+            ImportFeedback = string.Empty;
         }
         finally
         {
+            progressAnimationCts.Cancel();
+            await IgnoreCancellationAsync(progressAnimationTask);
+            _importCts.Dispose();
+            _importCts = null;
             _isImporting = false;
+            OnPropertyChanged(nameof(IsImporting));
             SubmitImportCommand.NotifyCanExecuteChanged();
             IsLoading = false;
         }
@@ -1744,14 +2296,20 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         _isImporting = true;
+        OnPropertyChanged(nameof(IsImporting));
+        ImportProgressPercent = 0;
         SubmitImportCommand.NotifyCanExecuteChanged();
         IsLoading = true;
-        ImportFeedback = L("SavingPlaylist");
+        ImportFeedback = string.Empty;
+        _importCts = new CancellationTokenSource();
+        var progress = new ImportProgressTarget();
+        using var progressAnimationCts = CancellationTokenSource.CreateLinkedTokenSource(_importCts.Token);
+        var progressAnimationTask = AnimateImportProgressAsync(progress, progressAnimationCts.Token);
         var resetSavedState = IsPlaylistConnectionChanging(request);
 
         try
         {
-            var result = await _sourceImport.UpdateAsync(request);
+            var result = await _sourceImport.UpdateAsync(request, progress, _importCts.Token);
             if (!result.Success || result.Source is null)
             {
                 ImportFeedback = result.Message;
@@ -1765,18 +2323,132 @@ public sealed partial class MainShellViewModel : ObservableObject
             }
 
             await LoadSourcesAsync(result.Source.Id);
+            progress.Report(new SourceImportProgress(100));
+            await progressAnimationTask;
             ImportFeedback = L("PlaylistSaved");
             NotificationMessage = L("PlaylistSaved");
             ActiveImportMode = SourceImportMode.None;
             IsEditingSource = false;
             _editingSourceId = null;
             ClearImportInputs();
+            StartAllChannelsEpgSync(result.Source.Id);
+        }
+        catch (OperationCanceledException) when (_importCts.IsCancellationRequested)
+        {
+            ImportFeedback = string.Empty;
         }
         finally
         {
+            progressAnimationCts.Cancel();
+            await IgnoreCancellationAsync(progressAnimationTask);
+            _importCts.Dispose();
+            _importCts = null;
             _isImporting = false;
+            OnPropertyChanged(nameof(IsImporting));
             SubmitImportCommand.NotifyCanExecuteChanged();
             IsLoading = false;
+        }
+    }
+
+    private async Task AnimateImportProgressAsync(
+        ImportProgressTarget progress,
+        CancellationToken cancellationToken)
+    {
+        var totalStopwatch = Stopwatch.StartNew();
+        var frameStopwatch = Stopwatch.StartNew();
+        var displayedPercent = 0d;
+        double? completionStartPercent = null;
+        TimeSpan completionStartedAt = default;
+        TimeSpan completionDuration = default;
+
+        ImportProgressPercent = 0;
+
+        while (true)
+        {
+            await Task.Delay(ImportProgressFrameInterval, cancellationToken);
+
+            var frameSeconds = Math.Max(frameStopwatch.Elapsed.TotalSeconds, 0.001d);
+            frameStopwatch.Restart();
+            var targetPercent = progress.Percent;
+
+            if (targetPercent >= 100d)
+            {
+                if (completionStartPercent is null)
+                {
+                    completionStartPercent = displayedPercent;
+                    completionStartedAt = totalStopwatch.Elapsed;
+                    var remainingFastWindow = ImportProgressFastCompletionDuration - completionStartedAt;
+                    completionDuration = remainingFastWindow > TimeSpan.FromMilliseconds(100)
+                        ? remainingFastWindow
+                        : TimeSpan.FromMilliseconds(100);
+                }
+
+                var elapsed = totalStopwatch.Elapsed - completionStartedAt;
+                var fraction = Math.Clamp(elapsed.TotalMilliseconds / completionDuration.TotalMilliseconds, 0d, 1d);
+                var easedFraction = 1d - Math.Pow(1d - fraction, 2d);
+                displayedPercent = completionStartPercent.Value
+                    + ((100d - completionStartPercent.Value) * easedFraction);
+
+                if (fraction >= 1d)
+                {
+                    ImportProgressPercent = 100d;
+                    return;
+                }
+            }
+            else
+            {
+                if (displayedPercent < targetPercent - 0.05d)
+                {
+                    var smoothingFactor = 1d - Math.Exp(-frameSeconds / 0.45d);
+                    displayedPercent += (targetPercent - displayedPercent) * smoothingFactor;
+                }
+                else
+                {
+                    var remaining = ImportProgressMaximumBeforeCompletion - displayedPercent;
+                    var continuousRate = Math.Clamp(remaining * 0.08d, 0.35d, 1.6d);
+                    displayedPercent += continuousRate * frameSeconds;
+                }
+
+                displayedPercent = Math.Min(displayedPercent, ImportProgressMaximumBeforeCompletion);
+            }
+
+            ImportProgressPercent = Math.Clamp(displayedPercent, 0d, 100d);
+        }
+    }
+
+    private static async Task IgnoreCancellationAsync(Task task)
+    {
+        try
+        {
+            await task;
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private sealed class ImportProgressTarget : IProgress<SourceImportProgress>
+    {
+        private readonly object _sync = new();
+        private double _percent;
+
+        public double Percent
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _percent;
+                }
+            }
+        }
+
+        public void Report(SourceImportProgress value)
+        {
+            lock (_sync)
+            {
+                _percent = Math.Max(_percent, value.Percent);
+            }
         }
     }
 
@@ -1787,6 +2459,7 @@ public sealed partial class MainShellViewModel : ObservableObject
             return;
         }
 
+        CancelAllChannelsEpgSync();
         var sourceId = SelectedSource.Id;
         IsLoading = true;
 
@@ -1807,6 +2480,54 @@ public sealed partial class MainShellViewModel : ObservableObject
         finally
         {
             IsLoading = false;
+        }
+    }
+
+    private bool _isRefreshingSource;
+
+    private async Task RefreshSelectedSourceAsync()
+    {
+        if (SelectedSource is null || _isRefreshingSource || _isImporting)
+        {
+            return;
+        }
+
+        _isRefreshingSource = true;
+        RefreshSelectedSourceCommand.NotifyCanExecuteChanged();
+
+        var sourceId = SelectedSource.Id;
+        IsStartupLoading = true;
+        StartupLoadingMessage = L("RefreshingPlaylist");
+
+        try
+        {
+            CancelAllChannelsEpgSync();
+            var result = await _sourceImport.RefreshAsync(sourceId);
+            if (!result.Success || result.Source is null)
+            {
+                NotificationMessage = result.Message;
+                return;
+            }
+
+            await LoadSourcesAsync(sourceId);
+            if (SelectedSource is not null)
+            {
+                await LoadCategoriesAsync(SelectedSource);
+                StartAllChannelsEpgSync(sourceId);
+            }
+
+            NotificationMessage = L("PlaylistRefreshed");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to refresh playlist {SourceId}", sourceId);
+            NotificationMessage = L("FailedRefreshPlaylist");
+        }
+        finally
+        {
+            _isRefreshingSource = false;
+            RefreshSelectedSourceCommand.NotifyCanExecuteChanged();
+            IsStartupLoading = false;
         }
     }
 
@@ -1917,10 +2638,14 @@ public sealed partial class MainShellViewModel : ObservableObject
             ReplaceCollection(VisibleCategories, Array.Empty<CategoryItemViewModel>());
             ReplaceCollection(VisibleChannels, Array.Empty<ChannelItemViewModel>());
             ReplaceCollection(RecentChannels, Array.Empty<ChannelItemViewModel>());
+            _recentChannelHistory.Clear();
+            _recentChannelsLoadedSourceId = null;
+            RefreshRecentChannelPresentation();
             ClearFavoriteChannelCache();
             ClearMovieState(L("NoPlaylistMovies"));
             ClearSeriesState(L("NoPlaylistSeries"));
             NotificationMessage = L("NoPlaylistsAvailable");
+            IsStartupLoading = false;
             return;
         }
 
@@ -1941,7 +2666,13 @@ public sealed partial class MainShellViewModel : ObservableObject
             return;
         }
 
-        await EnsureSeriesLoadedAsync(source);
+        if (IsSeriesSection)
+        {
+            await EnsureSeriesLoadedAsync(source);
+            return;
+        }
+
+        await LoadEventsAsync(loadPlaylistChannels: SelectedSportsEvent is not null);
     }
 
     private async Task LoadCategoriesAsync(SourceItemViewModel source)
@@ -1981,12 +2712,14 @@ public sealed partial class MainShellViewModel : ObservableObject
                 ReplaceCollection(VisibleChannels, Array.Empty<ChannelItemViewModel>());
                 ClearFavoriteChannelCache();
                 CancelVisibleEpgRefresh();
-            CurrentChannelTitle = L("NoChannelsAvailable");
+                CurrentChannelTitle = L("NoChannelsAvailable");
+                IsStartupLoading = false;
                 return;
             }
 
             var restoreCategoryId = source.Id == _restoredSourceId ? _restoredCategoryId : null;
             SelectedCategory = VisibleCategories.FirstOrDefault(category => category.Id == restoreCategoryId) ?? VisibleCategories[0];
+            StartAllChannelsEpgSync(source.Id);
         }
         catch (OperationCanceledException)
         {
@@ -2041,18 +2774,21 @@ public sealed partial class MainShellViewModel : ObservableObject
                 _allChannels.AddRange(channelItems);
             }
 
+            RefreshEventItems();
             await ApplyChannelFilterAsync(ChannelSearchText, loadToken);
-            RestoreRecentChannels();
+            await RestoreRecentChannelsAsync(source, loadToken);
 
             if (VisibleChannels.Count == 0)
             {
                 SelectedChannel = null;
-            CurrentChannelTitle = L("NoChannelsInCategory");
+                CurrentChannelTitle = L("NoChannelsInCategory");
+                IsStartupLoading = false;
                 return;
             }
 
             var restoreChannelId = source.Id == _restoredSourceId ? _restoredChannelId : null;
             SelectedChannel = VisibleChannels.FirstOrDefault(channel => channel.Id == restoreChannelId) ?? VisibleChannels[0];
+            IsStartupLoading = false;
         }
         catch (OperationCanceledException)
         {
@@ -2062,6 +2798,651 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             IsLoading = false;
         }
+    }
+
+    private void RefreshQuickQualityVariants(
+        ChannelItemViewModel? selectedChannel,
+        IReadOnlyList<ChannelItemViewModel>? knownVariants = null)
+    {
+        if (selectedChannel is null)
+        {
+            ReplaceCollection(QuickQualityVariants, Array.Empty<QuickQualityVariantViewModel>());
+            NotifyQuickQualityStateChanged();
+            return;
+        }
+
+        var selectedIdentity = StreamVariantIdentityNormalizer.Normalize(selectedChannel.Name);
+        List<ChannelItemViewModel> playlistChannels;
+        if (knownVariants is not null)
+        {
+            playlistChannels = [.. knownVariants];
+        }
+        else
+        {
+            lock (_syncRoot)
+            {
+                playlistChannels = SelectedSource is not null
+                                   && _quickQualityVariantsCacheSourceId == SelectedSource.Id
+                                   && _quickQualityVariantsByIdentity.TryGetValue(selectedIdentity.Key, out var cachedVariants)
+                    ? [.. cachedVariants]
+                    : [.. _allChannels];
+            }
+        }
+
+        if (playlistChannels.All(channel =>
+                !string.Equals(channel.Id, selectedChannel.Id, StringComparison.OrdinalIgnoreCase)))
+        {
+            playlistChannels.Add(selectedChannel);
+        }
+
+        var variants = playlistChannels
+            .DistinctBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(channel => new
+            {
+                Channel = channel,
+                Identity = StreamVariantIdentityNormalizer.Normalize(channel.Name),
+            })
+            .Where(candidate =>
+                string.Equals(candidate.Channel.Id, selectedChannel.Id, StringComparison.OrdinalIgnoreCase)
+                || StreamVariantIdentityNormalizer.CanGroup(selectedIdentity, candidate.Identity))
+            .Select(candidate => new QuickQualityVariantViewModel(
+                candidate.Channel,
+                candidate.Identity,
+                string.Equals(candidate.Channel.Id, selectedChannel.Id, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(variant => variant.QualitySortRank)
+            .ThenBy(variant => variant.QualityLabel, StringComparer.Ordinal)
+            .ThenBy(variant => variant.DisplayName, StringComparer.Ordinal)
+            .ThenBy(variant => variant.Id, StringComparer.Ordinal)
+            .ToArray();
+
+        ReplaceCollection(QuickQualityVariants, variants);
+        NotifyQuickQualityStateChanged();
+    }
+
+    private async Task EnsureQuickQualityVariantsLoadedAsync(
+        SourceItemViewModel source,
+        ChannelItemViewModel selectedChannel)
+    {
+        var selectedIdentity = StreamVariantIdentityNormalizer.Normalize(selectedChannel.Name);
+        if (!selectedIdentity.HasExplicitLocaleQualifier || selectedIdentity.Key.Length == 0)
+        {
+            return;
+        }
+
+        IReadOnlyList<ChannelItemViewModel>? cachedVariants = null;
+        lock (_syncRoot)
+        {
+            if (_quickQualityVariantsCacheSourceId == source.Id)
+            {
+                _quickQualityVariantsByIdentity.TryGetValue(selectedIdentity.Key, out cachedVariants);
+            }
+        }
+
+        if (cachedVariants is not null)
+        {
+            RefreshQuickQualityVariants(selectedChannel, cachedVariants);
+            return;
+        }
+
+        _quickQualityVariantsCts?.Cancel();
+        _quickQualityVariantsCts?.Dispose();
+        _quickQualityVariantsCts = new CancellationTokenSource();
+        var cancellationToken = _quickQualityVariantsCts.Token;
+
+        try
+        {
+            var channelModels = await _catalog.GetChannelVariantsAsync(
+                source.Id,
+                selectedChannel.Name,
+                cancellationToken);
+            var favorites = GetFavoriteChannelIds(source.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, ChannelItemViewModel> loadedChannelsById;
+            lock (_syncRoot)
+            {
+                loadedChannelsById = _allChannels
+                    .Concat(_favoriteChannels)
+                    .DistinctBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(channel => channel.Id, StringComparer.OrdinalIgnoreCase);
+            }
+
+            var variants = await Task.Run(() => channelModels
+                .Select(channel => loadedChannelsById.TryGetValue(channel.Id, out var loadedChannel)
+                    ? loadedChannel
+                    : ChannelItemViewModel.FromModel(channel, favorites.Contains(channel.Id)))
+                .ToArray(), cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested
+                || SelectedSource?.Id != source.Id
+                || SelectedChannel is null
+                || !string.Equals(
+                    StreamVariantIdentityNormalizer.Normalize(SelectedChannel.Name).Key,
+                    selectedIdentity.Key,
+                    StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            lock (_syncRoot)
+            {
+                if (_quickQualityVariantsCacheSourceId != source.Id)
+                {
+                    _quickQualityVariantsByIdentity.Clear();
+                    _quickQualityVariantsCacheSourceId = source.Id;
+                }
+
+                _quickQualityVariantsByIdentity[selectedIdentity.Key] = variants;
+            }
+
+            RefreshQuickQualityVariants(SelectedChannel, variants);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Quick Quality lookup canceled for source {SourceId}", source.Id);
+        }
+        catch (Exception exception)
+        {
+            // Variant discovery is optional presentation data. Playback must remain untouched
+            // and the already selected exact stream stays as the sole safe option.
+            _logger.LogWarning(exception, "Quick Quality lookup failed for source {SourceId}", source.Id);
+        }
+    }
+
+    private async Task LoadEventsAsync(
+        bool forceRefresh = false,
+        bool suppressIndicators = false,
+        bool loadPlaylistChannels = true)
+    {
+        if (_eventsLoaded && !forceRefresh)
+        {
+            RefreshEventItems();
+            if (loadPlaylistChannels && SelectedSource is not null)
+            {
+                await EnsureEventPlaylistChannelsLoadedAsync(SelectedSource, CancellationToken.None);
+            }
+
+            return;
+        }
+
+        _eventsCts?.Cancel();
+        _eventsCts?.Dispose();
+        _eventsCts = new CancellationTokenSource();
+        var loadCts = _eventsCts;
+        var cancellationToken = loadCts.Token;
+
+        var showFullLoader = !suppressIndicators && TodayEvents.Count == 0;
+        IsEventsLoading = showFullLoader;
+        IsEventsRefreshing = !suppressIndicators && !showFullLoader;
+        EventsErrorMessage = string.Empty;
+
+        try
+        {
+            if (!_eventsLoaded && !forceRefresh)
+            {
+                var cached = await _sportsEvents.LoadCachedAsync(cancellationToken);
+                if (cached is not null && !cancellationToken.IsCancellationRequested)
+                {
+                    ApplySportsEvents(cached.Events);
+                    _eventsLoaded = true;
+                    IsEventsLoading = false;
+                    IsEventsRefreshing = true;
+                }
+            }
+
+            var feed = await _sportsEvents.RefreshAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            ApplySportsEvents(feed.Events);
+            _eventsLoaded = true;
+            if (loadPlaylistChannels && SelectedSource is not null)
+            {
+                await EnsureEventPlaylistChannelsLoadedAsync(SelectedSource, cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogDebug("Sports events loading canceled");
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Sports events could not be loaded");
+            if (TodayEvents.Count == 0)
+            {
+                EventsErrorMessage = L("EventsUnavailable");
+            }
+            else
+            {
+                NotificationMessage = L("EventsRefreshFailed");
+            }
+        }
+        finally
+        {
+            if (ReferenceEquals(_eventsCts, loadCts))
+            {
+                IsEventsLoading = false;
+                IsEventsRefreshing = false;
+            }
+        }
+    }
+
+    private void ApplySportsEvents(IReadOnlyList<SportsEventModel> events)
+    {
+        var activeEvents = events
+            .Where(sportsEvent => sportsEvent.Status is SportsEventStatus.Scheduled or SportsEventStatus.Confirmed)
+            .ToList();
+
+        lock (_syncRoot)
+        {
+            _eventModels = activeEvents;
+        }
+
+        RefreshEventItems();
+    }
+
+    private void RefreshEventItems()
+    {
+        List<SportsEventModel> events;
+        var selectedSport = SelectedEventSportCategory?.Id;
+        var selectedEventId = SelectedSportsEvent?.Id;
+        var timeFilter = SelectedEventTimeFilter?.Id ?? "all";
+        var sortMode = SelectedEventSortMode?.Id ?? "popularity";
+
+        lock (_syncRoot)
+        {
+            IEnumerable<SportsEventModel> query = _eventModels;
+
+            if (!string.IsNullOrWhiteSpace(selectedSport))
+            {
+                query = query.Where(sportsEvent => string.Equals(sportsEvent.Sport, selectedSport, StringComparison.OrdinalIgnoreCase));
+            }
+
+            query = timeFilter switch
+            {
+                "today" => query.Where(IsEventToday),
+                "tomorrow" => query.Where(IsEventTomorrow),
+                "live" => query.Where(IsEventLiveOrSoon),
+                _ => query.Where(IsTodayOrTomorrow)
+            };
+
+            events = sortMode switch
+            {
+                "time" => query
+                    .OrderBy(e => e.StartUtc.ToLocalTime().Date)
+                    .ThenBy(e => e.StartUtc)
+                    .ThenByDescending(EventPopularityRanker.Score)
+                    .ToList(),
+                _ => query
+                    .OrderBy(e => e.StartUtc.ToLocalTime().Date)
+                    .ThenByDescending(EventPopularityRanker.Score)
+                    .ThenBy(e => e.StartUtc)
+                    .ToList()
+            };
+        }
+
+        var items = events
+            .Select(sportsEvent => new SportsEventItemViewModel(
+                sportsEvent,
+                FormatEventTime(sportsEvent.StartUtc),
+                SportLabel(sportsEvent.Sport),
+                Array.Empty<EventChannelOptionViewModel>(),
+                false))
+            .ToArray();
+
+        ReplaceCollection(TodayEvents, items);
+        if (SelectedSportsEvent is not null)
+        {
+            SelectedSportsEvent = TodayEvents.FirstOrDefault(item =>
+                string.Equals(item.Id, SelectedSportsEvent.Id, StringComparison.OrdinalIgnoreCase));
+            if (SelectedSportsEvent is not null)
+            {
+                SelectedSportsEvent.IsChannelOptionsVisible = true;
+                RefreshSelectedEventChannelOptions();
+            }
+        }
+
+        NotifyEventsStateChanged();
+    }
+
+    private void RefreshSelectedEventChannelOptions()
+    {
+        var selectedEvent = SelectedSportsEvent;
+        if (selectedEvent is null)
+        {
+            return;
+        }
+
+        var version = Interlocked.Increment(ref _selectedEventChannelMatchVersion);
+        List<ChannelItemViewModel> channels;
+        var selectedSource = SelectedSource;
+        if (selectedSource is not null && _eventsMatchedSourceId != selectedSource.Id)
+        {
+            _ = ExecuteAndReportAsync(() => EnsureEventPlaylistChannelsLoadedAsync(selectedSource, CancellationToken.None));
+            return;
+        }
+
+        lock (_syncRoot)
+        {
+            channels = selectedSource is not null
+                ? [.. _eventPlaylistChannels]
+                : [.. _allChannels];
+        }
+
+        if (channels.Count == 0)
+        {
+            selectedEvent.UpdateChannelOptions(Array.Empty<EventChannelOptionViewModel>());
+            selectedEvent.IsChannelOptionsVisible = true;
+            _isEventChannelPresentationLoading = false;
+            NotifyEventsStateChanged();
+            return;
+        }
+
+        _ = ExecuteAndReportAsync(async () =>
+        {
+            var eventModel = selectedEvent.Model;
+            var channelOptions = await Task.Run(() =>
+            {
+                var matches = EventChannelMatcher.MatchAll([eventModel], channels);
+                return matches.TryGetValue(selectedEvent.Id, out var options)
+                    ? options
+                    : Array.Empty<EventChannelOptionViewModel>();
+            }).ConfigureAwait(false);
+
+            if (version != Volatile.Read(ref _selectedEventChannelMatchVersion)
+                || !ReferenceEquals(SelectedSportsEvent, selectedEvent))
+            {
+                return;
+            }
+
+            _uiContext.Post(_ =>
+            {
+                if (version != Volatile.Read(ref _selectedEventChannelMatchVersion)
+                    || !ReferenceEquals(SelectedSportsEvent, selectedEvent))
+                {
+                    return;
+                }
+
+                selectedEvent.UpdateChannelOptions(channelOptions);
+                selectedEvent.IsChannelOptionsVisible = true;
+                _isEventChannelPresentationLoading = false;
+                NotifyEventsStateChanged();
+            }, null);
+        });
+    }
+
+    private async Task EnsureEventPlaylistChannelsLoadedAsync(SourceItemViewModel source, CancellationToken cancellationToken)
+    {
+        await _playlistChannelsLoadGate.WaitAsync(cancellationToken);
+        try
+        {
+            CategoryItemViewModel[] cachedCategories;
+            lock (_syncRoot)
+            {
+                if (_eventsMatchedSourceId == source.Id)
+                {
+                    return;
+                }
+
+                _eventsMatchingSourceId = source.Id;
+                cachedCategories = _allCategories
+                    .Select(category => new CategoryItemViewModel(category.Id, category.Name))
+                    .ToArray();
+            }
+
+            var categories = cachedCategories.Length > 0
+                ? cachedCategories
+                : (await _catalog.GetCategoriesAsync(source.Id, cancellationToken))
+                    .OrderBy(category => category.SortOrder)
+                    .Select(category => new CategoryItemViewModel(category.Id, category.Name))
+                    .ToArray();
+            var favorites = GetFavoriteChannelIds(source.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+            var channels = await Task.Run(async () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var rawChannels = new List<ChannelModel>();
+                foreach (var category in categories)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    var categoryChannels = await _catalog.GetChannelsAsync(source.Id, category.Id, cancellationToken)
+                        .ConfigureAwait(false);
+                    rawChannels.AddRange(categoryChannels);
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+                return rawChannels
+                    .DistinctBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase)
+                    .Select(channel => ChannelItemViewModel.FromModel(channel, favorites.Contains(channel.Id)))
+                    .ToList();
+            }, cancellationToken);
+
+            if (SelectedSource?.Id != source.Id || cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
+            lock (_syncRoot)
+            {
+                _eventPlaylistChannels.Clear();
+                _eventPlaylistChannels.AddRange(channels);
+                _eventsMatchedSourceId = source.Id;
+            }
+
+            RefreshSelectedEventChannelOptions();
+        }
+        finally
+        {
+            if (_eventsMatchingSourceId == source.Id)
+            {
+                _eventsMatchingSourceId = null;
+            }
+
+            _playlistChannelsLoadGate.Release();
+        }
+    }
+
+    private void InitializeEventSportCategories()
+    {
+        var categories = CreateEventSportCategories();
+        ReplaceCollection(EventSportCategories, categories);
+        SelectedEventSportCategory = EventSportCategories.FirstOrDefault(category => category.Id == "football")
+            ?? EventSportCategories.FirstOrDefault();
+        UpdateEventCategorySelection();
+    }
+
+    private void RefreshEventSportCategoryLabels()
+    {
+        var labels = CreateEventSportCategories().ToDictionary(category => category.Id, category => category.Label, StringComparer.OrdinalIgnoreCase);
+        foreach (var category in EventSportCategories)
+        {
+            if (labels.TryGetValue(category.Id, out var label))
+            {
+                category.UpdateLabel(label);
+            }
+        }
+    }
+
+    private IReadOnlyList<EventSportCategoryViewModel> CreateEventSportCategories()
+        =>
+        [
+            new("football", L("SportFootball")),
+            new("basketball", L("SportBasketball")),
+            new("tennis", L("SportTennis")),
+            new("formula1", L("SportFormulaOne")),
+            new("cricket", L("SportCricket")),
+            new("rugby", L("SportRugby")),
+        ];
+
+    private void SelectEventSportCategory(EventSportCategoryViewModel? category)
+    {
+        if (category is null || ReferenceEquals(SelectedEventSportCategory, category))
+        {
+            return;
+        }
+
+        SelectedEventSportCategory = category;
+    }
+
+    private void SelectEventsSection()
+    {
+        if (ActiveSection != ShellSection.Events)
+        {
+            _eventsReturnSection = ActiveSection;
+        }
+
+        ActiveSection = ShellSection.Events;
+    }
+
+    private void ReturnFromEvents()
+    {
+        if (ActiveSection != ShellSection.Events)
+        {
+            return;
+        }
+
+        if (SelectedSportsEvent is not null)
+        {
+            SelectedSportsEvent = null;
+            return;
+        }
+
+        SelectedSportsEvent = null;
+        ActiveSection = _eventsReturnSection is ShellSection.Movies or ShellSection.Series or ShellSection.LiveTv
+            ? _eventsReturnSection
+            : ShellSection.LiveTv;
+    }
+
+    private void UpdateEventCategorySelection()
+    {
+        foreach (var category in EventSportCategories)
+        {
+            category.IsSelected = ReferenceEquals(category, SelectedEventSportCategory);
+        }
+    }
+
+    private void InitializeEventFilters()
+    {
+        var sortModes = CreateEventSortModes();
+        ReplaceCollection(EventSortModes, sortModes);
+        SelectedEventSortMode = EventSortModes.FirstOrDefault(mode => mode.Id == "popularity")
+            ?? EventSortModes.FirstOrDefault();
+
+        var timeFilters = CreateEventTimeFilters();
+        ReplaceCollection(EventTimeFilters, timeFilters);
+        SelectedEventTimeFilter = EventTimeFilters.FirstOrDefault(filter => filter.Id == "today")
+            ?? EventTimeFilters.FirstOrDefault();
+
+        UpdateEventFilterSelection();
+    }
+
+    private IReadOnlyList<EventFilterOptionViewModel> CreateEventSortModes()
+        =>
+        [
+            new("popularity", L("FilterPopularity")),
+            new("time", L("FilterTime")),
+        ];
+
+    private IReadOnlyList<EventFilterOptionViewModel> CreateEventTimeFilters()
+        =>
+        [
+            new("today", L("Today")),
+            new("tomorrow", L("Tomorrow")),
+            new("live", L("FilterLive")),
+            new("all", L("FilterAll")),
+        ];
+
+    private void SelectEventSortMode(EventFilterOptionViewModel? mode)
+    {
+        if (mode is null || ReferenceEquals(SelectedEventSortMode, mode))
+        {
+            return;
+        }
+
+        SelectedEventSortMode = mode;
+    }
+
+    private void SelectEventTimeFilter(EventFilterOptionViewModel? filter)
+    {
+        if (filter is null || ReferenceEquals(SelectedEventTimeFilter, filter))
+        {
+            return;
+        }
+
+        SelectedEventTimeFilter = filter;
+    }
+
+    private void UpdateEventFilterSelection()
+    {
+        foreach (var mode in EventSortModes)
+        {
+            mode.IsSelected = ReferenceEquals(mode, SelectedEventSortMode);
+        }
+
+        foreach (var filter in EventTimeFilters)
+        {
+            filter.IsSelected = ReferenceEquals(filter, SelectedEventTimeFilter);
+        }
+    }
+
+    private void RefreshEventFilterLabels()
+    {
+        var sortLabels = CreateEventSortModes().ToDictionary(m => m.Id, m => m.Label, StringComparer.OrdinalIgnoreCase);
+        foreach (var mode in EventSortModes)
+        {
+            if (sortLabels.TryGetValue(mode.Id, out var label))
+            {
+                mode.UpdateLabel(label);
+            }
+        }
+
+        var timeLabels = CreateEventTimeFilters().ToDictionary(f => f.Id, f => f.Label, StringComparer.OrdinalIgnoreCase);
+        foreach (var filter in EventTimeFilters)
+        {
+            if (timeLabels.TryGetValue(filter.Id, out var label))
+            {
+                filter.UpdateLabel(label);
+            }
+        }
+    }
+
+    private void SelectEvent(SportsEventItemViewModel? item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        _isEventChannelPresentationLoading = true;
+        SelectedSportsEvent = item;
+        NotifyEventsStateChanged();
+
+        if (SelectedSource is not null && _eventsMatchedSourceId != SelectedSource.Id)
+        {
+            item.IsChannelOptionsVisible = false;
+            _ = ExecuteAndReportAsync(() => EnsureEventPlaylistChannelsLoadedAsync(SelectedSource, CancellationToken.None));
+            return;
+        }
+
+        item.IsChannelOptionsVisible = true;
+        RefreshSelectedEventChannelOptions();
+    }
+
+    private async Task PlayEventChannelAsync(EventChannelOptionViewModel? option)
+    {
+        if (option is null)
+        {
+            return;
+        }
+
+        SelectedChannel = option.Channel;
+        _logger.LogInformation(
+            "Event channel play invoked for broadcaster {BroadcasterName} on channel {ChannelId} - {ChannelName}",
+            option.BroadcasterName,
+            option.Channel.Id,
+            option.Channel.Name);
+        var (requestVersion, cancellationToken) = StartLivePlaybackRequest();
+        await PlayChannelInternalAsync(option.Channel, requestVersion, cancellationToken);
     }
 
     private async Task EnsureMoviesLoadedAsync(SourceItemViewModel source)
@@ -2149,6 +3530,8 @@ public sealed partial class MainShellViewModel : ObservableObject
                 IsMovieCatalogLoading = false;
                 NotifyMovieStateChanged();
             }
+
+            IsStartupLoading = false;
         }
     }
 
@@ -2510,6 +3893,8 @@ public sealed partial class MainShellViewModel : ObservableObject
                 IsSeriesCatalogLoading = false;
                 NotifySeriesStateChanged();
             }
+
+            IsStartupLoading = false;
         }
     }
 
@@ -2813,6 +4198,9 @@ public sealed partial class MainShellViewModel : ObservableObject
     private IReadOnlyCollection<string> GetRecentChannelIds(Guid? sourceId = null)
         => GetSourceCollection(_sessionSnapshot.RecentChannelIdsBySource, sourceId ?? SelectedSource?.Id);
 
+    private IReadOnlyCollection<RecentChannelHistoryEntry> GetRecentChannelHistory(Guid? sourceId = null)
+        => GetSourceCollection(_sessionSnapshot.RecentChannelHistoryBySource, sourceId ?? SelectedSource?.Id);
+
     private static IReadOnlyCollection<string> GetSourceCollection(
         IReadOnlyDictionary<string, IReadOnlyCollection<string>>? valuesBySource,
         Guid? sourceId)
@@ -2867,6 +4255,24 @@ public sealed partial class MainShellViewModel : ObservableObject
         return updatedValues;
     }
 
+    private static IReadOnlyDictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>> UpdateSourceCollection(
+        IReadOnlyDictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>? valuesBySource,
+        Guid sourceId,
+        IEnumerable<RecentChannelHistoryEntry> values)
+    {
+        var updatedValues = valuesBySource is null
+            ? new Dictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>(valuesBySource, StringComparer.OrdinalIgnoreCase);
+
+        updatedValues[sourceId.ToString("D")] = values
+            .Where(value => !string.IsNullOrWhiteSpace(value.ChannelId))
+            .DistinctBy(value => value.ChannelId, StringComparer.OrdinalIgnoreCase)
+            .Take(12)
+            .ToArray();
+
+        return updatedValues;
+    }
+
     private static IReadOnlyDictionary<string, IReadOnlyCollection<string>> RemoveSourceCollection(
         IReadOnlyDictionary<string, IReadOnlyCollection<string>>? valuesBySource,
         Guid sourceId)
@@ -2909,6 +4315,7 @@ public sealed partial class MainShellViewModel : ObservableObject
             RecentChannelIds = Array.Empty<string>(),
             FavoriteChannelIdsBySource = RemoveSourceCollection(_sessionSnapshot.FavoriteChannelIdsBySource, sourceId),
             RecentChannelIdsBySource = RemoveSourceCollection(_sessionSnapshot.RecentChannelIdsBySource, sourceId),
+            RecentChannelHistoryBySource = RemoveSourceCollection(_sessionSnapshot.RecentChannelHistoryBySource, sourceId),
         };
 
         await Task.WhenAll(
@@ -3106,6 +4513,30 @@ public sealed partial class MainShellViewModel : ObservableObject
         series.IsInWatchlist = watchlist.Contains(series.Id);
     }
 
+    private void UpdateMovieWatchlistCacheState(string movieId, bool isInWatchlist)
+    {
+        lock (_syncRoot)
+        {
+            foreach (var movie in _allMovies.Concat(_playlistSearchMovies)
+                         .Where(item => string.Equals(item.Id, movieId, StringComparison.OrdinalIgnoreCase)))
+            {
+                movie.IsInWatchlist = isInWatchlist;
+            }
+        }
+    }
+
+    private void UpdateSeriesWatchlistCacheState(string seriesId, bool isInWatchlist)
+    {
+        lock (_syncRoot)
+        {
+            foreach (var series in _allSeries.Concat(_playlistSearchSeries)
+                         .Where(item => string.Equals(item.Id, seriesId, StringComparison.OrdinalIgnoreCase)))
+            {
+                series.IsInWatchlist = isInWatchlist;
+            }
+        }
+    }
+
     private async Task PersistOnDemandStateAsync()
     {
         if (SelectedSource is null)
@@ -3114,16 +4545,30 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         var sourceId = SelectedSource.Id;
-        var visibleMovieIds = _allMovies
+        List<MovieItemViewModel> cachedMovies;
+        List<SeriesItemViewModel> cachedSeries;
+        lock (_syncRoot)
+        {
+            cachedMovies = _allMovies
+                .Concat(_playlistSearchMovies)
+                .DistinctBy(movie => movie.Id, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            cachedSeries = _allSeries
+                .Concat(_playlistSearchSeries)
+                .DistinctBy(series => series.Id, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        var visibleMovieIds = cachedMovies
             .Select(movie => movie.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var movieWatchlistIds = _allMovies
+        var movieWatchlistIds = cachedMovies
             .Where(movie => movie.IsInWatchlist)
             .Select(movie => movie.Id)
             .Concat(GetMovieWatchlistIds(sourceId).Where(id => !visibleMovieIds.Contains(id)))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var movieWatchlistItems = _allMovies
+        var movieWatchlistItems = cachedMovies
             .Where(movie => movie.IsInWatchlist)
             .Select(movie => movie.ToWatchlistItem())
             .Concat(GetMovieWatchlistItems(sourceId).Where(item => !visibleMovieIds.Contains(item.Id)))
@@ -3131,16 +4576,16 @@ public sealed partial class MainShellViewModel : ObservableObject
             .DistinctBy(item => item.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
-        var visibleSeriesIds = _allSeries
+        var visibleSeriesIds = cachedSeries
             .Select(series => series.Id)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var seriesWatchlistIds = _allSeries
+        var seriesWatchlistIds = cachedSeries
             .Where(series => series.IsInWatchlist)
             .Select(series => series.Id)
             .Concat(GetSeriesWatchlistIds(sourceId).Where(id => !visibleSeriesIds.Contains(id)))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var seriesWatchlistItems = _allSeries
+        var seriesWatchlistItems = cachedSeries
             .Where(series => series.IsInWatchlist)
             .Select(series => series.ToWatchlistItem())
             .Concat(GetSeriesWatchlistItems(sourceId).Where(item => !visibleSeriesIds.Contains(item.Id)))
@@ -3194,17 +4639,53 @@ public sealed partial class MainShellViewModel : ObservableObject
             .ToArray();
     }
 
-    private void RestoreRecentChannels()
+    private async Task RestoreRecentChannelsAsync(
+        SourceItemViewModel source,
+        CancellationToken cancellationToken)
     {
+        _recentChannelsLoadedSourceId = null;
         ReplaceCollection(RecentChannels, Array.Empty<ChannelItemViewModel>());
+        _recentChannelHistory.Clear();
+        RefreshRecentChannelPresentation();
 
-        var recentChannelIds = GetRecentChannelIds();
-        if (recentChannelIds.Count == 0)
+        var recentChannelIds = GetRecentChannelIds(source.Id)
+            .Where(id => !string.IsNullOrWhiteSpace(id))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Take(12)
+            .ToArray();
+        if (recentChannelIds.Length == 0)
+        {
+            _recentChannelsLoadedSourceId = source.Id;
+            RefreshRecentChannelPresentation();
+            return;
+        }
+
+        var favoriteIds = GetFavoriteChannelIds(source.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var restoredModels = await _catalog.GetFavoriteChannelsAsync(source.Id, recentChannelIds, cancellationToken);
+        cancellationToken.ThrowIfCancellationRequested();
+        if (SelectedSource?.Id != source.Id)
         {
             return;
         }
 
-        var byId = _allChannels.ToDictionary(channel => channel.Id, StringComparer.OrdinalIgnoreCase);
+        var byId = restoredModels
+            .GroupBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                group => group.Key,
+                group => ChannelItemViewModel.FromModel(group.First(), favoriteIds.Contains(group.Key)),
+                StringComparer.OrdinalIgnoreCase);
+
+        lock (_syncRoot)
+        {
+            foreach (var channel in _allChannels)
+            {
+                if (recentChannelIds.Contains(channel.Id, StringComparer.OrdinalIgnoreCase))
+                {
+                    byId[channel.Id] = channel;
+                }
+            }
+        }
+
         var orderedRecents = recentChannelIds
             .Where(byId.ContainsKey)
             .Select(id => byId[id])
@@ -3215,6 +4696,25 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             ReplaceCollection(RecentChannels, orderedRecents);
         }
+
+        var savedHistory = GetRecentChannelHistory(source.Id)
+            .Where(entry => !string.IsNullOrWhiteSpace(entry.ChannelId))
+            .GroupBy(entry => entry.ChannelId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+
+        foreach (var channel in orderedRecents)
+        {
+            _recentChannelHistory.Add(savedHistory.TryGetValue(channel.Id, out var history)
+                ? history
+                : new RecentChannelHistoryEntry(
+                    channel.Id,
+                    null,
+                    null,
+                    channel.CurrentProgramProgressPercent));
+        }
+
+        _recentChannelsLoadedSourceId = source.Id;
+        RefreshRecentChannelPresentation();
     }
 
     private async Task EnsureFavoriteChannelsCachedAsync(SourceItemViewModel source)
@@ -3344,6 +4844,12 @@ public sealed partial class MainShellViewModel : ObservableObject
     {
         lock (_syncRoot)
         {
+            foreach (var cachedChannel in _allChannels.Concat(_eventPlaylistChannels)
+                         .Where(item => string.Equals(item.Id, channel.Id, StringComparison.OrdinalIgnoreCase)))
+            {
+                cachedChannel.IsFavorite = channel.IsFavorite;
+            }
+
             _favoriteChannels.RemoveAll(item => string.Equals(item.Id, channel.Id, StringComparison.OrdinalIgnoreCase));
             if (channel.IsFavorite)
             {
@@ -3380,6 +4886,7 @@ public sealed partial class MainShellViewModel : ObservableObject
     {
         OnPropertyChanged(nameof(HasLoadedLiveTvPlaylist));
         OnPropertyChanged(nameof(FavoritesCategorySummary));
+        OnPropertyChanged(nameof(FavoriteChannelsCount));
         SelectFavoritesCategoryCommand.NotifyCanExecuteChanged();
     }
 
@@ -3397,6 +4904,9 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         _currentPlaybackState = PlaybackState.Connecting;
+        NotifyPlayerControlStateChanged();
+        _pendingRecentPlaybackChannel = channel;
+        _pendingRecentPlaybackRequestVersion = requestVersion;
         CurrentChannelTitle = channel.Name;
         NotificationMessage = string.Empty;
         PlaybackStatusText = string.Empty;
@@ -3413,8 +4923,6 @@ public sealed partial class MainShellViewModel : ObservableObject
                 return;
             }
 
-            UpdateRecents(channel);
-            await PersistStateAsync(channel.Id);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -3427,6 +4935,22 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     private (long RequestVersion, CancellationToken CancellationToken) StartLivePlaybackRequest()
     {
+        var isContinuingSameChannel = _activeRecentPlaybackChannel is not null
+            && SelectedChannel is not null
+            && string.Equals(
+                _activeRecentPlaybackChannel.Id,
+                SelectedChannel.Id,
+                StringComparison.OrdinalIgnoreCase)
+            && _activeRecentPlaybackStartedTimestamp != 0L;
+
+        TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: !isContinuingSameChannel);
+        if (!isContinuingSameChannel)
+        {
+            StopLiveSessionTimer();
+        }
+
+        _pendingRecentPlaybackChannel = null;
+        _pendingRecentPlaybackRequestVersion = 0;
         CancelVisibleEpgRefresh();
         _livePlaybackCts?.Cancel();
         _livePlaybackCts?.Dispose();
@@ -3451,10 +4975,14 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     private void CancelLivePlaybackRequest()
     {
+        TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: true);
+        StopLiveSessionTimer();
         CancelVisibleEpgRefresh();
         _livePlaybackCts?.Cancel();
         _livePlaybackCts?.Dispose();
         _livePlaybackCts = null;
+        _pendingRecentPlaybackChannel = null;
+        _pendingRecentPlaybackRequestVersion = 0;
         _lastLivePlaybackPlayingUtc = DateTimeOffset.MinValue;
         Interlocked.Exchange(ref _livePlaybackRecoveryInFlight, 0);
         _livePlaybackRecoveryAttempt = 0;
@@ -3628,9 +5156,19 @@ public sealed partial class MainShellViewModel : ObservableObject
             }
 
             var channel = channels[index];
+            if (!string.IsNullOrWhiteSpace(channel.CurrentProgram)
+                && channel.HasCurrentProgramTiming
+                && channel.CurrentProgramProgressPercent < 95)
+            {
+                continue;
+            }
+
             LogBackgroundWorkDuringPlayback("visible-epg-refresh", channel.Id, "request");
             var epg = await _catalog.GetChannelEpgAsync(sourceId, channel.Id, cancellationToken).ConfigureAwait(false);
-            ApplyChannelEpg(channel, epg);
+            if (epg != ChannelEpgModel.Empty)
+            {
+                ApplyChannelEpg(channel, epg);
+            }
             LogBackgroundWorkDuringPlayback("visible-epg-refresh", channel.Id, "posted-ui-apply");
 
             await Task.Delay(VisibleEpgRefreshBetweenRequests, cancellationToken).ConfigureAwait(false);
@@ -3663,7 +5201,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         => _livePlaybackCts is not null
            && !IsOnDemandPlaybackActive
            && SelectedChannel is not null
-           && _currentPlaybackState is PlaybackState.Connecting or PlaybackState.Buffering or PlaybackState.Playing or PlaybackState.Paused;
+           && _currentPlaybackState is PlaybackState.Connecting or PlaybackState.Buffering or PlaybackState.Playing;
 
     private bool ShouldDeferVisibleChannelsEpgRefresh()
     {
@@ -3778,6 +5316,161 @@ public sealed partial class MainShellViewModel : ObservableObject
         _deferredVisibleEpgRefreshCts = null;
     }
 
+    private CancellationTokenSource? _allChannelsEpgSyncCts;
+
+    private void CancelAllChannelsEpgSync()
+    {
+        if (_allChannelsEpgSyncCts is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _allChannelsEpgSyncCts.Cancel();
+            _allChannelsEpgSyncCts.Dispose();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogDebug(exception, "Failed to cancel Priority 2 background all-channels EPG sync");
+        }
+        finally
+        {
+            _allChannelsEpgSyncCts = null;
+        }
+    }
+
+    private void StartAllChannelsEpgSync(Guid sourceId)
+    {
+        CancelAllChannelsEpgSync();
+
+        if (SelectedSource is null || SelectedSource.Id != sourceId)
+        {
+            return;
+        }
+
+        _allChannelsEpgSyncCts = new CancellationTokenSource();
+        var cancellationToken = _allChannelsEpgSyncCts.Token;
+
+        _logger.LogInformation("Starting Priority 2 background all-channels EPG sync for source {SourceId}", sourceId);
+        _ = Task.Run(() => SyncAllChannelsEpgAsync(sourceId, cancellationToken), cancellationToken);
+    }
+
+    private async Task SyncAllChannelsEpgAsync(Guid sourceId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken).ConfigureAwait(false);
+
+            var categories = await _catalog.GetCategoriesAsync(sourceId, cancellationToken).ConfigureAwait(false);
+            if (categories.Count == 0)
+            {
+                return;
+            }
+
+            var selectedCategoryId = SelectedCategory?.Id;
+            var sortedCategories = categories
+                .OrderByDescending(c => selectedCategoryId is not null && string.Equals(c.Id, selectedCategoryId, StringComparison.OrdinalIgnoreCase))
+                .ThenBy(c => c.SortOrder)
+                .ToList();
+
+            var allChannelsToSync = new List<ChannelModel>();
+            foreach (var category in sortedCategories)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var catChannels = await _catalog.GetChannelsAsync(sourceId, category.Id, cancellationToken).ConfigureAwait(false);
+                allChannelsToSync.AddRange(catChannels);
+            }
+
+            var channels = allChannelsToSync
+                .Where(c => string.IsNullOrWhiteSpace(c.CurrentProgram))
+                .DistinctBy(c => c.Id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            if (channels.Length == 0)
+            {
+                return;
+            }
+
+            _logger.LogInformation(
+                "Priority 2 background all-channels EPG sync queued {Count} channels for source {SourceId}",
+                channels.Length,
+                sourceId);
+
+            var nextIndex = -1;
+            const int WorkerCount = 1;
+            var workers = Enumerable.Range(0, WorkerCount)
+                .Select(_ => SyncAllChannelsEpgWorkerAsync(sourceId, channels, () => Interlocked.Increment(ref nextIndex), cancellationToken))
+                .ToArray();
+
+            await Task.WhenAll(workers).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected cancellation on source switch or shutdown
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Priority 2 background all-channels EPG sync encountered an issue");
+        }
+    }
+
+    private async Task SyncAllChannelsEpgWorkerAsync(
+        Guid sourceId,
+        IReadOnlyList<ChannelModel> channels,
+        Func<int> getNextIndex,
+        CancellationToken cancellationToken)
+    {
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var index = getNextIndex();
+            if (index >= channels.Count)
+            {
+                return;
+            }
+
+            var channel = channels[index];
+
+            while (IsLivePlaybackBackgroundWorkActive() || ShouldDeferLivePlaybackBackgroundWork())
+            {
+                await Task.Delay(1200, cancellationToken).ConfigureAwait(false);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var epg = await _catalog.GetChannelEpgAsync(sourceId, channel.Id, cancellationToken).ConfigureAwait(false);
+            if (epg != ChannelEpgModel.Empty)
+            {
+                _uiContext.Post(_ =>
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    var visibleChannel = VisibleChannels.FirstOrDefault(entry => string.Equals(entry.Id, channel.Id, StringComparison.OrdinalIgnoreCase));
+                    if (visibleChannel is not null)
+                    {
+                        visibleChannel.ApplyEpg(epg);
+                    }
+
+                    lock (_syncRoot)
+                    {
+                        var allChannel = _allChannels.FirstOrDefault(entry => string.Equals(entry.Id, channel.Id, StringComparison.OrdinalIgnoreCase));
+                        if (allChannel is not null && !ReferenceEquals(allChannel, visibleChannel))
+                        {
+                            allChannel.ApplyEpg(epg);
+                        }
+                    }
+                }, null);
+            }
+
+            await Task.Delay(AllChannelsEpgSyncBetweenRequests, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
     private void CancelMovieDetailsLoad()
     {
         _movieDetailsCts?.Cancel();
@@ -3795,6 +5488,13 @@ public sealed partial class MainShellViewModel : ObservableObject
     private void ClearLiveTvState()
     {
         CancelLivePlaybackRequest();
+        _channelFilterCts?.Cancel();
+        _channelFilterCts?.Dispose();
+        _channelFilterCts = null;
+        _quickQualityVariantsCts?.Cancel();
+        _quickQualityVariantsCts?.Dispose();
+        _quickQualityVariantsCts = null;
+        _quickQualityVariantsCacheSourceId = null;
         _loadCategoriesCts?.Cancel();
         _loadCategoriesCts?.Dispose();
         _loadCategoriesCts = null;
@@ -3814,16 +5514,33 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             _allCategories.Clear();
             _allChannels.Clear();
+            _eventPlaylistChannels.Clear();
+            _eventsMatchedSourceId = null;
+            _eventsMatchingSourceId = null;
+            _quickQualityVariantsByIdentity.Clear();
         }
 
         ReplaceCollection(VisibleCategories, Array.Empty<CategoryItemViewModel>());
         ReplaceCollection(VisibleChannels, Array.Empty<ChannelItemViewModel>());
         ReplaceCollection(RecentChannels, Array.Empty<ChannelItemViewModel>());
+        _recentChannelHistory.Clear();
+        _recentChannelsLoadedSourceId = null;
+        _activeRecentPlaybackChannel = null;
+        _activeRecentPlaybackStartedUtc = DateTimeOffset.MinValue;
+        RefreshRecentChannelPresentation();
+        ReplaceCollection(QuickQualityVariants, Array.Empty<QuickQualityVariantViewModel>());
+        NotifyQuickQualityStateChanged();
     }
 
     private void ClearMovieState(string emptyMessage)
     {
         _loadMoviesCts?.Cancel();
+        _movieFilterCts?.Cancel();
+        _movieFilterCts?.Dispose();
+        _movieFilterCts = null;
+        _movieSearchCacheCts?.Cancel();
+        _movieSearchCacheCts?.Dispose();
+        _movieSearchCacheCts = null;
         CancelMovieDetailsLoad();
         var wasLoading = _isLoadingMovieCatalog;
         _isLoadingMovieCatalog = true;
@@ -3839,6 +5556,12 @@ public sealed partial class MainShellViewModel : ObservableObject
         ReplaceCollection(MovieCategories, Array.Empty<CategoryItemViewModel>());
         ReplaceCollection(VisibleMovies, Array.Empty<MovieItemViewModel>());
         ClearMovieCache();
+        lock (_syncRoot)
+        {
+            _playlistSearchMovies.Clear();
+            _movieSearchCacheSourceId = null;
+            _movieSearchCacheWarmupTask = null;
+        }
         _isLoadingMovieCatalog = wasLoading;
         NotifyMovieStateChanged();
     }
@@ -3855,6 +5578,12 @@ public sealed partial class MainShellViewModel : ObservableObject
     private void ClearSeriesState(string emptyMessage)
     {
         _loadSeriesCts?.Cancel();
+        _seriesFilterCts?.Cancel();
+        _seriesFilterCts?.Dispose();
+        _seriesFilterCts = null;
+        _seriesSearchCacheCts?.Cancel();
+        _seriesSearchCacheCts?.Dispose();
+        _seriesSearchCacheCts = null;
         CancelSeriesDetailsLoad();
         var wasLoading = _isLoadingSeriesCatalog;
         _isLoadingSeriesCatalog = true;
@@ -3870,6 +5599,12 @@ public sealed partial class MainShellViewModel : ObservableObject
         ReplaceCollection(SeriesCategories, Array.Empty<CategoryItemViewModel>());
         ReplaceCollection(VisibleSeries, Array.Empty<SeriesItemViewModel>());
         ClearSeriesCache();
+        lock (_syncRoot)
+        {
+            _playlistSearchSeries.Clear();
+            _seriesSearchCacheSourceId = null;
+            _seriesSearchCacheWarmupTask = null;
+        }
         _isLoadingSeriesCatalog = wasLoading;
         NotifySeriesStateChanged();
     }
@@ -3903,9 +5638,10 @@ public sealed partial class MainShellViewModel : ObservableObject
         return VisibleChannels[nextIndex];
     }
 
-    private void UpdateRecents(ChannelItemViewModel channel)
+    private void UpdateRecents(ChannelItemViewModel channel, DateTimeOffset playedAtUtc)
     {
-        var existing = RecentChannels.FirstOrDefault(item => item.Id == channel.Id);
+        var existing = RecentChannels.FirstOrDefault(item =>
+            string.Equals(item.Id, channel.Id, StringComparison.OrdinalIgnoreCase));
         if (existing is not null)
         {
             RecentChannels.Remove(existing);
@@ -3917,6 +5653,244 @@ public sealed partial class MainShellViewModel : ObservableObject
         {
             RecentChannels.RemoveAt(RecentChannels.Count - 1);
         }
+
+        _recentChannelHistory.RemoveAll(entry =>
+            string.Equals(entry.ChannelId, channel.Id, StringComparison.OrdinalIgnoreCase));
+        _recentChannelHistory.Insert(0, new RecentChannelHistoryEntry(
+            channel.Id,
+            playedAtUtc,
+            playedAtUtc,
+            0d));
+
+        while (_recentChannelHistory.Count > 12)
+        {
+            _recentChannelHistory.RemoveAt(_recentChannelHistory.Count - 1);
+        }
+
+        _activeRecentPlaybackChannel = channel;
+        _activeRecentPlaybackStartedUtc = playedAtUtc;
+        _activeRecentPlaybackStartedTimestamp = Stopwatch.GetTimestamp();
+        RefreshRecentChannelPresentation();
+    }
+
+    private void RecordSuccessfulLivePlayback(DateTimeOffset playedAtUtc)
+    {
+        var channel = _pendingRecentPlaybackChannel;
+        var requestVersion = Interlocked.Read(ref _livePlaybackRequestVersion);
+        if (channel is null
+            || _pendingRecentPlaybackRequestVersion != requestVersion
+            || SelectedChannel is null
+            || !string.Equals(SelectedChannel.Id, channel.Id, StringComparison.OrdinalIgnoreCase)
+            || SelectedSource is null
+            || IsOnDemandPlaybackActive
+            || _livePlaybackCts is null)
+        {
+            return;
+        }
+
+        if (requestVersion == _lastRecordedRecentPlaybackRequestVersion)
+        {
+            return;
+        }
+
+        _lastRecordedRecentPlaybackRequestVersion = requestVersion;
+        var isContinuingSameChannel = _activeRecentPlaybackChannel is not null
+            && string.Equals(_activeRecentPlaybackChannel.Id, channel.Id, StringComparison.OrdinalIgnoreCase)
+            && _activeRecentPlaybackStartedTimestamp != 0L;
+        if (!isContinuingSameChannel)
+        {
+            UpdateRecents(channel, playedAtUtc);
+        }
+
+        StartLiveSessionTimer(channel);
+        _ = ExecuteAndReportAsync(() => PersistStateAsync(channel.Id));
+    }
+
+    private void StartLiveSessionTimer(ChannelItemViewModel channel)
+    {
+        if (_activeRecentPlaybackChannel is null
+            || !string.Equals(_activeRecentPlaybackChannel.Id, channel.Id, StringComparison.OrdinalIgnoreCase)
+            || _activeRecentPlaybackStartedTimestamp == 0L)
+        {
+            return;
+        }
+
+        TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: false);
+        if (_liveSessionTimerCts is { IsCancellationRequested: false })
+        {
+            return;
+        }
+
+        StopLiveSessionTimer();
+        _liveSessionTimerCts = new CancellationTokenSource();
+        var cancellationToken = _liveSessionTimerCts.Token;
+        var timerVersion = Interlocked.Increment(ref _liveSessionTimerVersion);
+        var channelId = channel.Id;
+
+        _ = Task.Run(async () =>
+        {
+            try
+            {
+                using var timer = new PeriodicTimer(LiveSessionTimerInterval);
+                while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    _uiContext.Post(_ =>
+                    {
+                        if (cancellationToken.IsCancellationRequested
+                            || timerVersion != Interlocked.Read(ref _liveSessionTimerVersion)
+                            || _livePlaybackCts is null
+                            || IsOnDemandPlaybackActive
+                            || _activeRecentPlaybackChannel is null
+                            || !string.Equals(_activeRecentPlaybackChannel.Id, channelId, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return;
+                        }
+
+                        TouchActiveRecentChannel(DateTimeOffset.UtcNow, endSession: false);
+                    }, null);
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+            }
+        }, cancellationToken);
+    }
+
+    private void StopLiveSessionTimer()
+    {
+        Interlocked.Increment(ref _liveSessionTimerVersion);
+        _liveSessionTimerCts?.Cancel();
+        _liveSessionTimerCts?.Dispose();
+        _liveSessionTimerCts = null;
+    }
+
+    private bool TouchActiveRecentChannel(DateTimeOffset watchedToUtc, bool endSession)
+    {
+        var channel = _activeRecentPlaybackChannel;
+        if (channel is null)
+        {
+            return false;
+        }
+
+        var historyIndex = _recentChannelHistory.FindIndex(entry =>
+            string.Equals(entry.ChannelId, channel.Id, StringComparison.OrdinalIgnoreCase));
+        if (historyIndex < 0)
+        {
+            if (endSession)
+            {
+                _activeRecentPlaybackChannel = null;
+                _activeRecentPlaybackStartedUtc = DateTimeOffset.MinValue;
+                _activeRecentPlaybackStartedTimestamp = 0L;
+            }
+
+            return false;
+        }
+
+        var current = _recentChannelHistory[historyIndex];
+        var watchedFromUtc = current.WatchedFromUtc ?? _activeRecentPlaybackStartedUtc;
+        if (watchedFromUtc == DateTimeOffset.MinValue || watchedToUtc < watchedFromUtc)
+        {
+            watchedFromUtc = watchedToUtc;
+        }
+
+        var watchedDuration = _activeRecentPlaybackStartedTimestamp == 0L
+            ? watchedToUtc - watchedFromUtc
+            : Stopwatch.GetElapsedTime(_activeRecentPlaybackStartedTimestamp);
+        var watchedProgress = Math.Clamp(watchedDuration.TotalMinutes / 30d * 100d, 0d, 100d);
+        var progressPercent = Math.Max(current.ProgressPercent, watchedProgress);
+
+        _recentChannelHistory[historyIndex] = current with
+        {
+            WatchedFromUtc = watchedFromUtc,
+            WatchedToUtc = watchedToUtc,
+            ProgressPercent = Math.Clamp(progressPercent, 0d, 100d),
+        };
+
+        if (endSession)
+        {
+            _activeRecentPlaybackChannel = null;
+            _activeRecentPlaybackStartedUtc = DateTimeOffset.MinValue;
+            _activeRecentPlaybackStartedTimestamp = 0L;
+        }
+
+        RefreshRecentChannelPresentation();
+        return true;
+    }
+
+    private void RefreshRecentChannelPresentation()
+    {
+        var historyById = _recentChannelHistory
+            .GroupBy(entry => entry.ChannelId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+
+        var existingItemsById = CompactRecentChannels
+            .Prepend(ResumeLastChannel)
+            .Where(item => item is not null)
+            .Cast<RecentChannelItemViewModel>()
+            .GroupBy(item => item.Id, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+
+        var activeChannelId = _activeRecentPlaybackChannel?.Id;
+        var activeSessionElapsed = _activeRecentPlaybackStartedTimestamp == 0L
+            ? TimeSpan.Zero
+            : Stopwatch.GetElapsedTime(_activeRecentPlaybackStartedTimestamp);
+
+        var recentItems = RecentChannels
+            .Take(4)
+            .Select(channel =>
+            {
+                var history = historyById.TryGetValue(channel.Id, out var savedHistory)
+                    ? savedHistory
+                    : null;
+
+                RecentChannelItemViewModel item;
+                if (existingItemsById.TryGetValue(channel.Id, out var existingItem)
+                    && ReferenceEquals(existingItem.Channel, channel))
+                {
+                    existingItem.UpdateHistory(history);
+                    item = existingItem;
+                }
+                else
+                {
+                    item = new RecentChannelItemViewModel(channel, history);
+                }
+
+                if (!string.IsNullOrWhiteSpace(activeChannelId)
+                    && string.Equals(channel.Id, activeChannelId, StringComparison.OrdinalIgnoreCase))
+                {
+                    item.UpdateActiveSession(activeSessionElapsed);
+                }
+
+                return item;
+            })
+            .ToArray();
+
+        if (!string.IsNullOrWhiteSpace(activeChannelId)
+            && _activeRecentPlaybackStartedTimestamp != 0L)
+        {
+            LivePlaybackElapsedText = recentItems
+                .FirstOrDefault(item => string.Equals(item.Id, activeChannelId, StringComparison.OrdinalIgnoreCase))
+                ?.LastWatchedTimeRange
+                ?? "00:00";
+            LivePlaybackProgressPercent = Math.Clamp(activeSessionElapsed.TotalMinutes / 30d * 100d, 0d, 100d);
+        }
+        else
+        {
+            LivePlaybackElapsedText = "00:00";
+            LivePlaybackProgressPercent = 0d;
+        }
+
+        ResumeLastChannel = recentItems.FirstOrDefault();
+        var compactItems = recentItems.Skip(1).Take(3).ToArray();
+        if (CompactRecentChannels.Count != compactItems.Length
+            || !CompactRecentChannels.SequenceEqual(compactItems))
+        {
+            ReplaceCollection(CompactRecentChannels, compactItems);
+        }
+
+        OnPropertyChanged(nameof(HasRecentChannels));
+        OnPropertyChanged(nameof(HasCompactRecentChannels));
+        OnPropertyChanged(nameof(IsRecentChannelsEmptyStateVisible));
     }
 
     private async Task PersistStateAsync(string? forcedChannelId = null)
@@ -3954,10 +5928,16 @@ public sealed partial class MainShellViewModel : ObservableObject
             }
         }
 
-        var recentIds = RecentChannels
-            .Select(channel => channel.Id)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        var recentStateIsLoaded = sourceId.HasValue && _recentChannelsLoadedSourceId == sourceId;
+        var recentIds = recentStateIsLoaded
+            ? RecentChannels
+                .Select(channel => channel.Id)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray()
+            : GetRecentChannelIds(sourceId).ToArray();
+        var recentHistory = recentStateIsLoaded
+            ? OrderRecentHistory(recentIds, _recentChannelHistory)
+            : GetRecentChannelHistory(sourceId).ToArray();
 
         _sessionSnapshot = new UserSessionState(
             sourceId,
@@ -3973,9 +5953,26 @@ public sealed partial class MainShellViewModel : ObservableObject
             RecentChannelIdsBySource = sourceId.HasValue
                 ? UpdateSourceCollection(_sessionSnapshot.RecentChannelIdsBySource, sourceId.Value, recentIds)
                 : _sessionSnapshot.RecentChannelIdsBySource,
+            RecentChannelHistoryBySource = sourceId.HasValue
+                ? UpdateSourceCollection(_sessionSnapshot.RecentChannelHistoryBySource, sourceId.Value, recentHistory)
+                : _sessionSnapshot.RecentChannelHistoryBySource,
         };
 
         await _session.SaveAsync(_sessionSnapshot);
+    }
+
+    private static RecentChannelHistoryEntry[] OrderRecentHistory(
+        IEnumerable<string> recentIds,
+        IEnumerable<RecentChannelHistoryEntry> history)
+    {
+        var historyById = history
+            .GroupBy(entry => entry.ChannelId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+
+        return recentIds
+            .Where(historyById.ContainsKey)
+            .Select(id => historyById[id])
+            .ToArray();
     }
 
     private void ApplyCategoryFilter(string? filter)
@@ -3996,13 +5993,18 @@ public sealed partial class MainShellViewModel : ObservableObject
 
     private void ApplyChannelFilter(string? filter)
     {
+        var term = filter?.Trim();
+        var searchSourceId = SelectedSource?.Id;
         List<ChannelItemViewModel> source;
         lock (_syncRoot)
         {
-            source = [.. _allChannels];
+            source = !string.IsNullOrWhiteSpace(term)
+                     && searchSourceId.HasValue
+                     && _eventsMatchedSourceId == searchSourceId.Value
+                ? [.. _eventPlaylistChannels]
+                : [.. _allChannels];
         }
 
-        var term = filter?.Trim();
         var results = string.IsNullOrWhiteSpace(term)
             ? source
             : source.Where(channel =>
@@ -4045,13 +6047,25 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         var term = filter?.Trim();
+        var searchSource = SelectedSource;
+        if (!string.IsNullOrWhiteSpace(term) && searchSource is not null)
+        {
+            await EnsureEventPlaylistChannelsLoadedAsync(searchSource, cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        var searchSourceId = searchSource?.Id;
         var results = await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             List<ChannelItemViewModel> source;
             lock (_syncRoot)
             {
-                source = [.. _allChannels];
+                source = !string.IsNullOrWhiteSpace(term)
+                         && searchSourceId.HasValue
+                         && _eventsMatchedSourceId == searchSourceId.Value
+                    ? [.. _eventPlaylistChannels]
+                    : [.. _allChannels];
             }
 
             return string.IsNullOrWhiteSpace(term)
@@ -4067,7 +6081,8 @@ public sealed partial class MainShellViewModel : ObservableObject
                     .ToList();
         }, cancellationToken);
 
-        if (cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested
+            || (searchSourceId.HasValue && SelectedSource?.Id != searchSourceId.Value))
         {
             return;
         }
@@ -4088,7 +6103,133 @@ public sealed partial class MainShellViewModel : ObservableObject
         _movieFilterCts = new CancellationTokenSource();
         var cancellationToken = _movieFilterCts.Token;
 
-        _ = ExecuteAndReportAsync(() => ApplyMovieFilterAsync(filter, cancellationToken, debounce: true));
+        _ = ExecuteAndReportAsync(() => ApplyMovieFilterAsync(filter, cancellationToken));
+    }
+
+    private void BeginOnDemandSearchCacheWarmup(SourceItemViewModel source)
+    {
+        BeginMovieSearchCacheWarmup(source);
+        BeginSeriesSearchCacheWarmup(source);
+    }
+
+    private void BeginMovieSearchCacheWarmup(SourceItemViewModel source)
+    {
+        lock (_syncRoot)
+        {
+            if (_movieSearchCacheSourceId == source.Id
+                || _movieSearchCacheWarmupTask is { IsCompleted: false })
+            {
+                return;
+            }
+
+            _movieSearchCacheWarmupTask = Task.Run(() => WarmMovieSearchCacheAsync(source));
+        }
+    }
+
+    private async Task WarmMovieSearchCacheAsync(SourceItemViewModel source)
+    {
+        try
+        {
+            await EnsurePlaylistMovieSearchCacheAsync(source, CancellationToken.None);
+            _uiContext.Post(_ =>
+            {
+                if (SelectedSource?.Id == source.Id && !string.IsNullOrWhiteSpace(MovieSearchText))
+                {
+                    QueueMovieFilter(MovieSearchText);
+                }
+            }, null);
+        }
+        catch (OperationCanceledException)
+        {
+            // The active playlist changed before its background index completed.
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Background movie search index warmup failed for source {SourceId}", source.Id);
+        }
+    }
+
+    private void BeginSeriesSearchCacheWarmup(SourceItemViewModel source)
+    {
+        lock (_syncRoot)
+        {
+            if (_seriesSearchCacheSourceId == source.Id
+                || _seriesSearchCacheWarmupTask is { IsCompleted: false })
+            {
+                return;
+            }
+
+            _seriesSearchCacheWarmupTask = Task.Run(() => WarmSeriesSearchCacheAsync(source));
+        }
+    }
+
+    private async Task WarmSeriesSearchCacheAsync(SourceItemViewModel source)
+    {
+        try
+        {
+            await EnsurePlaylistSeriesSearchCacheAsync(source, CancellationToken.None);
+            _uiContext.Post(_ =>
+            {
+                if (SelectedSource?.Id == source.Id && !string.IsNullOrWhiteSpace(SeriesSearchText))
+                {
+                    QueueSeriesFilter(SeriesSearchText);
+                }
+            }, null);
+        }
+        catch (OperationCanceledException)
+        {
+            // The active playlist changed before its background index completed.
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Background series search index warmup failed for source {SourceId}", source.Id);
+        }
+    }
+
+    private async Task EnsurePlaylistMovieSearchCacheAsync(
+        SourceItemViewModel source,
+        CancellationToken cancellationToken)
+    {
+        await _movieSearchCacheLoadGate.WaitAsync(cancellationToken);
+        try
+        {
+            lock (_syncRoot)
+            {
+                if (_movieSearchCacheSourceId == source.Id)
+                {
+                    return;
+                }
+            }
+
+            _movieSearchCacheCts ??= new CancellationTokenSource();
+            var cacheCancellationToken = _movieSearchCacheCts.Token;
+            var movies = await _catalog.GetMoviesAsync(source.Id, null, cacheCancellationToken);
+            var watchlistIds = GetMovieWatchlistIds(source.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var movieItems = await Task.Run(() => movies
+                .Select(MovieItemViewModel.FromModel)
+                .Select(movie =>
+                {
+                    movie.IsInWatchlist = watchlistIds.Contains(movie.Id);
+                    return movie;
+                })
+                .ToList(), cacheCancellationToken);
+
+            if (cacheCancellationToken.IsCancellationRequested || SelectedSource?.Id != source.Id)
+            {
+                return;
+            }
+
+            lock (_syncRoot)
+            {
+                _playlistSearchMovies.Clear();
+                _playlistSearchMovies.AddRange(movieItems);
+                _movieSearchCacheSourceId = source.Id;
+            }
+        }
+        finally
+        {
+            _movieSearchCacheLoadGate.Release();
+        }
     }
 
     private async Task ApplyMovieFilterAsync(
@@ -4102,6 +6243,13 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         var term = filter?.Trim();
+        var searchSource = SelectedSource;
+        if (!string.IsNullOrWhiteSpace(term) && searchSource is not null)
+        {
+            BeginMovieSearchCacheWarmup(searchSource);
+        }
+
+        var searchSourceId = searchSource?.Id;
         var visibleLimit = VisibleMovieLimit;
         var (results, visible) = await Task.Run(() =>
         {
@@ -4109,7 +6257,11 @@ public sealed partial class MainShellViewModel : ObservableObject
             List<MovieItemViewModel> source;
             lock (_syncRoot)
             {
-                source = [.. _allMovies];
+                source = !string.IsNullOrWhiteSpace(term)
+                         && searchSourceId.HasValue
+                         && _movieSearchCacheSourceId == searchSourceId.Value
+                    ? [.. _playlistSearchMovies]
+                    : [.. _allMovies];
             }
 
             var filtered = string.IsNullOrWhiteSpace(term)
@@ -4123,7 +6275,8 @@ public sealed partial class MainShellViewModel : ObservableObject
             return (filtered, filtered.Take(visibleLimit).ToArray());
         }, cancellationToken);
 
-        if (cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested
+            || (searchSourceId.HasValue && SelectedSource?.Id != searchSourceId.Value))
         {
             return;
         }
@@ -4145,7 +6298,53 @@ public sealed partial class MainShellViewModel : ObservableObject
         _seriesFilterCts = new CancellationTokenSource();
         var cancellationToken = _seriesFilterCts.Token;
 
-        _ = ExecuteAndReportAsync(() => ApplySeriesFilterAsync(filter, cancellationToken, debounce: true));
+        _ = ExecuteAndReportAsync(() => ApplySeriesFilterAsync(filter, cancellationToken));
+    }
+
+    private async Task EnsurePlaylistSeriesSearchCacheAsync(
+        SourceItemViewModel source,
+        CancellationToken cancellationToken)
+    {
+        await _seriesSearchCacheLoadGate.WaitAsync(cancellationToken);
+        try
+        {
+            lock (_syncRoot)
+            {
+                if (_seriesSearchCacheSourceId == source.Id)
+                {
+                    return;
+                }
+            }
+
+            _seriesSearchCacheCts ??= new CancellationTokenSource();
+            var cacheCancellationToken = _seriesSearchCacheCts.Token;
+            var series = await _catalog.GetSeriesAsync(source.Id, null, cacheCancellationToken);
+            var watchlistIds = GetSeriesWatchlistIds(source.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var seriesItems = await Task.Run(() => series
+                .Select(SeriesItemViewModel.FromModel)
+                .Select(item =>
+                {
+                    item.IsInWatchlist = watchlistIds.Contains(item.Id);
+                    return item;
+                })
+                .ToList(), cacheCancellationToken);
+
+            if (cacheCancellationToken.IsCancellationRequested || SelectedSource?.Id != source.Id)
+            {
+                return;
+            }
+
+            lock (_syncRoot)
+            {
+                _playlistSearchSeries.Clear();
+                _playlistSearchSeries.AddRange(seriesItems);
+                _seriesSearchCacheSourceId = source.Id;
+            }
+        }
+        finally
+        {
+            _seriesSearchCacheLoadGate.Release();
+        }
     }
 
     private async Task ApplySeriesFilterAsync(
@@ -4159,6 +6358,13 @@ public sealed partial class MainShellViewModel : ObservableObject
         }
 
         var term = filter?.Trim();
+        var searchSource = SelectedSource;
+        if (!string.IsNullOrWhiteSpace(term) && searchSource is not null)
+        {
+            BeginSeriesSearchCacheWarmup(searchSource);
+        }
+
+        var searchSourceId = searchSource?.Id;
         var visibleLimit = VisibleSeriesLimit;
         var (results, visible) = await Task.Run(() =>
         {
@@ -4166,7 +6372,11 @@ public sealed partial class MainShellViewModel : ObservableObject
             List<SeriesItemViewModel> source;
             lock (_syncRoot)
             {
-                source = [.. _allSeries];
+                source = !string.IsNullOrWhiteSpace(term)
+                         && searchSourceId.HasValue
+                         && _seriesSearchCacheSourceId == searchSourceId.Value
+                    ? [.. _playlistSearchSeries]
+                    : [.. _allSeries];
             }
 
             var filtered = string.IsNullOrWhiteSpace(term)
@@ -4180,7 +6390,8 @@ public sealed partial class MainShellViewModel : ObservableObject
             return (filtered, filtered.Take(visibleLimit).ToArray());
         }, cancellationToken);
 
-        if (cancellationToken.IsCancellationRequested)
+        if (cancellationToken.IsCancellationRequested
+            || (searchSourceId.HasValue && SelectedSource?.Id != searchSourceId.Value))
         {
             return;
         }
@@ -4280,6 +6491,28 @@ public sealed partial class MainShellViewModel : ObservableObject
         ToggleSeriesWatchlistCommand.NotifyCanExecuteChanged();
     }
 
+    private void NotifyEventsStateChanged()
+    {
+        OnPropertyChanged(nameof(HasEventsError));
+        OnPropertyChanged(nameof(IsEventsEmpty));
+        OnPropertyChanged(nameof(HasSelectedSportsEvent));
+        OnPropertyChanged(nameof(IsEventsListVisible));
+        OnPropertyChanged(nameof(EventsEmptyTitle));
+        OnPropertyChanged(nameof(EventsMatchScopeText));
+        OnPropertyChanged(nameof(IsSelectedEventChannelsLoading));
+        OnPropertyChanged(nameof(IsEventChannelContentVisible));
+        OnPropertyChanged(nameof(IsEventCountrySelectorVisible));
+        OnPropertyChanged(nameof(IsNoMatchingEventChannelVisible));
+        RefreshEventsCommand.NotifyCanExecuteChanged();
+    }
+
+    private void NotifyQuickQualityStateChanged()
+    {
+        OnPropertyChanged(nameof(HasQuickQualityVariants));
+        OnPropertyChanged(nameof(HasMultipleQuickQualityVariants));
+        OnPropertyChanged(nameof(QuickQualityTitle));
+    }
+
     private void OnPlaybackStatusChanged(object? sender, PlayerStatus status)
     {
         _uiContext.Post(_ =>
@@ -4313,11 +6546,22 @@ public sealed partial class MainShellViewModel : ObservableObject
                 _lastLivePlaybackPlayingUtc = now;
                 ScheduleVisibleChannelsEpgRefreshAfterPlaybackStable();
                 IsLoading = true;
-                ShowCleanPlaybackLoadingSurface();
+                ShowPlayerSurfaceOverlay(string.Empty, string.Empty, showLoader: true, showText: false);
                 return;
             }
 
             _currentPlaybackState = status.State;
+            NotifyPlayerControlStateChanged();
+
+            if (status.State == PlaybackState.Playing)
+            {
+                RecordSuccessfulLivePlayback(now);
+            }
+            else if (status.State == PlaybackState.Paused
+                     && TouchActiveRecentChannel(now, endSession: false))
+            {
+                _ = ExecuteAndReportAsync(() => PersistStateAsync());
+            }
 
             if (status.State == PlaybackState.Playing
                 && _livePlaybackCts is not null
@@ -4379,6 +6623,34 @@ public sealed partial class MainShellViewModel : ObservableObject
         }, null);
     }
 
+    private void OnAudioStateChanged(object? sender, PlayerAudioState state)
+    {
+        _uiContext.Post(_ =>
+        {
+            _isApplyingExternalAudioState = true;
+            try
+            {
+                Volume = Math.Clamp(state.Volume, 0, 100);
+                IsMuted = state.IsMuted;
+            }
+            finally
+            {
+                _isApplyingExternalAudioState = false;
+            }
+        }, null);
+    }
+
+    private void NotifyPlayerControlStateChanged()
+    {
+        OnPropertyChanged(nameof(IsPlaybackPlaying));
+        OnPropertyChanged(nameof(IsPlayerPauseIndicatorVisible));
+        OnPropertyChanged(nameof(IsPlayerStopIndicatorVisible));
+        OnPropertyChanged(nameof(IsPlayerActionIndicatorVisible));
+        OnPropertyChanged(nameof(PlayPauseIconGlyph));
+        OnPropertyChanged(nameof(PlayPauseIconGeometry));
+        OnPropertyChanged(nameof(PlayPauseToolTip));
+    }
+
     private bool IsUnexpectedLivePlaybackTermination(PlayerStatus status)
         => _livePlaybackCts is not null
            && !_livePlaybackCts.IsCancellationRequested
@@ -4418,6 +6690,7 @@ public sealed partial class MainShellViewModel : ObservableObject
             status.ErrorCode ?? "none");
 
         _currentPlaybackState = PlaybackState.Connecting;
+        NotifyPlayerControlStateChanged();
         if (_livePlaybackRecoveryAttempt >= LivePlaybackNoSignalAttempt)
         {
             PlaybackStatusText = L("NoSignal");
@@ -4570,7 +6843,15 @@ public sealed partial class MainShellViewModel : ObservableObject
                 ShowCleanPlaybackLoadingSurface();
                 break;
             case PlaybackState.Buffering:
-                ShowCleanPlaybackLoadingSurface();
+                if (IsNativeVideoSurfaceVisible)
+                {
+                    ShowFullscreenPlaybackLoading();
+                    ShowPlayerSurfaceOverlay(string.Empty, string.Empty, showLoader: true, showText: false);
+                }
+                else
+                {
+                    ShowCleanPlaybackLoadingSurface();
+                }
                 break;
             case PlaybackState.Playing:
             case PlaybackState.Paused:
@@ -4581,7 +6862,7 @@ public sealed partial class MainShellViewModel : ObservableObject
                 break;
             case PlaybackState.Stopped:
                 IsNativeVideoSurfaceVisible = false;
-                ShowPlayerSurfaceOverlay(L("PlaybackStopped"), L("SelectChannelToContinue"));
+                ShowPlayerSurfaceOverlay(string.Empty, string.Empty, showText: false);
                 break;
             case PlaybackState.Failed:
                 IsNativeVideoSurfaceVisible = false;
@@ -4613,6 +6894,7 @@ public sealed partial class MainShellViewModel : ObservableObject
         bool showText = true)
     {
         PlayerSurfaceOverlayTitle = title;
+        OnPropertyChanged(nameof(IsPlayerSurfaceReady));
         PlayerSurfaceOverlayMessage = message;
         IsPlayerSurfaceLoadingVisible = showLoader;
         IsPlayerSurfaceTextVisible = showText;
@@ -4622,6 +6904,19 @@ public sealed partial class MainShellViewModel : ObservableObject
     partial void OnPlaybackStatusTextChanged(string value)
     {
         OnPropertyChanged(nameof(HasPlaybackStatusText));
+        OnPropertyChanged(nameof(IsNoSignalStatusVisible));
+        OnPropertyChanged(nameof(IsFullscreenNoSignalVisible));
+        OnPropertyChanged(nameof(IsFullscreenHeaderTitleVisible));
+    }
+
+    partial void OnIsFullscreenPlaybackLoadingVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsFullscreenNoSignalVisible));
+    }
+
+    partial void OnIsNativeVideoSurfaceVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(IsFullscreenNoSignalVisible));
     }
 
     partial void OnNotificationMessageChanged(string value)
@@ -4640,6 +6935,7 @@ public sealed partial class MainShellViewModel : ObservableObject
     partial void OnIsOnDemandPlaybackActiveChanged(bool value)
     {
         OnPropertyChanged(nameof(IsOnDemandPlaybackControlVisible));
+        OnPropertyChanged(nameof(IsLivePlaybackActive));
         ResumeCommand.NotifyCanExecuteChanged();
         SeekBackwardCommand.NotifyCanExecuteChanged();
         SeekForwardCommand.NotifyCanExecuteChanged();
@@ -4697,17 +6993,141 @@ public sealed partial class MainShellViewModel : ObservableObject
             SeriesErrorMessage = localization.Relocalize(SeriesErrorMessage);
             SeriesDetailsErrorMessage = localization.Relocalize(SeriesDetailsErrorMessage);
             ImportFeedback = localization.Relocalize(ImportFeedback);
+            StartupLoadingMessage = localization.Relocalize(StartupLoadingMessage);
 
             OnPropertyChanged(nameof(MuteButtonText));
+            OnPropertyChanged(nameof(PlayPauseToolTip));
+            OnPropertyChanged(nameof(VolumeToolTip));
             OnPropertyChanged(nameof(FavoritesCategorySummary));
+            OnPropertyChanged(nameof(FavoriteChannelsCount));
             OnPropertyChanged(nameof(ImportTitle));
             OnPropertyChanged(nameof(SubmitImportButtonText));
             OnPropertyChanged(nameof(PlaylistInputLabel));
             OnPropertyChanged(nameof(PlaylistInputHint));
+            OnPropertyChanged(nameof(QuickQualityTitle));
+
+            foreach (var source in Sources)
+            {
+                source.RefreshLocalizedText();
+            }
+
+            MovieCategories.FirstOrDefault(category => category.Id == AllMoviesCategoryId)
+                ?.RefreshLocalizedName("AllMovies");
+            SeriesCategories.FirstOrDefault(category => category.Id == AllSeriesCategoryId)
+                ?.RefreshLocalizedName("AllSeries");
+
+            foreach (var channel in VisibleChannels
+                         .Concat(RecentChannels)
+                         .Append(SelectedChannel)
+                         .Where(channel => channel is not null)
+                         .Cast<ChannelItemViewModel>()
+                         .DistinctBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase))
+            {
+                channel.RefreshLocalizedText();
+            }
+
+            foreach (var variant in QuickQualityVariants)
+            {
+                variant.RefreshLocalizedText();
+            }
+
+            foreach (var recent in CompactRecentChannels.Append(ResumeLastChannel)
+                         .Where(recent => recent is not null)
+                         .Cast<RecentChannelItemViewModel>()
+                         .DistinctBy(recent => recent.Id, StringComparer.OrdinalIgnoreCase))
+            {
+                recent.RefreshLocalizedText();
+            }
+
+            List<MovieItemViewModel> movies;
+            List<SeriesItemViewModel> series;
+            lock (_syncRoot)
+            {
+                movies = _allMovies.Concat(_playlistSearchMovies).Concat(VisibleMovies)
+                    .DistinctBy(movie => movie.Id, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                series = _allSeries.Concat(_playlistSearchSeries).Concat(VisibleSeries)
+                    .DistinctBy(item => item.Id, StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+            }
+
+            foreach (var movie in movies)
+            {
+                movie.RefreshLocalizedText();
+            }
+
+            foreach (var item in series)
+            {
+                item.RefreshLocalizedText();
+            }
+
+            SelectedMovieDetails?.RefreshLocalizedText();
+            SelectedSeriesDetails?.RefreshLocalizedText();
+            foreach (var item in ContinueWatchingMovies.Concat(ContinueWatchingSeries))
+            {
+                item.RefreshLocalizedText();
+            }
+
             NotifyMovieStateChanged();
             NotifySeriesStateChanged();
+            RefreshEventSportCategoryLabels();
+            RefreshEventFilterLabels();
+            RefreshEventItems();
+            NotifyEventsStateChanged();
         }, null);
     }
+
+    private static bool IsTodayOrTomorrow(SportsEventModel sportsEvent)
+    {
+        var localDate = sportsEvent.StartUtc.ToLocalTime().Date;
+        var today = DateTimeOffset.Now.Date;
+        return localDate == today || localDate == today.AddDays(1);
+    }
+
+    private static bool IsEventToday(SportsEventModel sportsEvent)
+    {
+        var localDate = sportsEvent.StartUtc.ToLocalTime().Date;
+        var today = DateTimeOffset.Now.Date;
+        return localDate == today;
+    }
+
+    private static bool IsEventTomorrow(SportsEventModel sportsEvent)
+    {
+        var localDate = sportsEvent.StartUtc.ToLocalTime().Date;
+        var today = DateTimeOffset.Now.Date;
+        return localDate == today.AddDays(1);
+    }
+
+    private static bool IsEventLiveOrSoon(SportsEventModel sportsEvent)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var start = sportsEvent.StartUtc;
+        return now >= start.AddHours(-2) && now <= start.AddHours(3);
+    }
+
+    private static string FormatEventTime(DateTimeOffset startUtc)
+    {
+        var local = startUtc.ToLocalTime();
+        var today = DateTimeOffset.Now.Date;
+        var day = local.Date == today
+            ? L("Today")
+            : local.Date == today.AddDays(1)
+                ? L("Tomorrow")
+                : local.ToString("d", CultureInfo.CurrentUICulture);
+        return $"{day} - {local.ToString("t", CultureInfo.CurrentUICulture)}";
+    }
+
+    private static string SportLabel(string sport)
+        => sport.ToLowerInvariant() switch
+        {
+            "football" => L("SportFootball"),
+            "basketball" => L("SportBasketball"),
+            "tennis" => L("SportTennis"),
+            "formula1" => L("SportFormulaOne"),
+            "cricket" => L("SportCricket"),
+            "rugby" => L("SportRugby"),
+            _ => sport,
+        };
 
     private static string L(string key)
         => UiLocalization.Current.GetString(key);

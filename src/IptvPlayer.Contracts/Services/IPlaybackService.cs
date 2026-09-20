@@ -6,7 +6,13 @@ public interface IPlaybackService : IAsyncDisposable
 {
     event EventHandler<PlayerStatus>? StatusChanged;
 
+    event EventHandler<PlayerAudioState>? AudioStateChanged;
+
     bool IsPlaying { get; }
+
+    int Volume { get; }
+
+    bool IsMuted { get; }
 
     Task InitializeAsync(CancellationToken cancellationToken = default);
 
@@ -20,6 +26,8 @@ public interface IPlaybackService : IAsyncDisposable
     Task StopAsync(CancellationToken cancellationToken = default);
 
     Task SetMutedAsync(bool muted, CancellationToken cancellationToken = default);
+
+    Task SetVolumeAsync(int volume, CancellationToken cancellationToken = default);
 
     Task<PlaybackProgress> GetProgressAsync(CancellationToken cancellationToken = default);
 

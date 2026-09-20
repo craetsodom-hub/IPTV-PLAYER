@@ -17,6 +17,7 @@
             <Setter Property="Background" Value="{DynamicResource Brush.SurfaceMuted}" />
             <Setter Property="BorderBrush" Value="{DynamicResource Brush.CardBorder}" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Tag" Value="False" />
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -27,7 +28,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="7"
+                                CornerRadius="{DynamicResource Shape.CornerRadius.7}"
                                 SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
@@ -38,12 +39,16 @@
                                 <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Brush.AccentHover}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#1A2E48" />
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource Theme.Brush.1A2E48}" />
                                 <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Brush.AccentPressed}" />
                             </Trigger>
                             <Trigger Property="IsKeyboardFocused" Value="True">
                                 <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Brush.Accent}" />
                             </Trigger>
+                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource Brush.SelectionBackground}" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Brush.AccentHover}" />
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -68,13 +73,13 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="7">
+                                CornerRadius="{DynamicResource Shape.CornerRadius.7}">
                             <ContentPresenter />
                         </Border>
                         <ControlTemplate.Triggers>
                             <DataTrigger Binding="{Binding CheckmarkVisibility}" Value="Visible">
-                                <Setter TargetName="RowBorder" Property="Background" Value="#182D49" />
-                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="#345B82" />
+                                <Setter TargetName="RowBorder" Property="Background" Value="{DynamicResource Theme.Brush.182D49}" />
+                                <Setter TargetName="RowBorder" Property="BorderBrush" Value="{DynamicResource Theme.Brush.345B82}" />
                             </DataTrigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="RowBorder" Property="Background" Value="{DynamicResource Brush.SelectionBackground}" />
@@ -97,7 +102,7 @@
                 Click="LanguageButton_OnClick">
             <Border BorderBrush="{DynamicResource Brush.InputBorder}"
                     BorderThickness="0.6"
-                    CornerRadius="2">
+                    CornerRadius="{DynamicResource Shape.CornerRadius.2}">
                 <Image Width="20"
                        Height="13"
                        Stretch="Fill"
@@ -107,36 +112,30 @@
 
         <Popup x:Name="LanguagePopup"
                PlacementTarget="{Binding ElementName=LanguageButton}"
-               Placement="Bottom"
-               VerticalOffset="6"
+               Placement="Custom"
+               CustomPopupPlacementCallback="LanguagePopup_OnCustomPlacement"
                FlowDirection="{Binding FlowDirection, ElementName=Root}"
                AllowsTransparency="True"
                PopupAnimation="Fade"
-               StaysOpen="False"
-               Opened="LanguagePopup_OnOpened">
-            <Popup.Style>
-                <Style TargetType="Popup">
-                    <Setter Property="HorizontalOffset" Value="-214" />
-                    <Style.Triggers>
-                        <Trigger Property="FlowDirection" Value="RightToLeft">
-                            <Setter Property="HorizontalOffset" Value="0" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Popup.Style>
-            <Border Width="244"
-                    MaxHeight="414"
-                    Padding="8"
-                    Background="{DynamicResource Brush.CardBackground}"
-                    BorderBrush="{DynamicResource Brush.InputBorder}"
-                    BorderThickness="1"
-                    CornerRadius="10">
-                <Border.Effect>
-                    <DropShadowEffect Color="#000000"
+               StaysOpen="True"
+               Opened="LanguagePopup_OnOpened"
+               Closed="LanguagePopup_OnClosed">
+            <Grid Width="244"
+                  MaxHeight="423">
+                <Grid.Effect>
+                    <DropShadowEffect Color="{DynamicResource Theme.Color.000000}"
                                       BlurRadius="14"
                                       ShadowDepth="4"
-                                      Opacity="0.48" />
-                </Border.Effect>
+                                      Opacity="{DynamicResource Design.Opacity.0_48}" />
+                </Grid.Effect>
+
+                <Border Margin="0,9,0,0"
+                        MaxHeight="414"
+                        Padding="8"
+                        Background="{DynamicResource Brush.CardBackground}"
+                        BorderBrush="{DynamicResource Brush.InputBorder}"
+                        BorderThickness="1"
+                        CornerRadius="{DynamicResource Shape.CornerRadius.10}">
 
                 <Grid>
                     <Grid.RowDefinitions>
@@ -148,11 +147,11 @@
                             Margin="0,0,0,8"
                             Padding="11,0,10,0"
                             BorderThickness="1"
-                            CornerRadius="18">
+                            CornerRadius="{DynamicResource Shape.CornerRadius.18}">
                         <Border.Style>
                             <Style TargetType="Border">
-                                <Setter Property="Background" Value="#111F35" />
-                                <Setter Property="BorderBrush" Value="#456A96" />
+                                <Setter Property="Background" Value="{DynamicResource Theme.Brush.111F35}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource Theme.Brush.456A96}" />
                                 <Style.Triggers>
                                     <Trigger Property="IsMouseOver" Value="True">
                                         <Setter Property="BorderBrush" Value="{DynamicResource Brush.AccentHover}" />
@@ -224,6 +223,10 @@
                              BorderThickness="0"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling"
+                             VirtualizingPanel.ScrollUnit="Pixel"
+                             ScrollViewer.CanContentScroll="True"
                              ItemContainerStyle="{StaticResource LanguageRowStyle}"
                              ItemsSource="{Binding FilteredLanguages, ElementName=Root}"
                              SelectionChanged="LanguageList_OnSelectionChanged">
@@ -242,7 +245,7 @@
                                             VerticalAlignment="Center"
                                             BorderBrush="{DynamicResource Brush.InputBorder}"
                                             BorderThickness="0.6"
-                                            CornerRadius="2">
+                                            CornerRadius="{DynamicResource Shape.CornerRadius.2}">
                                         <Image Stretch="Fill"
                                                Source="{Binding FlagCode, Converter={StaticResource FlagConverter}}" />
                                     </Border>
@@ -271,8 +274,26 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                </Grid>
-            </Border>
+                    </Grid>
+                </Border>
+
+                <Canvas Width="20"
+                        Height="11"
+                        Margin="0,0,5,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        IsHitTestVisible="False"
+                        Panel.ZIndex="2">
+                    <Polygon Points="0,10 10,0 20,10 20,11 0,11"
+                             Fill="{DynamicResource Brush.CardBackground}" />
+                    <Path Data="M0,10 L10,0 L20,10"
+                          Stroke="{DynamicResource Brush.InputBorder}"
+                          StrokeThickness="1"
+                          StrokeStartLineCap="Square"
+                          StrokeEndLineCap="Square"
+                          StrokeLineJoin="Miter" />
+                </Canvas>
+            </Grid>
         </Popup>
     </Grid>
 </UserControl>

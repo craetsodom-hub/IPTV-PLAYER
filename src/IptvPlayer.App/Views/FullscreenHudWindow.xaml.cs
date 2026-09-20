@@ -1,8 +1,5 @@
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace IptvPlayer.App.Views;
 
@@ -18,82 +15,63 @@ public partial class FullscreenHudWindow : Window
 
     public event EventHandler? ExitRequested;
 
+    public event EventHandler? ScreenshotRequested;
+
+    public event EventHandler? RecordRequested;
+
+    public event EventHandler? DisplayModeRequested;
+
+    public bool IsPointerOverControls
+        => FullscreenPlayerControlBar.IsMouseOver || FullscreenPlayerControlBar.IsMouseCaptureWithin;
+
     public void SetChromeVisible(bool visible)
     {
-        SetElementVisible(TopChrome, visible);
         SetElementVisible(BottomChrome, visible);
+        Cursor = visible ? Cursors.Arrow : Cursors.None;
+        ForceCursor = true;
     }
 
     private static void SetElementVisible(UIElement element, bool visible)
     {
-        element.Visibility = Visibility.Visible;
         element.IsHitTestVisible = visible;
-
-        var animation = new DoubleAnimation
-        {
-            To = visible ? 1d : 0d,
-            Duration = visible ? TimeSpan.FromMilliseconds(180) : TimeSpan.FromMilliseconds(320),
-            EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
-        };
-
-        element.BeginAnimation(OpacityProperty, animation);
+        element.BeginAnimation(OpacityProperty, null);
+        element.Opacity = visible ? 1d : 0d;
     }
 
     private void FullscreenHudWindow_OnMouseMove(object sender, MouseEventArgs e)
         => ActivityDetected?.Invoke(this, EventArgs.Empty);
 
-    private void BackButton_OnClick(object sender, RoutedEventArgs e)
+    public void SetRecordingState(bool isRecording)
+        => FullscreenPlayerControlBar.IsRecording = isRecording;
+
+    public void SetDisplayModeState(bool isStretch)
+        => FullscreenPlayerControlBar.IsStretchDisplayMode = isStretch;
+
+    private void PlayerControlBar_OnActivityDetected(object? sender, EventArgs e)
+        => ActivityDetected?.Invoke(this, EventArgs.Empty);
+
+    private void PlayerControlBar_OnScreenshotRequested(object? sender, EventArgs e)
+    {
+        ActivityDetected?.Invoke(this, EventArgs.Empty);
+        ScreenshotRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayerControlBar_OnRecordRequested(object? sender, EventArgs e)
+    {
+        ActivityDetected?.Invoke(this, EventArgs.Empty);
+        RecordRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayerControlBar_OnDisplayModeRequested(object? sender, EventArgs e)
+    {
+        ActivityDetected?.Invoke(this, EventArgs.Empty);
+        DisplayModeRequested?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayerControlBar_OnFullscreenRequested(object? sender, EventArgs e)
     {
         ActivityDetected?.Invoke(this, EventArgs.Empty);
         ExitRequested?.Invoke(this, EventArgs.Empty);
-        e.Handled = true;
-    }
-
-    private void VodTimelineSlider_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (sender is not Slider slider || !slider.IsEnabled || slider.ActualWidth <= 0d)
-        {
-            return;
-        }
-
-        if (e.OriginalSource is DependencyObject source && FindVisualParent<Thumb>(source) is not null)
-        {
-            return;
-        }
-
-        var ratio = GetTimelineSeekRatio(slider, e);
-        slider.Value = slider.Minimum + ((slider.Maximum - slider.Minimum) * ratio);
-        ActivityDetected?.Invoke(this, EventArgs.Empty);
-        e.Handled = true;
-    }
-
-    private static double GetTimelineSeekRatio(Slider slider, MouseButtonEventArgs e)
-    {
-        slider.ApplyTemplate();
-
-        if (slider.Template.FindName("PART_Track", slider) is Track track && track.ActualWidth > 0d)
-        {
-            return Math.Clamp(e.GetPosition(track).X / track.ActualWidth, 0d, 1d);
-        }
-
-        return Math.Clamp(e.GetPosition(slider).X / slider.ActualWidth, 0d, 1d);
-    }
-
-    private static T? FindVisualParent<T>(DependencyObject child)
-        where T : DependencyObject
-    {
-        var parent = System.Windows.Media.VisualTreeHelper.GetParent(child);
-        while (parent is not null)
-        {
-            if (parent is T typedParent)
-            {
-                return typedParent;
-            }
-
-            parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
-        }
-
-        return null;
     }
 
     private void FullscreenHudWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)

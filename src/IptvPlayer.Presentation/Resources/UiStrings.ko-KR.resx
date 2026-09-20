@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 에피소드 1개</value></data>
   <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - 에피소드 {1}개</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>해당 없음</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>오늘의 이벤트</value></data>
+  <data name="Today" xml:space="preserve"><value>오늘</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>내일</value></data>
+  <data name="Refresh" xml:space="preserve"><value>새로 고침</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>나중에 다시 시도하세요.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>이벤트 불러오는 중...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>재생목록을 불러오는 중...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>재생목록 새로고침 중...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>재생목록을 새로고침하지 못했습니다.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>재생목록 새로고침</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>재생목록을 성공적으로 새로고침했습니다.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>이벤트를 사용할 수 없음</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>이벤트를 새로 고칠 수 없습니다.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>오늘이나 내일 주요 이벤트가 없습니다</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>이벤트는 자동으로 업데이트됩니다</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>이벤트를 선택하면 재생 목록에서 일치하는 채널을 볼 수 있습니다.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>라이브 TV 카테고리를 불러오면 재생 목록에서 일치하는 채널을 볼 수 있습니다.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>축구</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>농구</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>테니스</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>포뮬러 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>크리켓</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>럭비</value></data>
+  <data name="Appearance" xml:space="preserve"><value>모양</value></data>
+  <data name="Design" xml:space="preserve"><value>스타일</value></data>
+  <data name="Color" xml:space="preserve"><value>색상</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>색상 테마</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>재생 위치</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>라이브 진행률</value></data>
+  <data name="Volume" xml:space="preserve"><value>볼륨</value></data>
+  <data name="Live" xml:space="preserve"><value>라이브</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>스크린샷</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>플레이어 작업</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>플레이어 컨트롤</value></data>
+  <data name="Account" xml:space="preserve"><value>계정</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>재생 목록 링크</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>재생 목록 파일</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>직접 재생</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>이 국가와 일치하는 채널이 없습니다</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>동영상 플레이어</value></data>
+  <data name="Now" xml:space="preserve"><value>현재</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>최근 채널</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>마지막 항목 계속</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>채널 계속 보기</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>최근 채널이 아직 없습니다</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>스크린샷 저장됨</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>녹화 중지</value></data>
+  <data name="Record" xml:space="preserve"><value>녹화</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>화면 채우기</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>화면에 맞추기</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>전체 화면 종료</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>스크린샷을 찍기 전에 라이브 채널을 재생하세요.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>스크린샷 저장</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>PNG 이미지 (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>스크린샷을 저장할 수 없습니다.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>녹화하기 전에 라이브 채널을 재생하세요.</value></data>
+  <data name="Recording" xml:space="preserve"><value>녹화</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>녹화 저장</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>MP4 동영상 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>녹화를 시작할 수 없습니다.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>오류로 인해 녹화가 중지되었습니다.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>녹화 저장됨</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>화질 옵션 - 가장 잘 맞음</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>화질 옵션 - 가장 잘 맞음({0}만)</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>{0}분 남음</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>{0}시간 남음</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>{0}시간 {1:00}분 남음</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0}분</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0}시간 {1:00}분</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>낮음</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>높음</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>원본</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>낮은 화질</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>높은 화질</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>효율적인 동영상</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>표준 동영상</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>최신 동영상</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>제공업체에서</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>정확한 버전</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>최근 시청</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>에피소드 {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>활성</value></data>
+  <data name="Available" xml:space="preserve"><value>사용 가능</value></data>
+  <data name="Disabled" xml:space="preserve"><value>사용 안 함</value></data>
+  <data name="Blocked" xml:space="preserve"><value>차단됨</value></data>
+  <data name="Trial" xml:space="preserve"><value>체험판</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>둥근 모서리</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>직선 모서리</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>미드나이트 블루</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>에메랄드 나이트</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>딥 틸</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>시네마 네이비</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>아크틱 아이스</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>포레스트 모스</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>슬레이트 시안</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} 대 {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>전 세계</value></data>
 </root>

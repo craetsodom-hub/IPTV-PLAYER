@@ -5,6 +5,7 @@ dist/
 /dist/
 /artifacts/
 /qa-artifacts/
+/releases/
 /logs/
 /_msixinspect/
 /_storecheck*/
@@ -69,6 +70,7 @@ website/dist/
 appsettings.Development.json
 
 # Local scratch files in this workspace
+/.kilo/
 /.codex-chrome-profile/
 /whoplaysnow - Copy/
 /multi.txt
@@ -77,3 +79,19 @@ appsettings.Development.json
 /test-permission.txt
 /appsettings.json
 /whose-iptv.logo.png
+
+# IDE & Editor directories
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Temporary and test files
+*.tmp
+*.bak
+*.swp
+[Tt]est[Rr]esults/

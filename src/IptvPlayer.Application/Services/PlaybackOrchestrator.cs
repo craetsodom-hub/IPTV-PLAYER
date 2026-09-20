@@ -17,9 +17,16 @@ public sealed class PlaybackOrchestrator
         _playbackService = playbackService;
         _logger = logger;
         _playbackService.StatusChanged += (_, status) => StatusChanged?.Invoke(this, status);
+        _playbackService.AudioStateChanged += (_, state) => AudioStateChanged?.Invoke(this, state);
     }
 
     public event EventHandler<PlayerStatus>? StatusChanged;
+
+    public event EventHandler<PlayerAudioState>? AudioStateChanged;
+
+    public int Volume => _playbackService.Volume;
+
+    public bool IsMuted => _playbackService.IsMuted;
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
         => _playbackService.InitializeAsync(cancellationToken);
@@ -35,6 +42,9 @@ public sealed class PlaybackOrchestrator
 
     public Task SetMutedAsync(bool muted, CancellationToken cancellationToken = default)
         => _playbackService.SetMutedAsync(muted, cancellationToken);
+
+    public Task SetVolumeAsync(int volume, CancellationToken cancellationToken = default)
+        => _playbackService.SetVolumeAsync(volume, cancellationToken);
 
     public Task<PlaybackProgress> GetProgressAsync(CancellationToken cancellationToken = default)
         => _playbackService.GetProgressAsync(cancellationToken);

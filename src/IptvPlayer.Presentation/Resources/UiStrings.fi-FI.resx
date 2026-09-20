@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>Ei tarjota</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>Ei käytössä</value></data>
   <data name="Expired" xml:space="preserve"><value>Vanhentunut</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Tämän päivän tapahtumat</value></data>
+  <data name="Today" xml:space="preserve"><value>Tänään</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>Huomenna</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Päivitä</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Yritä myöhemmin uudelleen.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Ladataan tapahtumia...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Ladataan soittolistaasi...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Päivitetään soittolistaa...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Soittolistan päivitys epäonnistui.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Päivitä soittolista</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Soittolista päivitetty onnistuneesti.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Tapahtumat eivät ole saatavilla</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Tapahtumia ei voitu päivittää.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Ei suuria tapahtumia tänään tai huomenna</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Tapahtumat päivittyvät automaattisesti</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Valitse tapahtuma nähdäksesi soittolistasi vastaavat kanavat.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Lataa Live TV -luokka nähdäksesi soittolistasi vastaavat kanavat.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Jalkapallo</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Koripallo</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Tennis</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Formula 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Kriketti</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Rugby</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Ulkoasu</value></data>
+  <data name="Design" xml:space="preserve"><value>Tyyli</value></data>
+  <data name="Color" xml:space="preserve"><value>Väri</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Väriteema</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Toistokohta</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Suoran lähetyksen eteneminen</value></data>
+  <data name="Volume" xml:space="preserve"><value>Äänenvoimakkuus</value></data>
+  <data name="Live" xml:space="preserve"><value>SUORA</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Kuvakaappaus</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Soittimen toiminto</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Soittimen ohjaimet</value></data>
+  <data name="Account" xml:space="preserve"><value>Tili</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Soittolistan linkki</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>Soittolistatiedosto</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Suora lähetys</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Tälle maalle ei löytynyt vastaavaa kanavaa</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Videosoitin</value></data>
+  <data name="Now" xml:space="preserve"><value>NYT</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Viime kanavat</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Jatka viimeisintä</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Jatka kanavaa</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Ei vielä viime kanavia</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Kuvakaappaus tallennettu</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Lopeta tallennus</value></data>
+  <data name="Record" xml:space="preserve"><value>Tallenna</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Täytä näyttö</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Sovita näyttöön</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Poistu koko näytöstä</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Toista suoraa kanavaa ennen kuvakaappauksen ottamista.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Tallenna kuvakaappaus</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>PNG-kuva (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Kuvakaappausta ei voitu tallentaa.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Toista suoraa kanavaa ennen tallentamista.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Tallennus</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Tallenna tallenne</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>MP4-video (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Tallennusta ei voitu aloittaa.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>Tallennus pysähtyi virheen vuoksi.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Tallenne tallennettu</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Laatuvaihtoehdot - paras osuma</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Laatuvaihtoehdot - paras osuma (vain {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>{0} min jäljellä</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>{0} t jäljellä</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>{0} t {1:00} min jäljellä</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} min</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} t {1:00} min</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Matala</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Korkea</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Alkuperäinen</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Heikompi laatu</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Parempi laatu</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Tehokas video</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Tavallinen video</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Uudempi video</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Palveluntarjoajalta</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Tarkka versio</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Katsottu äskettäin</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Jakso {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiivinen</value></data>
+  <data name="Available" xml:space="preserve"><value>Saatavilla</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Poistettu käytöstä</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Estetty</value></data>
+  <data name="Trial" xml:space="preserve"><value>Kokeilu</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Pyöristetty</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Terävät reunat</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Keskiyönsininen</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Smaragdiyö</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Tumma sinivihreä</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Elokuvansininen</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Arktinen jää</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Metsäsammal</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Liuskesyaani</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} vastaan {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>Maailmanlaajuinen</value></data>
 </root>

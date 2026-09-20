@@ -27,6 +27,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\WhoseIptv.ico" />
+    <Resource Include="Assets\WhoseIptv.ico" />
+    <None Remove="Assets\WhoseIptvLogo.png" />
+    <Resource Include="Assets\WhoseIptvLogo.png" />
+    <None Remove="Assets\WhoseIptv-256.png" />
+    <Resource Include="Assets\WhoseIptv-256.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>

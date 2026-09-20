@@ -11,6 +11,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<SourceCatalogService>();
         services.AddSingleton<ISourceCatalogService>(provider => provider.GetRequiredService<SourceCatalogService>());
         services.AddSingleton<ISourceImportService>(provider => provider.GetRequiredService<SourceCatalogService>());
+        services.AddSingleton<ISportsEventService, SportsEventService>();
         services.AddSingleton<IUserStateStore, JsonUserStateStore>();
         services.AddSingleton<IOnDemandStateStore, JsonOnDemandStateStore>();
         return services;

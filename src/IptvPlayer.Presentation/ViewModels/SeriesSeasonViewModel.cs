@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Models;
 using IptvPlayer.Presentation.Localization;
 
 namespace IptvPlayer.Presentation.ViewModels;
 
-public sealed class SeriesSeasonViewModel
+public sealed class SeriesSeasonViewModel : ObservableObject
 {
     private SeriesSeasonViewModel(
         int seasonNumber,
@@ -24,6 +25,15 @@ public sealed class SeriesSeasonViewModel
     public string Header => Episodes.Count == 1
         ? UiLocalization.Current.Format("OneEpisodeFormat", Name)
         : UiLocalization.Current.Format("EpisodeCountFormat", Name, Episodes.Count);
+
+    public void RefreshLocalizedText()
+    {
+        OnPropertyChanged(nameof(Header));
+        foreach (var episode in Episodes)
+        {
+            episode.RefreshLocalizedText();
+        }
+    }
 
     public static SeriesSeasonViewModel FromModel(SeriesSeasonModel model)
         => new(

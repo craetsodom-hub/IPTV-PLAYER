@@ -4,4 +4,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+
+  <!-- Keep all source-build outputs distinct from the approved release. -->
+  <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
+    <DevelopmentArtifactsRoot>$(MSBuildThisFileDirectory)artifacts\development\</DevelopmentArtifactsRoot>
+    <BaseOutputPath>$(DevelopmentArtifactsRoot)bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(DevelopmentArtifactsRoot)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
 </Project>

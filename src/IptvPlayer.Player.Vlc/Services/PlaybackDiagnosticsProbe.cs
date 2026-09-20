@@ -75,6 +75,11 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
             Enabled && NativeVerbosity > 0 ? $"--verbose={NativeVerbosity}" : "--quiet",
             $"--network-caching={networkCachingMs}",
             $"--live-caching={liveCachingMs}",
+            $"--file-caching={networkCachingMs}",
+            "--avcodec-hw=d3d11va",
+            "--direct3d11-hw-blending",
+            "--deinterlace=-1",
+            "--deinterlace-mode=auto",
         };
 
         return arguments;

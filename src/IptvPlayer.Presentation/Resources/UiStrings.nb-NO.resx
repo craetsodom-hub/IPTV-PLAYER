@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>Ikke gitt</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
   <data name="Expired" xml:space="preserve"><value>Utløpt</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Dagens hendelser</value></data>
+  <data name="Today" xml:space="preserve"><value>I dag</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>I morgen</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Oppdater</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Prøv igjen senere.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Laster hendelser...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Laster inn spillelisten din...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Oppdaterer spilleliste...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Kunne ikke oppdatere spillelisten.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Oppdater spilleliste</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Spillelisten ble oppdatert.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Hendelser er ikke tilgjengelige</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Hendelsene kunne ikke oppdateres.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Ingen store hendelser i dag eller i morgen</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Hendelser oppdateres automatisk</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Velg en hendelse for å se samsvarende kanaler fra spillelisten din.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Last inn en Live TV-kategori for å se samsvarende kanaler fra spillelisten din.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Fotball</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Basketball</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Tennis</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Formel 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Cricket</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Rugby</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Utseende</value></data>
+  <data name="Design" xml:space="preserve"><value>Design</value></data>
+  <data name="Color" xml:space="preserve"><value>Farge</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Fargetema</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Avspillingsposisjon</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Live-fremdrift</value></data>
+  <data name="Volume" xml:space="preserve"><value>Volum</value></data>
+  <data name="Live" xml:space="preserve"><value>DIREKTE</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Skjermbilde</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Spillerhandling</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Spillerkontroller</value></data>
+  <data name="Account" xml:space="preserve"><value>Konto</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Spillelistelenke</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>Spillelistefil</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Direktestrøm</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Ingen samsvarende kanal for dette landet</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Videospiller</value></data>
+  <data name="Now" xml:space="preserve"><value>NÅ</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Nylige kanaler</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Fortsett den siste</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Fortsett kanal</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Ingen nylige kanaler ennå</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Skjermbilde lagret</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Stopp opptak</value></data>
+  <data name="Record" xml:space="preserve"><value>Ta opp</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Fyll skjermen</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Tilpass til skjermen</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Avslutt fullskjerm</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Spill av en direktekanal før du tar et skjermbilde.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Lagre skjermbilde</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>PNG-bilde (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Skjermbildet kunne ikke lagres.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Spill av en direktekanal før du tar opp.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Opptak</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Lagre opptak</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>MP4-video (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Opptaket kunne ikke starte.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>Opptaket stoppet på grunn av en feil.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Opptak lagret</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Kvalitetsvalg - beste treff</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Kvalitetsvalg - beste treff (bare {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>{0} min igjen</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>{0} time igjen</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>{0} time {1:00} min igjen</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} min</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} time {1:00} min</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Lav</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Høy</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Original</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Lavere kvalitet</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Høyere kvalitet</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Effektiv video</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Standardvideo</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Nyere video</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Fra leverandøren</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Nøyaktig versjon</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Nylig sett</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Episode {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktiv</value></data>
+  <data name="Available" xml:space="preserve"><value>Tilgjengelig</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Deaktivert</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Blokkert</value></data>
+  <data name="Trial" xml:space="preserve"><value>Prøve</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Avrundet</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Skarpe kanter</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Midnattsblå</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Smaragdnatt</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Mørk blågrønn</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Kinoblå</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Arktisk is</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Skogsmose</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Skifercyan</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} mot {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>Hele verden</value></data>
 </root>

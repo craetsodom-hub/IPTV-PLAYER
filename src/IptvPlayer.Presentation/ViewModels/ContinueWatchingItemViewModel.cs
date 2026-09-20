@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Services;
 using IptvPlayer.Presentation.Localization;
 
 namespace IptvPlayer.Presentation.ViewModels;
 
-public sealed class ContinueWatchingItemViewModel
+public sealed class ContinueWatchingItemViewModel : ObservableObject
 {
     private ContinueWatchingItemViewModel(
         string? sourceId,
@@ -66,6 +67,9 @@ public sealed class ContinueWatchingItemViewModel
     public string SubtitleText => string.IsNullOrWhiteSpace(Subtitle)
         ? UiLocalization.Current.GetString("ReadyToResume")
         : Subtitle;
+
+    public void RefreshLocalizedText()
+        => OnPropertyChanged(nameof(SubtitleText));
 
     public OnDemandHistoryEntry ToStateEntry()
         => new(

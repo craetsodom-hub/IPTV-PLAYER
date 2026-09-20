@@ -1,8 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Models;
+using IptvPlayer.Presentation.Localization;
 
 namespace IptvPlayer.Presentation.ViewModels;
 
-public sealed class SeriesEpisodeViewModel
+public sealed class SeriesEpisodeViewModel : ObservableObject
 {
     private SeriesEpisodeViewModel(
         string id,
@@ -41,11 +43,14 @@ public sealed class SeriesEpisodeViewModel
     public Uri PlaybackUri { get; }
 
     public string DisplayTitle => EpisodeNumber > 0
-        ? $"E{EpisodeNumber:00}  {Title}"
+        ? UiLocalization.Current.Format("EpisodeTitleFormat", EpisodeNumber, Title)
         : Title;
 
     public string MetadataLine
         => string.Join("  ", new[] { Duration, Rating }.Where(value => !string.IsNullOrWhiteSpace(value)));
+
+    public void RefreshLocalizedText()
+        => OnPropertyChanged(nameof(DisplayTitle));
 
     public static SeriesEpisodeViewModel FromModel(SeriesEpisodeModel model)
         => new(

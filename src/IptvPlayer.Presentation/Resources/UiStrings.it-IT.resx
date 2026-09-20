@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>Non fornito</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>N/D</value></data>
   <data name="Expired" xml:space="preserve"><value>Scaduto</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Eventi di oggi</value></data>
+  <data name="Today" xml:space="preserve"><value>Oggi</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>Domani</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Aggiorna</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Riprova più tardi.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Caricamento eventi...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Caricamento playlist in corso...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Aggiornamento playlist in corso...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Impossibile aggiornare la playlist.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Aggiorna playlist</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Playlist aggiornata con successo.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Eventi non disponibili</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Impossibile aggiornare gli eventi.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Nessun evento importante oggi o domani</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Gli eventi si aggiornano automaticamente</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Scegli un evento per vedere i canali corrispondenti della tua playlist.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Carica una categoria TV in diretta per vedere i canali corrispondenti della tua playlist.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Calcio</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Pallacanestro</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Tennis</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Formula 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Cricket</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Rugby</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Aspetto</value></data>
+  <data name="Design" xml:space="preserve"><value>Stile</value></data>
+  <data name="Color" xml:space="preserve"><value>Colore</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Tema colore</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Posizione di riproduzione</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Avanzamento diretta</value></data>
+  <data name="Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="Live" xml:space="preserve"><value>IN DIRETTA</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Schermata</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Azione del lettore</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Comandi del lettore</value></data>
+  <data name="Account" xml:space="preserve"><value>Account</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Collegamento playlist</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>File playlist</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Diretta</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Nessun canale corrispondente per questo paese</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Lettore video</value></data>
+  <data name="Now" xml:space="preserve"><value>ORA</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Canali recenti</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Riprendi l’ultimo</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Riprendi canale</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Nessun canale recente</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Schermata salvata</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Ferma registrazione</value></data>
+  <data name="Record" xml:space="preserve"><value>Registra</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Riempi schermo</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Adatta allo schermo</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Esci da schermo intero</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Riproduci un canale in diretta prima di acquisire una schermata.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Salva schermata</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>Immagine PNG (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Impossibile salvare la schermata.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Riproduci un canale in diretta prima di registrare.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Registrazione</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Salva registrazione</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>Video MP4 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Impossibile avviare la registrazione.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>La registrazione si è interrotta per un errore.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Registrazione salvata</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Opzioni qualità - scelta migliore</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Opzioni qualità - scelta migliore (solo {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>{0} min rim.</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>{0} ora rim.</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>{0} ore {1:00} min rim.</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} min</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} ore {1:00} min</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Bassa</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Alta</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Originale</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Qualità inferiore</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Qualità superiore</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Video efficiente</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Video standard</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Video più recente</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Dal fornitore</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Versione esatta</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Visto di recente</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Episodio {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Attivo</value></data>
+  <data name="Available" xml:space="preserve"><value>Disponibile</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Disattivato</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Bloccato</value></data>
+  <data name="Trial" xml:space="preserve"><value>Prova</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Arrotondato</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Bordi netti</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Blu notte</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Notte smeraldo</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Verde petrolio scuro</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Blu cinema</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Ghiaccio artico</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Muschio di bosco</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Ciano ardesia</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} contro {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>Tutto il mondo</value></data>
 </root>

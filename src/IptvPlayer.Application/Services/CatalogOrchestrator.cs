@@ -50,6 +50,12 @@ public sealed class CatalogOrchestrator
         CancellationToken cancellationToken = default)
         => _sourceCatalogService.GetFavoriteChannelsAsync(sourceId, favoriteChannelIds, cancellationToken);
 
+    public Task<IReadOnlyList<ChannelModel>> GetChannelVariantsAsync(
+        Guid sourceId,
+        string selectedChannelName,
+        CancellationToken cancellationToken = default)
+        => _sourceCatalogService.GetChannelVariantsAsync(sourceId, selectedChannelName, cancellationToken);
+
     public async Task<ChannelEpgModel> GetChannelEpgAsync(
         Guid sourceId,
         string channelId,

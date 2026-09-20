@@ -1,4 +1,6 @@
+using IptvPlayer.App.Themes;
 using IptvPlayer.Application.DependencyInjection;
+using IptvPlayer.Application.Services;
 using IptvPlayer.Infrastructure.DependencyInjection;
 using IptvPlayer.Player.Vlc.DependencyInjection;
 using IptvPlayer.Presentation.DependencyInjection;
@@ -28,6 +30,8 @@ public partial class App : System.Windows.Application
         base.OnStartup(e);
 
         UiLocalization.Current.Initialize();
+        ThemeManager.Current.Initialize(Resources);
+        DesignManager.Current.Initialize(Resources);
 
         RegisterGlobalExceptionHandlers();
 
@@ -66,9 +70,24 @@ public partial class App : System.Windows.Application
 
         await _host.StartAsync();
 
+        bool hasSavedPlaylists = false;
+        try
+        {
+            var catalog = _host.Services.GetRequiredService<CatalogOrchestrator>();
+            var sources = await catalog.GetSourcesAsync();
+            hasSavedPlaylists = sources.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Failed to inspect saved playlists during startup");
+        }
+
         var window = _host.Services.GetRequiredService<MainWindow>();
         MainWindow = window;
+        window.SetStartupLoadingState(hasSavedPlaylists);
+        window.WindowState = WindowState.Maximized;
         window.Show();
+        window.Activate();
     }
 
     protected override async void OnExit(System.Windows.ExitEventArgs e)

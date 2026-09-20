@@ -1,4 +1,5 @@
 using IptvPlayer.Contracts.Models;
+using IptvPlayer.Contracts.Channels;
 using IptvPlayer.Contracts.Services;
 
 namespace IptvPlayer.Infrastructure.Services;
@@ -98,6 +99,29 @@ public sealed class InMemorySourceCatalogService : ISourceCatalogService
             .Where(item => item.Key.StartsWith($"{sourceId:N}:", StringComparison.OrdinalIgnoreCase))
             .SelectMany(item => item.Value)
             .Where(channel => favoriteIds.Contains(channel.Id))
+            .ToArray();
+
+        return Task.FromResult<IReadOnlyList<ChannelModel>>(channels);
+    }
+
+    public Task<IReadOnlyList<ChannelModel>> GetChannelVariantsAsync(
+        Guid sourceId,
+        string selectedChannelName,
+        CancellationToken cancellationToken = default)
+    {
+        var selectedIdentity = StreamVariantIdentityNormalizer.Normalize(selectedChannelName);
+        if (!selectedIdentity.HasExplicitLocaleQualifier)
+        {
+            return Task.FromResult<IReadOnlyList<ChannelModel>>(Array.Empty<ChannelModel>());
+        }
+
+        var channels = _channelsByCategory
+            .Where(item => item.Key.StartsWith($"{sourceId:N}:", StringComparison.OrdinalIgnoreCase))
+            .SelectMany(item => item.Value)
+            .Where(channel => StreamVariantIdentityNormalizer.CanGroup(
+                selectedIdentity,
+                StreamVariantIdentityNormalizer.Normalize(channel.Name)))
+            .DistinctBy(channel => channel.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
         return Task.FromResult<IReadOnlyList<ChannelModel>>(channels);

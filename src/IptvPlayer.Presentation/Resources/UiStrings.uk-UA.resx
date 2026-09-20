@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>Не передбачено</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>N/A</value></data>
   <data name="Expired" xml:space="preserve"><value>Термін дії минув</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Сьогоднішні події</value></data>
+  <data name="Today" xml:space="preserve"><value>Сьогодні</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>Завтра</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Оновити</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Спробуйте ще раз пізніше.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Завантаження подій...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Завантаження списку відтворення...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Оновлення списку відтворення...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Не вдалося оновити список відтворення.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Оновити список відтворення</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Список відтворення успішно оновлено.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Події недоступні</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Не вдалося оновити події.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Сьогодні та завтра немає великих подій</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Події оновлюються автоматично</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Виберіть подію, щоб побачити відповідні канали зі свого списку.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Завантажте категорію прямого ефіру, щоб побачити відповідні канали зі свого списку.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Футбол</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Баскетбол</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Теніс</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Формула-1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Крикет</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Регбі</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Вигляд</value></data>
+  <data name="Design" xml:space="preserve"><value>Стиль</value></data>
+  <data name="Color" xml:space="preserve"><value>Колір</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Кольорова тема</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Позиція відтворення</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Перебіг прямого ефіру</value></data>
+  <data name="Volume" xml:space="preserve"><value>Гучність</value></data>
+  <data name="Live" xml:space="preserve"><value>НАЖИВО</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Знімок екрана</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Дія програвача</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Керування програвачем</value></data>
+  <data name="Account" xml:space="preserve"><value>Обліковий запис</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Посилання на список</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>Файл списку</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Прямий ефір</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Немає відповідного каналу для цієї країни</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Відеопрогравач</value></data>
+  <data name="Now" xml:space="preserve"><value>ЗАРАЗ</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Недавні канали</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Продовжити останній</value></data>
+  <data name="TvShort" xml:space="preserve"><value>ТБ</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Продовжити канал</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Недавніх каналів ще немає</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Знімок екрана збережено</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Зупинити запис</value></data>
+  <data name="Record" xml:space="preserve"><value>Записати</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Заповнити екран</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Припасувати до екрана</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Вийти з повноекранного режиму</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Увімкніть канал наживо, перш ніж робити знімок екрана.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Зберегти знімок екрана</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>Зображення PNG (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Не вдалося зберегти знімок екрана.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Увімкніть канал наживо, перш ніж записувати.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Запис</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Зберегти запис</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>Відео MP4 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Не вдалося почати запис.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>Запис зупинився через помилку.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Запис збережено</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Варіанти якості — найкращий збіг</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Варіанти якості — найкращий збіг (лише {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>Залишилось {0} хв</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>Залишилась {0} год</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>Залишилось {0} год {1:00} хв</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} хв</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} год {1:00} хв</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Низька</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Висока</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Початкова</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Нижча якість</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Вища якість</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Ефективне відео</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Звичайне відео</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Новіше відео</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Від постачальника</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Точна версія</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Нещодавно переглянуто</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Серія {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Активний</value></data>
+  <data name="Available" xml:space="preserve"><value>Доступний</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Вимкнений</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Заблокований</value></data>
+  <data name="Trial" xml:space="preserve"><value>Пробний</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Заокруглений</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Прямі кути</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Опівнічний синій</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Смарагдова ніч</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Темний бірюзовий</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Кіносиній</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Арктична крига</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Лісовий мох</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Сланцевий блакитний</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} проти {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>По всьому світу</value></data>
 </root>

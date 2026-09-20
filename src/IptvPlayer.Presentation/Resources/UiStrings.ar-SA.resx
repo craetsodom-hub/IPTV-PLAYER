@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -172,5 +172,104 @@
   <data name="Unknown" xml:space="preserve"><value>غير معروف</value></data>
   <data name="NotProvided" xml:space="preserve"><value>غير متوفر</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>لا يوجد</value></data>
+  <data name="TvGuideUnavailable" xml:space="preserve"><value>دليل التلفزيون غير متوفر</value></data>
   <data name="Expired" xml:space="preserve"><value>انتهت صلاحيتها</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>أحداث اليوم</value></data>
+  <data name="Today" xml:space="preserve"><value>اليوم</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>غدًا</value></data>
+  <data name="Refresh" xml:space="preserve"><value>تحديث</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>حاول مرة أخرى لاحقًا.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>جارٍ تحميل الأحداث...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>جارٍ تحميل قائمة التشغيل...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>جارٍ تحديث قائمة التشغيل...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>فشل تحديث قائمة التشغيل.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>تحديث قائمة التشغيل</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>تم تحديث قائمة التشغيل بنجاح.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>الأحداث غير متاحة</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>تعذر تحديث الأحداث.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>لا توجد أحداث مهمة اليوم أو غدًا</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>يتم تحديث الأحداث تلقائيًا</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>اختر حدثًا لعرض القنوات المطابقة من قائمتك.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>حمّل فئة البث المباشر لعرض القنوات المطابقة من قائمتك.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>كرة القدم</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>كرة السلة</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>التنس</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>فورمولا 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>الكريكيت</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>الرجبي</value></data>
+  <data name="Appearance" xml:space="preserve"><value>المظهر</value></data>
+  <data name="Design" xml:space="preserve"><value>النمط</value></data>
+  <data name="Color" xml:space="preserve"><value>اللون</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>نسق الألوان</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>موضع التشغيل</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>تقدم البث المباشر</value></data>
+  <data name="Volume" xml:space="preserve"><value>مستوى الصوت</value></data>
+  <data name="Live" xml:space="preserve"><value>مباشر</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>لقطة شاشة</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>إجراء المشغل</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>عناصر تحكم المشغل</value></data>
+  <data name="Account" xml:space="preserve"><value>الحساب</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>رابط القائمة</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>ملف القائمة</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>بث مباشر</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>لا توجد قناة مطابقة لهذا البلد</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>مشغل الفيديو</value></data>
+  <data name="Now" xml:space="preserve"><value>الآن</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>القنوات الأخيرة</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>متابعة الأخير</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>متابعة القناة</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>لا توجد قنوات أخيرة بعد</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>تم حفظ لقطة الشاشة</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>إيقاف التسجيل</value></data>
+  <data name="Record" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>ملء الشاشة</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>ملاءمة للشاشة</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>الخروج من ملء الشاشة</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>شغّل قناة مباشرة قبل أخذ لقطة شاشة.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>حفظ لقطة الشاشة</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>صورة PNG (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>تعذر حفظ لقطة الشاشة.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>شغّل قناة مباشرة قبل التسجيل.</value></data>
+  <data name="Recording" xml:space="preserve"><value>التسجيل</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>حفظ التسجيل</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>فيديو MP4 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>تعذر بدء التسجيل.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>توقف التسجيل بسبب خطأ.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>تم حفظ التسجيل</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>خيارات الجودة - أفضل تطابق</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>خيارات الجودة - أفضل تطابق ({0} فقط)</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>متبقي {0} د</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>متبقي {0} س</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>متبقي {0} س و{1:00} د</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} د</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} س و{1:00} د</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>منخفضة</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>عالية</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>أصلية</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>جودة أقل</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>جودة أعلى</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>فيديو موفر</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>فيديو عادي</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>فيديو أحدث</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>من المزود</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>الإصدار المطابق</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>شوهد مؤخرًا</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>الحلقة {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="Available" xml:space="preserve"><value>متاح</value></data>
+  <data name="Disabled" xml:space="preserve"><value>معطل</value></data>
+  <data name="Blocked" xml:space="preserve"><value>محظور</value></data>
+  <data name="Trial" xml:space="preserve"><value>تجريبي</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>مستدير</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>حواف حادة</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>أزرق منتصف الليل</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>ليلة زمردية</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>تركوازي داكن</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>أزرق سينمائي</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>جليد القطب</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>طحلب الغابة</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>سماوي أردوازي</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} ضد {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>حول العالم</value></data>
 </root>

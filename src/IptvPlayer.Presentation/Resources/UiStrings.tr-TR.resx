@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>Sağlanmadı</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>Yok</value></data>
   <data name="Expired" xml:space="preserve"><value>Süresi dolmuş</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Bugünün etkinlikleri</value></data>
+  <data name="Today" xml:space="preserve"><value>Bugün</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>Yarın</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Yenile</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Daha sonra tekrar deneyin.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Etkinlikler yükleniyor...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Oynatma listeniz yükleniyor...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Oynatma listesi yenileniyor...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Oynatma listesi yenilenemedi.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Oynatma Listesini Yenile</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Oynatma listesi başarıyla yenilendi.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Etkinlikler kullanılamıyor</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Etkinlikler yenilenemedi.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Bugün veya yarın önemli etkinlik yok</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Etkinlikler otomatik olarak güncellenir</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Listenizdeki eşleşen kanalları görmek için bir etkinlik seçin.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Listenizdeki eşleşen kanalları görmek için bir Canlı TV kategorisi yükleyin.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Futbol</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Basketbol</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Tenis</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Formula 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Kriket</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Ragbi</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Görünüm</value></data>
+  <data name="Design" xml:space="preserve"><value>Stil</value></data>
+  <data name="Color" xml:space="preserve"><value>Renk</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Renk teması</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Oynatma konumu</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Canlı yayın ilerlemesi</value></data>
+  <data name="Volume" xml:space="preserve"><value>Ses düzeyi</value></data>
+  <data name="Live" xml:space="preserve"><value>CANLI</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Ekran görüntüsü</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Oynatıcı işlemi</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Oynatıcı kontrolleri</value></data>
+  <data name="Account" xml:space="preserve"><value>Hesap</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Liste bağlantısı</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>Liste dosyası</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Doğrudan yayın</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Bu ülke için eşleşen kanal yok</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Video oynatıcı</value></data>
+  <data name="Now" xml:space="preserve"><value>ŞİMDİ</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Son kanallar</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Sonuncuya devam et</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Kanala devam et</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Henüz son kanal yok</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Ekran görüntüsü kaydedildi</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Kaydı durdur</value></data>
+  <data name="Record" xml:space="preserve"><value>Kaydet</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Ekranı doldur</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Ekrana sığdır</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Tam ekrandan çık</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Ekran görüntüsü almadan önce canlı bir kanal oynatın.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Ekran görüntüsünü kaydet</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>PNG resmi (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Ekran görüntüsü kaydedilemedi.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Kayıttan önce canlı bir kanal oynatın.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Kayıt</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Kaydı kaydet</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>MP4 videosu (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Kayıt başlatılamadı.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>Kayıt bir hata nedeniyle durdu.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Kayıt kaydedildi</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Kalite seçenekleri - en iyi eşleşme</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Kalite seçenekleri - en iyi eşleşme (yalnızca {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>{0} dk kaldı</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>{0} sa kaldı</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>{0} sa {1:00} dk kaldı</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} dk</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} sa {1:00} dk</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Düşük</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Yüksek</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Orijinal</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Daha düşük kalite</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Daha yüksek kalite</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Verimli video</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Standart video</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Daha yeni video</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Sağlayıcıdan</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Tam sürüm</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Yakın zamanda izlendi</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Bölüm {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Etkin</value></data>
+  <data name="Available" xml:space="preserve"><value>Kullanılabilir</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Devre dışı</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Engellendi</value></data>
+  <data name="Trial" xml:space="preserve"><value>Deneme</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Yuvarlak</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Keskin kenarlar</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Gece mavisi</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Zümrüt gece</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Koyu camgöbeği</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Sinema laciverti</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Kutup buzu</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Orman yosunu</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Arduvaz camgöbeği</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} - {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>Dünya çapında</value></data>
 </root>

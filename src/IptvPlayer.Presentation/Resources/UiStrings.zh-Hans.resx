@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="NotProvided" xml:space="preserve"><value>未提供</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>不适用</value></data>
   <data name="Expired" xml:space="preserve"><value>已过期</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>今日赛事</value></data>
+  <data name="Today" xml:space="preserve"><value>今天</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>明天</value></data>
+  <data name="Refresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>请稍后再试。</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>正在加载赛事...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>正在加载播放列表...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>正在刷新播放列表...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>刷新播放列表失败。</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>刷新播放列表</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>播放列表刷新成功。</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>赛事不可用</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>无法刷新赛事。</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>今天和明天没有重要赛事</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>赛事会自动更新</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>选择一项赛事，查看播放列表中匹配的频道。</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>加载一个直播电视分类，查看播放列表中匹配的频道。</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>足球</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>篮球</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>网球</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>一级方程式</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>板球</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>橄榄球</value></data>
+  <data name="Appearance" xml:space="preserve"><value>外观</value></data>
+  <data name="Design" xml:space="preserve"><value>样式</value></data>
+  <data name="Color" xml:space="preserve"><value>颜色</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>颜色主题</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>播放位置</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>直播进度</value></data>
+  <data name="Volume" xml:space="preserve"><value>音量</value></data>
+  <data name="Live" xml:space="preserve"><value>直播</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>屏幕截图</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>播放器操作</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>播放器控件</value></data>
+  <data name="Account" xml:space="preserve"><value>帐户</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>播放列表链接</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>播放列表文件</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>直接播放</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>没有适合此国家或地区的频道</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>视频播放器</value></data>
+  <data name="Now" xml:space="preserve"><value>现在</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>最近频道</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>继续上次播放</value></data>
+  <data name="TvShort" xml:space="preserve"><value>电视</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>继续播放频道</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>还没有最近频道</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>屏幕截图已保存</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>停止录制</value></data>
+  <data name="Record" xml:space="preserve"><value>录制</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>铺满屏幕</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>适应屏幕</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>退出全屏</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>请先播放直播频道，再截取屏幕截图。</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>保存屏幕截图</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>PNG 图像 (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>无法保存屏幕截图。</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>请先播放直播频道，再开始录制。</value></data>
+  <data name="Recording" xml:space="preserve"><value>录制</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>保存录制</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>MP4 视频 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>无法开始录制。</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>录制因错误而停止。</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>录制已保存</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>画质选项 - 最佳匹配</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>画质选项 - 最佳匹配（仅 {0}）</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>剩余 {0} 分钟</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>剩余 {0} 小时</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>剩余 {0} 小时 {1:00} 分钟</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} 分钟</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} 小时 {1:00} 分钟</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>低</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>高</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>原始</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>较低画质</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>较高画质</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>高效视频</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>标准视频</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>较新视频</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>来自提供商</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>精确版本</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>最近观看</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>第 {0} 集：{1}</value></data>
+  <data name="Active" xml:space="preserve"><value>启用</value></data>
+  <data name="Available" xml:space="preserve"><value>可用</value></data>
+  <data name="Disabled" xml:space="preserve"><value>已停用</value></data>
+  <data name="Blocked" xml:space="preserve"><value>已阻止</value></data>
+  <data name="Trial" xml:space="preserve"><value>试用</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>圆角</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>直角</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>午夜蓝</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>翡翠夜</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>深青色</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>影院海军蓝</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>北极冰</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>森林苔藓</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>板岩青</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} 对阵 {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>全球</value></data>
 </root>

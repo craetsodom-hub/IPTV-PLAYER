@@ -1,78 +1,107 @@
-# IPTV Player for Windows
+# Whose IPTV - Windows Desktop Player
 
-Premium-oriented Windows IPTV desktop player scaffold with modular architecture, VLC playback integration, and production-ready foundations.
+A modern, high-performance Windows IPTV player built with WPF, .NET 8, and embedded LibVLC. Designed for smooth streaming, resilient playback, and a clean TV/desktop user experience.
 
-## Current implementation status
+---
 
-Implemented in this baseline:
+## Highlights & Features
 
-- Clean multi-project architecture with clear module boundaries
-- WPF desktop shell with 3-column premium dark layout
-- VLC playback integration through LibVLCSharp
-- Playback state handling with buffering/loading overlays
-- Double-click fullscreen toggle and escape-to-exit behavior
-- Source import panel supporting:
-  - Xtream Codes
-  - M3U URL
-  - M3U file path
-  - M3U8 direct stream
-- Xtream API auth and category/channel parsing
-- M3U and M3U8 parsing pipelines
-- Category/channel loading and filtering
-- Favorites and recent channels
-- Session persistence (last source/category/channel, favorites, recents, mute)
-- Source status and expiration display when available
-- Structured logging bootstrap with Serilog
+- **Embedded VLC Playback**: 100% in-app rendering via direct HWND video host—no detached windows, flicker-free fullscreen transitions, and low latency.
+- **Multi-Source Support**:
+  - Xtream Codes API (Live Streams, VOD Movies, Series, Categories, EPG)
+  - M3U and M3U8 playlist URLs
+  - Local M3U playlist files
+  - Direct stream links
+- **Full VOD & Series Experience**:
+  - Movie details, posters, and playback progress
+  - TV series seasons, episodes, and resume/continue watching tracking
+- **Live Sports Hub**:
+  - Integrated sports events schedule and live scores
+  - Intelligent channel matching for football, basketball, motorsports, tennis, and more
+  - Global club and tournament popularity rankings
+- **Multilingual Localization**:
+  - Fully localized UI with 20+ supported languages (English, Arabic, French, German, Spanish, Italian, Japanese, Russian, Portuguese, Turkish, and more)
+- **Advanced Player Controls**:
+  - Sleek hover/fullscreen HUD with channel switching, aspect ratio toggle, audio track selection, and volume controls
+  - Picture-in-picture style mini-player
+  - Keyboard shortcuts (space to pause, double-click for fullscreen, escape to exit)
+- **Store-Ready MSIX Packaging**:
+  - Canonical Windows Application Packaging Project (`WhoseIptv.Package.wapproj`) ready for the Microsoft Store.
 
-## Solution structure
+---
 
-- `src/IptvPlayer.App` - WPF app host and UI
-- `src/IptvPlayer.Presentation` - ViewModels and UI logic
-- `src/IptvPlayer.Application` - Orchestrators and app use-cases
-- `src/IptvPlayer.Domain` - Core domain entities and value objects
-- `src/IptvPlayer.Contracts` - Shared contracts and models
-- `src/IptvPlayer.Infrastructure` - Imports, catalog storage, persistence
-- `src/IptvPlayer.Player.Vlc` - VLC playback service and bridge
+## Architecture & Solution Structure
 
-## Prerequisites
+```
+├── src/
+│   ├── IptvPlayer.App/             # WPF Application shell, views, and custom controls
+│   ├── IptvPlayer.Presentation/    # ViewModels, UI state, localization resources, and ranking logic
+│   ├── IptvPlayer.Application/     # Use cases, catalog orchestrators, and playback coordination
+│   ├── IptvPlayer.Domain/          # Core domain models and entities
+│   ├── IptvPlayer.Contracts/       # Shared interfaces, DTOs, and channel/stream models
+│   ├── IptvPlayer.Infrastructure/  # Source import pipelines, persistence, and local storage
+│   ├── IptvPlayer.Player.Vlc/      # LibVLCSharp playback implementation and native bridge
+│   └── WhoseIptv.Package/          # Windows Application Packaging (WAP) project for Store/MSIX
+├── tests/
+│   └── IptvPlayer.Presentation.RegressionTests/ # Automated regression tests
+├── website/                        # Product landing page
+└── plans/                          # Architectural roadmaps and design docs
+```
 
-1. Windows 10 or 11
-2. .NET 8 SDK installed and available in PATH
-3. Internet access for NuGet restore and network streams
+---
 
-If `dotnet` is not recognized, install the .NET 8 SDK and restart terminal.
+## Getting Started
 
-## Build and run
+### Prerequisites
+- Windows 10 (version 1809+) or Windows 11
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+- Visual Studio 2022 / Build Tools (if packaging MSIX via `.wapproj`)
+
+### Build the Solution
 
 ```powershell
 dotnet restore "IPTV PLAYER.sln"
 dotnet build "IPTV PLAYER.sln"
+```
+
+### Run the Desktop App
+
+```powershell
 dotnet run --project .\src\IptvPlayer.App\IptvPlayer.App.csproj
 ```
 
-## Publish (recommended for stable VLC runtime loading)
+### Run Automated Tests
 
-Use a non-single-file self-contained publish so `libvlc` native files are shipped as normal files:
+```powershell
+dotnet run --project .\tests\IptvPlayer.Presentation.RegressionTests\IptvPlayer.Presentation.RegressionTests.csproj
+```
+
+---
+
+## Publishing
+
+### Standalone Folder Publish (Recommended for local distribution)
 
 ```powershell
 dotnet publish .\src\IptvPlayer.App\IptvPlayer.App.csproj -c Release -r win-x64 --self-contained true -o .\dist\IptvPlayer
 ```
 
-Run the app from:
+The output binary will be located at `.\dist\IptvPlayer\IptvPlayer.App.exe`. Folder-based publish ensures all LibVLC native libraries are cleanly loaded.
 
-- `.\dist\IptvPlayer\IptvPlayer.App.exe`
+### Store Package (MSIX)
 
-Do not switch to single-file publish for this app; VLC native runtime loading is most reliable with folder-based publish output.
+Run the packaging script using Visual Studio MSBuild:
 
-## Data and logs
+```cmd
+Build-Store-Package.cmd
+```
 
-- Source catalog (saved subscriptions): `%LocalAppData%\IptvPlayer\catalog\sources.json`
-- User session state: `%LocalAppData%\IptvPlayer\state\session.json`
-- Logs: `%LocalAppData%\IptvPlayer\logs\iptv-player-*.log`
+---
 
-Imported subscriptions are persisted and remain available across restarts until explicitly deleted from the app.
+## Local Data & Persistence
 
-## Notes
+- **Saved Subscriptions**: `%LocalAppData%\IptvPlayer\catalog\sources.json`
+- **Session State**: `%LocalAppData%\IptvPlayer\state\session.json`
+- **Application Logs**: `%LocalAppData%\IptvPlayer\logs\iptv-player-*.log`
 
-- This is a strong production-oriented foundation built in phases.
-- Remaining hardening includes deeper error UX, stronger caching layers, packaging, and additional QA automation.
+All user credentials and tokens stored locally are kept in user-protected application storage and are never tracked in Git.

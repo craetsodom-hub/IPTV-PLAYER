@@ -66,6 +66,12 @@ public sealed partial class SeriesItemViewModel : ObservableObject
             model.Year,
             model.Rating);
 
+    public void RefreshLocalizedText()
+    {
+        OnPropertyChanged(nameof(WatchlistGlyph));
+        OnPropertyChanged(nameof(WatchlistText));
+    }
+
     public static SeriesItemViewModel FromWatchlistItem(OnDemandWatchlistItem item)
         => new(
             item.Id,

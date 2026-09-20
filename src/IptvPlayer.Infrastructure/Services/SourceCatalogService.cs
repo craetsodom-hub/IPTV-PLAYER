@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using IptvPlayer.Contracts.Channels;
 using IptvPlayer.Contracts.Import;
 using IptvPlayer.Contracts.Models;
 using IptvPlayer.Contracts.Services;
@@ -23,10 +24,11 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
     private static readonly TimeSpan OnDemandCategoryRequestTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan OnDemandDetailsRequestTimeout = TimeSpan.FromSeconds(8);
     private static readonly TimeSpan OnDemandListRequestTimeout = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan OnDemandFullListRequestTimeout = TimeSpan.FromSeconds(90);
     private static readonly TimeSpan MetadataCacheTtl = TimeSpan.FromHours(12);
     private static readonly TimeSpan MetadataCacheFastWait = TimeSpan.FromMilliseconds(150);
     private static readonly TimeSpan MetadataCacheSaveDelay = TimeSpan.FromSeconds(8);
-    private static readonly TimeSpan EpgCatalogSaveDelay = TimeSpan.FromSeconds(4);
+    private static readonly TimeSpan EpgCatalogSaveDelay = TimeSpan.FromSeconds(30);
     private const long MaxMetadataCacheFileBytes = 128L * 1024L * 1024L;
     private const int MaxCachedListEntries = 80;
     private const int MaxCachedDetailEntries = 240;
@@ -48,6 +50,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
     private int _catalogSaveRunning;
 
     private CatalogStore _store = new();
+    private readonly Dictionary<Guid, Dictionary<string, StoredChannel>> _channelLookupCache = new();
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, MetadataCacheEntry<IReadOnlyList<CategoryModel>>> _categoryMetadataCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, MetadataCacheEntry<IReadOnlyList<MovieModel>>> _movieMetadataCache = new(StringComparer.OrdinalIgnoreCase);
     private readonly System.Collections.Concurrent.ConcurrentDictionary<string, MetadataCacheEntry<MovieDetailsModel?>> _movieDetailsMetadataCache = new(StringComparer.OrdinalIgnoreCase);
@@ -169,6 +172,70 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         }
     }
 
+    public async Task<IReadOnlyList<ChannelModel>> GetChannelVariantsAsync(
+        Guid sourceId,
+        string selectedChannelName,
+        CancellationToken cancellationToken = default)
+    {
+        var selectedIdentity = StreamVariantIdentityNormalizer.Normalize(selectedChannelName);
+        if (!selectedIdentity.HasExplicitLocaleQualifier)
+        {
+            return Array.Empty<ChannelModel>();
+        }
+
+        await EnsureStoreLoadedAsync(cancellationToken).ConfigureAwait(false);
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var source = _store.Sources.FirstOrDefault(entry => entry.Id == sourceId);
+            if (source is null)
+            {
+                return Array.Empty<ChannelModel>();
+            }
+
+            var variants = new List<ChannelModel>();
+            var seenIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var category in source.Categories)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                foreach (var channel in category.Channels)
+                {
+                    if (!seenIds.Add(channel.Id)
+                        || !StreamVariantIdentityNormalizer.CanGroup(
+                            selectedIdentity,
+                            StreamVariantIdentityNormalizer.Normalize(channel.Name))
+                        || !Uri.TryCreate(channel.StreamUri, UriKind.Absolute, out var streamUri))
+                    {
+                        continue;
+                    }
+
+                    var hasRealEpg = channel.EpgUpdatedUtc.HasValue;
+                    variants.Add(new ChannelModel(
+                        channel.Id,
+                        category.Id,
+                        channel.Name,
+                        streamUri,
+                        channel.LogoUri,
+                        hasRealEpg ? channel.CurrentProgram : null,
+                        hasRealEpg ? channel.NextProgram : null,
+                        hasRealEpg ? channel.CurrentProgramTitle ?? channel.CurrentProgram : null,
+                        hasRealEpg ? channel.CurrentProgramDescription : null,
+                        hasRealEpg ? channel.CurrentProgramTimeRange : null,
+                        hasRealEpg ? channel.NextProgramTitle ?? channel.NextProgram : null,
+                        hasRealEpg ? channel.NextProgramDescription : null,
+                        hasRealEpg ? channel.NextProgramTimeRange : null,
+                        channel.IsFavorite));
+                }
+            }
+
+            return variants;
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     public async Task<IReadOnlyList<ChannelModel>> GetFavoriteChannelsAsync(
         Guid sourceId,
         IReadOnlyCollection<string> favoriteChannelIds,
@@ -249,9 +316,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         try
         {
             var source = _store.Sources.FirstOrDefault(entry => entry.Id == sourceId);
-            var channel = source?.Categories
-                .SelectMany(category => category.Channels)
-                .FirstOrDefault(entry => string.Equals(entry.Id, channelId, StringComparison.OrdinalIgnoreCase));
+            var channel = FindStoredChannelUnsafe(sourceId, channelId);
 
             if (source is null || channel is null)
             {
@@ -261,7 +326,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             var hasRealEpg = channel.EpgUpdatedUtc.HasValue;
             if (HasStructuredEpg(channel)
                 && channel.EpgUpdatedUtc is { } epgUpdatedUtc
-                && epgUpdatedUtc > DateTimeOffset.UtcNow.AddMinutes(-10))
+                && epgUpdatedUtc > DateTimeOffset.UtcNow.AddMinutes(-60))
             {
                 return MapStoredEpg(channel);
             }
@@ -385,7 +450,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         using var streamsDocument = await GetJsonDocumentWithRetryAsync(
             streamsUrl,
             cancellationToken,
-            OnDemandListRequestTimeout).ConfigureAwait(false);
+            categoryId is null ? OnDemandFullListRequestTimeout : OnDemandListRequestTimeout).ConfigureAwait(false);
         var movies = ParseXtreamMovies(streamsDocument.RootElement, context);
         if (movies.Count <= MaxCachedMediaListItems)
         {
@@ -494,7 +559,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         using var seriesDocument = await GetJsonDocumentWithRetryAsync(
             seriesUrl,
             cancellationToken,
-            OnDemandListRequestTimeout).ConfigureAwait(false);
+            categoryId is null ? OnDemandFullListRequestTimeout : OnDemandListRequestTimeout).ConfigureAwait(false);
         var series = ParseXtreamSeries(seriesDocument.RootElement);
         if (series.Count <= MaxCachedMediaListItems)
         {
@@ -544,7 +609,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         return details;
     }
 
-    public async Task<SourceImportResult> ImportAsync(SourceImportRequest request, CancellationToken cancellationToken = default)
+    public async Task<SourceImportResult> ImportAsync(
+        SourceImportRequest request,
+        IProgress<SourceImportProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         await EnsureStoreLoadedAsync(cancellationToken).ConfigureAwait(false);
@@ -553,10 +621,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         {
             var importedSource = request.Mode switch
             {
-                SourceImportMode.XtreamCodes => await ImportXtreamAsync(request, cancellationToken),
-                SourceImportMode.M3uUrl => await ImportM3uUrlAsync(request, cancellationToken),
-                SourceImportMode.M3uFile => await ImportM3uFileAsync(request, cancellationToken),
-                SourceImportMode.M3u8Link => await ImportM3u8Async(request, cancellationToken),
+                SourceImportMode.XtreamCodes => await ImportXtreamAsync(request, progress, cancellationToken),
+                SourceImportMode.M3uUrl => await ImportM3uUrlAsync(request, progress, cancellationToken),
+                SourceImportMode.M3uFile => await ImportM3uFileAsync(request, progress, cancellationToken),
+                SourceImportMode.M3u8Link => await ImportM3u8Async(request, progress, cancellationToken),
                 _ => null,
             };
 
@@ -565,6 +633,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
                 return SourceImportResult.Failed("Invalid import mode.");
             }
 
+            progress?.Report(new SourceImportProgress(98));
             await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
@@ -584,6 +653,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             }
 
             return SourceImportResult.Succeeded(MapSource(importedSource.Source), importedSource.SuccessMessage);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception exception)
         {
@@ -619,7 +692,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         }
     }
 
-    public async Task<SourceImportResult> UpdateSourceAsync(SourceUpdateRequest request, CancellationToken cancellationToken = default)
+    public async Task<SourceImportResult> UpdateSourceAsync(
+        SourceUpdateRequest request,
+        IProgress<SourceImportProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         await EnsureStoreLoadedAsync(cancellationToken).ConfigureAwait(false);
@@ -679,10 +755,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             var importRequest = BuildUpdateImportRequest(existing, request, displayName);
             var importedSource = importRequest.Mode switch
             {
-                SourceImportMode.XtreamCodes => await ImportXtreamAsync(importRequest, cancellationToken, "Playlist saved."),
-                SourceImportMode.M3uUrl => await ImportM3uUrlAsync(importRequest, cancellationToken),
-                SourceImportMode.M3uFile => await ImportM3uFileAsync(importRequest, cancellationToken),
-                SourceImportMode.M3u8Link => await ImportM3u8Async(importRequest, cancellationToken),
+                SourceImportMode.XtreamCodes => await ImportXtreamAsync(importRequest, progress, cancellationToken, "Playlist saved."),
+                SourceImportMode.M3uUrl => await ImportM3uUrlAsync(importRequest, progress, cancellationToken),
+                SourceImportMode.M3uFile => await ImportM3uFileAsync(importRequest, progress, cancellationToken),
+                SourceImportMode.M3u8Link => await ImportM3u8Async(importRequest, progress, cancellationToken),
                 _ => null,
             };
 
@@ -693,6 +769,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
 
             importedSource.Source.Id = existing.Id;
 
+            progress?.Report(new SourceImportProgress(98));
             await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
             try
             {
@@ -713,6 +790,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
 
             return SourceImportResult.Succeeded(MapSource(importedSource.Source), "Playlist saved.");
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Source update failed for {SourceId}", request.SourceId);
@@ -720,8 +801,104 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         }
     }
 
+    public async Task<SourceImportResult> RefreshSourceAsync(
+        Guid sourceId,
+        IProgress<SourceImportProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureStoreLoadedAsync(cancellationToken).ConfigureAwait(false);
+
+        StoredSource? existing;
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            existing = _store.Sources.FirstOrDefault(source => source.Id == sourceId);
+            if (existing is null)
+            {
+                return SourceImportResult.Failed("Playlist was not found.");
+            }
+        }
+        finally
+        {
+            _gate.Release();
+        }
+
+        try
+        {
+            var importRequest = existing.Kind switch
+            {
+                SourceKind.XtreamCodes => new SourceImportRequest(
+                    SourceImportMode.XtreamCodes,
+                    existing.Endpoint,
+                    existing.XtreamUsername,
+                    existing.XtreamPassword,
+                    existing.Name),
+                SourceKind.M3uUrl => new SourceImportRequest(
+                    SourceImportMode.M3uUrl,
+                    existing.Endpoint,
+                    DisplayName: existing.Name),
+                SourceKind.M3uFile => new SourceImportRequest(
+                    SourceImportMode.M3uFile,
+                    existing.Endpoint,
+                    DisplayName: existing.Name),
+                SourceKind.M3u8Link => new SourceImportRequest(
+                    SourceImportMode.M3u8Link,
+                    existing.Endpoint,
+                    DisplayName: existing.Name),
+                _ => throw new InvalidOperationException("Unsupported playlist source kind."),
+            };
+
+            var importedSource = importRequest.Mode switch
+            {
+                SourceImportMode.XtreamCodes => await ImportXtreamAsync(importRequest, progress, cancellationToken, "Playlist refreshed successfully."),
+                SourceImportMode.M3uUrl => await ImportM3uUrlAsync(importRequest, progress, cancellationToken),
+                SourceImportMode.M3uFile => await ImportM3uFileAsync(importRequest, progress, cancellationToken),
+                SourceImportMode.M3u8Link => await ImportM3u8Async(importRequest, progress, cancellationToken),
+                _ => null,
+            };
+
+            if (importedSource is null)
+            {
+                return SourceImportResult.Failed("Playlist could not be refreshed.");
+            }
+
+            importedSource.Source.Id = existing.Id;
+
+            progress?.Report(new SourceImportProgress(98));
+            await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+            try
+            {
+                _store.Sources.RemoveAll(source => source.Id == existing.Id);
+                _store.Sources.RemoveAll(source =>
+                    source.Kind == importedSource.Source.Kind
+                    && string.Equals(GetSourceIdentity(source), GetSourceIdentity(importedSource.Source), StringComparison.OrdinalIgnoreCase)
+                    && source.Id != importedSource.Source.Id);
+
+                _store.Sources.Add(importedSource.Source);
+                ClearMetadataCache();
+                await SaveUnsafeAsync(cancellationToken);
+            }
+            finally
+            {
+                _gate.Release();
+            }
+
+            return SourceImportResult.Succeeded(MapSource(importedSource.Source), "Playlist refreshed successfully.");
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Source refresh failed for {SourceId}", sourceId);
+            return SourceImportResult.Failed(exception.Message);
+        }
+    }
+
     private async Task<ImportExecution?> ImportXtreamAsync(
         SourceImportRequest request,
+        IProgress<SourceImportProgress>? progress,
         CancellationToken cancellationToken,
         string successMessage = "Playlist added successfully.")
     {
@@ -737,6 +914,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         var normalizedServer = NormalizeServerUrl(serverUrl);
 
         var authUrl = BuildXtreamUrl(normalizedServer, username, password, null);
+        progress?.Report(new SourceImportProgress(5));
         using var authDocument = await GetJsonDocumentWithRetryAsync(authUrl, cancellationToken).ConfigureAwait(false);
 
         var root = authDocument.RootElement;
@@ -758,14 +936,17 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
 
         var categoriesUrl = BuildXtreamUrl(normalizedServer, username, password, "get_live_categories");
         var streamsUrl = BuildXtreamUrl(normalizedServer, username, password, "get_live_streams");
+        progress?.Report(new SourceImportProgress(25));
         var categoriesTask = GetJsonDocumentWithRetryAsync(categoriesUrl, cancellationToken);
         var streamsTask = GetJsonDocumentWithRetryAsync(streamsUrl, cancellationToken);
 
         using var categoriesDocument = await categoriesTask.ConfigureAwait(false);
         using var streamsDocument = await streamsTask.ConfigureAwait(false);
 
+        progress?.Report(new SourceImportProgress(75));
         var categories = ParseXtreamCategories(categoriesDocument.RootElement);
         ParseXtreamStreams(streamsDocument.RootElement, categories, normalizedServer, username, password);
+        progress?.Report(new SourceImportProgress(95));
 
         if (categories.Count == 0)
         {
@@ -790,7 +971,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         return new ImportExecution(source, successMessage);
     }
 
-    private async Task<ImportExecution?> ImportM3uUrlAsync(SourceImportRequest request, CancellationToken cancellationToken)
+    private async Task<ImportExecution?> ImportM3uUrlAsync(
+        SourceImportRequest request,
+        IProgress<SourceImportProgress>? progress,
+        CancellationToken cancellationToken)
     {
         var url = request.PrimaryInput?.Trim() ?? string.Empty;
         if (!Uri.TryCreate(url, UriKind.Absolute, out var playlistUri))
@@ -810,6 +994,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
                 {
                     return await ImportXtreamAsync(
                         xtreamRequest,
+                        progress,
                         cancellationToken,
                         "Playlist added successfully as Xtream.").ConfigureAwait(false);
                 }
@@ -828,8 +1013,8 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
                 RedactSensitiveUrl(url));
         }
 
-        var content = await GetStringWithRetryAsync(url, cancellationToken).ConfigureAwait(false);
-        var parsedCategories = ParseM3u(content);
+        var content = await GetStringWithRetryAsync(url, progress, cancellationToken).ConfigureAwait(false);
+        var parsedCategories = ParseM3u(content, progress, cancellationToken);
 
         if (parsedCategories.Count == 0)
         {
@@ -854,7 +1039,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         return new ImportExecution(source, message);
     }
 
-    private async Task<ImportExecution?> ImportM3uFileAsync(SourceImportRequest request, CancellationToken cancellationToken)
+    private async Task<ImportExecution?> ImportM3uFileAsync(
+        SourceImportRequest request,
+        IProgress<SourceImportProgress>? progress,
+        CancellationToken cancellationToken)
     {
         var path = request.PrimaryInput?.Trim() ?? string.Empty;
         if (!File.Exists(path))
@@ -862,8 +1050,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             throw new InvalidOperationException("M3U file path does not exist.");
         }
 
+        progress?.Report(new SourceImportProgress(5));
         var content = await File.ReadAllTextAsync(path, cancellationToken).ConfigureAwait(false);
-        var parsedCategories = ParseM3u(content);
+        progress?.Report(new SourceImportProgress(50));
+        var parsedCategories = ParseM3u(content, progress, cancellationToken);
 
         if (parsedCategories.Count == 0)
         {
@@ -886,7 +1076,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         return new ImportExecution(source, "Playlist added successfully.");
     }
 
-    private Task<ImportExecution?> ImportM3u8Async(SourceImportRequest request, CancellationToken cancellationToken)
+    private Task<ImportExecution?> ImportM3u8Async(
+        SourceImportRequest request,
+        IProgress<SourceImportProgress>? progress,
+        CancellationToken cancellationToken)
     {
         var url = request.PrimaryInput?.Trim() ?? string.Empty;
         if (!Uri.TryCreate(url, UriKind.Absolute, out var streamUri))
@@ -926,6 +1119,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             Categories = [category],
         };
 
+        progress?.Report(new SourceImportProgress(95));
         return Task.FromResult<ImportExecution?>(new ImportExecution(source, "Playlist added successfully."));
     }
 
@@ -1155,7 +1349,46 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         _movieDetailsMetadataCache.Clear();
         _seriesMetadataCache.Clear();
         _seriesDetailsMetadataCache.Clear();
+        InvalidateChannelLookupCache();
         QueueMetadataCacheSave();
+    }
+
+    private void InvalidateChannelLookupCache(Guid? sourceId = null)
+    {
+        if (sourceId.HasValue)
+        {
+            _channelLookupCache.Remove(sourceId.Value);
+        }
+        else
+        {
+            _channelLookupCache.Clear();
+        }
+    }
+
+    private StoredChannel? FindStoredChannelUnsafe(Guid sourceId, string channelId)
+    {
+        if (!_channelLookupCache.TryGetValue(sourceId, out var channelMap))
+        {
+            var source = _store.Sources.FirstOrDefault(entry => entry.Id == sourceId);
+            if (source is null)
+            {
+                return null;
+            }
+
+            channelMap = new Dictionary<string, StoredChannel>(StringComparer.OrdinalIgnoreCase);
+            foreach (var category in source.Categories)
+            {
+                foreach (var ch in category.Channels)
+                {
+                    channelMap.TryAdd(ch.Id, ch);
+                }
+            }
+
+            _channelLookupCache[sourceId] = channelMap;
+        }
+
+        channelMap.TryGetValue(channelId, out var matchedChannel);
+        return matchedChannel;
     }
 
     private async Task EnsureMetadataCacheLoadedAsync(CancellationToken cancellationToken)
@@ -2007,11 +2240,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            var channel = _store.Sources
-                .Where(source => source.Id == sourceId)
-                .SelectMany(source => source.Categories)
-                .SelectMany(category => category.Channels)
-                .FirstOrDefault(entry => string.Equals(entry.Id, channelId, StringComparison.OrdinalIgnoreCase));
+            var channel = FindStoredChannelUnsafe(sourceId, channelId);
 
             if (channel is null)
             {
@@ -2427,7 +2656,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         return value.Any(char.IsLetterOrDigit) && value.All(character => !char.IsControl(character) || char.IsWhiteSpace(character));
     }
 
-    private static List<StoredCategory> ParseM3u(string content)
+    private static List<StoredCategory> ParseM3u(
+        string content,
+        IProgress<SourceImportProgress>? progress,
+        CancellationToken cancellationToken)
     {
         var categories = new Dictionary<string, StoredCategory>(StringComparer.OrdinalIgnoreCase);
 
@@ -2437,8 +2669,16 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         var categoryOrder = 1;
         var channelCounter = 1;
 
-        foreach (var rawLine in content.Split('\n'))
+        var lines = content.Split('\n');
+        for (var index = 0; index < lines.Length; index++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (index % 128 == 0 || index == lines.Length - 1)
+            {
+                progress?.Report(new SourceImportProgress(50d + (45d * (index + 1) / lines.Length)));
+            }
+
+            var rawLine = lines[index];
             var line = rawLine.Trim();
             if (line.Length == 0)
             {
@@ -2500,7 +2740,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             pendingName = null;
             pendingGroup = null;
             pendingLogo = null;
+
         }
+
+        progress?.Report(new SourceImportProgress(95));
 
         return categories.Values
             .OrderBy(category => category.SortOrder)
@@ -2652,6 +2895,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
 
     private async Task<string> GetStringWithRetryAsync(
         string url,
+        IProgress<SourceImportProgress>? progress,
         CancellationToken cancellationToken,
         TimeSpan? requestTimeout = null)
     {
@@ -2673,7 +2917,27 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
                     .ConfigureAwait(false);
 
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync(timeoutCts.Token).ConfigureAwait(false);
+                await using var stream = await response.Content.ReadAsStreamAsync(timeoutCts.Token).ConfigureAwait(false);
+                using var reader = new StreamReader(stream);
+                var contentLength = response.Content.Headers.ContentLength;
+                var buffer = new char[16 * 1024];
+                var builder = new StringBuilder();
+                long receivedCharacters = 0;
+                int read;
+                progress?.Report(new SourceImportProgress(5));
+
+                while ((read = await reader.ReadAsync(buffer.AsMemory(0, buffer.Length), timeoutCts.Token).ConfigureAwait(false)) > 0)
+                {
+                    builder.Append(buffer, 0, read);
+                    receivedCharacters += read;
+                    if (contentLength is > 0)
+                    {
+                        progress?.Report(new SourceImportProgress(Math.Min(50d, 5d + (45d * receivedCharacters / contentLength.Value))));
+                    }
+                }
+
+                progress?.Report(new SourceImportProgress(50));
+                return builder.ToString();
             }
             catch (Exception) when (cancellationToken.IsCancellationRequested)
             {
@@ -2700,7 +2964,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         CancellationToken cancellationToken,
         TimeSpan? requestTimeout = null)
     {
-        var payload = await GetStringWithRetryAsync(url, cancellationToken, requestTimeout).ConfigureAwait(false);
+        var payload = await GetStringWithRetryAsync(url, null, cancellationToken, requestTimeout).ConfigureAwait(false);
         try
         {
             return JsonDocument.Parse(payload);
@@ -2793,6 +3057,10 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
         {
             _logger.LogError(exception, "Failed to load source catalog. A seed catalog will be used.");
             _store = CreateSeedStore();
+        }
+        finally
+        {
+            InvalidateChannelLookupCache();
         }
     }
 

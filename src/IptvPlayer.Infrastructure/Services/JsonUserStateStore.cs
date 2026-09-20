@@ -92,7 +92,27 @@ public sealed class JsonUserStateStore : IUserStateStore
                 RecentChannelIds = state.RecentChannelIds ?? Array.Empty<string>(),
                 FavoriteChannelIdsBySource = NormalizeSourceCollections(state.FavoriteChannelIdsBySource),
                 RecentChannelIdsBySource = NormalizeSourceCollections(state.RecentChannelIdsBySource),
+                RecentChannelHistoryBySource = NormalizeRecentChannelHistory(state.RecentChannelHistoryBySource),
             };
+
+    private static IReadOnlyDictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>> NormalizeRecentChannelHistory(
+        IReadOnlyDictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>? values)
+        => values?
+            .Where(entry => !string.IsNullOrWhiteSpace(entry.Key))
+            .ToDictionary(
+                entry => entry.Key,
+                entry => (IReadOnlyCollection<RecentChannelHistoryEntry>)(entry.Value ?? Array.Empty<RecentChannelHistoryEntry>())
+                    .Where(value => value is not null && !string.IsNullOrWhiteSpace(value.ChannelId))
+                    .DistinctBy(value => value.ChannelId, StringComparer.OrdinalIgnoreCase)
+                    .Select(value => value with
+                    {
+                        ProgressPercent = double.IsFinite(value.ProgressPercent)
+                            ? Math.Clamp(value.ProgressPercent, 0d, 100d)
+                            : 0d,
+                    })
+                    .ToArray(),
+                StringComparer.OrdinalIgnoreCase)
+            ?? new Dictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>(StringComparer.OrdinalIgnoreCase);
 
     private static IReadOnlyDictionary<string, IReadOnlyCollection<string>> NormalizeSourceCollections(
         IReadOnlyDictionary<string, IReadOnlyCollection<string>>? values)

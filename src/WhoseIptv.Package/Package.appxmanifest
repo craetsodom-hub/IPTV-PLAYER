@@ -6,11 +6,11 @@
 
   <Identity Name="WHOSEIPTV.WhoseIPTV"
             Publisher="CN=C6C5F599-ABE9-410E-8C8B-2EFE05E597B0"
-            Version="1.0.12.0" />
+            Version="1.0.18.0" />
 
   <Properties>
     <DisplayName>Whose IPTV</DisplayName>
-    <PublisherDisplayName>Whose IPTV</PublisherDisplayName>
+    <PublisherDisplayName>Catrixa Studio</PublisherDisplayName>
     <Description>Whose IPTV desktop player</Description>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -18,7 +18,7 @@
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop"
                         MinVersion="10.0.17763.0"
-                        MaxVersionTested="10.0.22631.0" />
+                        MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>

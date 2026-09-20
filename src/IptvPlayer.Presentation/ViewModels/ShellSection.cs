@@ -5,4 +5,5 @@ public enum ShellSection
     LiveTv,
     Movies,
     Series,
+    Events,
 }

@@ -14,6 +14,9 @@ public sealed record UserSessionState(
     public IReadOnlyDictionary<string, IReadOnlyCollection<string>> RecentChannelIdsBySource { get; init; }
         = new Dictionary<string, IReadOnlyCollection<string>>(StringComparer.OrdinalIgnoreCase);
 
+    public IReadOnlyDictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>> RecentChannelHistoryBySource { get; init; }
+        = new Dictionary<string, IReadOnlyCollection<RecentChannelHistoryEntry>>(StringComparer.OrdinalIgnoreCase);
+
     public static UserSessionState Empty { get; } = new(
         null,
         null,
@@ -22,3 +25,9 @@ public sealed record UserSessionState(
         Array.Empty<string>(),
         false);
 }
+
+public sealed record RecentChannelHistoryEntry(
+    string ChannelId,
+    DateTimeOffset? WatchedFromUtc,
+    DateTimeOffset? WatchedToUtc,
+    double ProgressPercent);

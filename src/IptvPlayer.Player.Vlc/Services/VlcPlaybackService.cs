@@ -15,7 +15,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     private const int DefaultLiveCachingMs = 4000;
     private const int MinimumCachingMs = 500;
     private const int MaximumCachingMs = 30000;
-    private const double ActivePlaybackHighCacheBufferingThreshold = 90d;
+    private const double ActivePlaybackHighCacheBufferingThreshold = 10d;
 
     private readonly SemaphoreSlim _gate = new(1, 1);
     private readonly ILogger<VlcPlaybackService> _logger;
@@ -30,6 +30,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     private LibVLC? _libVlc;
     private MediaPlayer? _mediaPlayer;
     private Media? _activeMedia;
+    private IntPtr _videoHostHandle = IntPtr.Zero;
     private CancellationTokenSource? _firstFrameMonitorCts;
     private Task? _firstFrameMonitorTask;
     private long _activePlaybackSessionId;
@@ -38,10 +39,11 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     private long _playbackStartTimestamp;
     private long _lastPlayingTimestamp;
     private int _activeRebuffering;
+    private int _volume = 100;
+    private bool _isMuted;
+    private int _isApplyingDesiredAudioState;
     private DateTimeOffset _lastVlcBufferLogUtc = DateTimeOffset.MinValue;
     private DateTimeOffset _lastSuppressedVlcBufferLogUtc = DateTimeOffset.MinValue;
-    private GCLatencyMode _previousGcLatencyMode;
-    private bool _playbackGcLatencyActive;
     private bool _initialized;
 
     public VlcPlaybackService(
@@ -62,9 +64,24 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
 
     public event EventHandler<PlayerStatus>? StatusChanged;
 
+    public event EventHandler<PlayerAudioState>? AudioStateChanged;
+
     public object? NativePlayer => _mediaPlayer;
 
+    public void SetVideoHostHandle(IntPtr handle)
+    {
+        _videoHostHandle = handle;
+        if (_mediaPlayer is not null && handle != IntPtr.Zero)
+        {
+            _mediaPlayer.Hwnd = handle;
+        }
+    }
+
     public bool IsPlaying => _mediaPlayer?.IsPlaying ?? false;
+
+    public int Volume => Volatile.Read(ref _volume);
+
+    public bool IsMuted => Volatile.Read(ref _isMuted);
 
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
@@ -94,7 +111,12 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                 _diagnosticsProbe.Attach(_libVlc);
 
                 _mediaPlayer = new MediaPlayer(_libVlc);
+                if (_videoHostHandle != IntPtr.Zero)
+                {
+                    _mediaPlayer.Hwnd = _videoHostHandle;
+                }
                 HookPlayerEvents(_mediaPlayer);
+                SynchronizeAndEmitAudioState(_mediaPlayer);
 
                 _initialized = true;
                 Emit(new PlayerStatus(PlaybackState.Idle, "Player ready"));
@@ -143,6 +165,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
             await StopFirstFrameMonitorAsync();
             await _diagnosticsProbe.StopSessionAsync();
             _mediaPlayer.Stop();
+            ApplyDesiredAudioState(_mediaPlayer);
             _activeMedia?.Dispose();
             _activeMedia = null;
 
@@ -151,6 +174,11 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
             _activeMedia = new Media(_libVlc, streamUri);
             _activeMedia.AddOption($":network-caching={_networkCachingMs}");
             _activeMedia.AddOption($":live-caching={_liveCachingMs}");
+            _activeMedia.AddOption($":file-caching={_networkCachingMs}");
+            _activeMedia.AddOption(":avcodec-hw=d3d11va");
+            _activeMedia.AddOption(":avcodec-threads=0");
+            _activeMedia.AddOption(":deinterlace=-1");
+            _activeMedia.AddOption(":deinterlace-mode=auto");
             _diagnosticsProbe.ApplyMediaOptions(_activeMedia);
 
             if (_httpReconnect && IsHttpStream(streamUri))
@@ -174,6 +202,22 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                     _httpReconnect && IsHttpStream(streamUri));
             }
 
+            if (_videoHostHandle != IntPtr.Zero && _mediaPlayer.Hwnd == IntPtr.Zero)
+            {
+                _mediaPlayer.Hwnd = _videoHostHandle;
+            }
+
+            var waitAttempts = 0;
+            while (_mediaPlayer.Hwnd == IntPtr.Zero && waitAttempts < 40)
+            {
+                await Task.Delay(25, cancellationToken).ConfigureAwait(false);
+                waitAttempts++;
+                if (_videoHostHandle != IntPtr.Zero && _mediaPlayer.Hwnd == IntPtr.Zero)
+                {
+                    _mediaPlayer.Hwnd = _videoHostHandle;
+                }
+            }
+
             EnterPlaybackGcLatencyMode();
             var started = _mediaPlayer.Play(_activeMedia);
             if (!started)
@@ -182,6 +226,8 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                 Emit(new PlayerStatus(PlaybackState.Failed, "Failed to start playback", null, "PLAYBACK_START_FAILED"));
                 return;
             }
+
+            ApplyDesiredAudioState(_mediaPlayer);
 
             _diagnosticsProbe.StartSession(_activeMedia, _mediaPlayer, streamUri.Scheme);
             StartFirstFrameMonitor(
@@ -302,14 +348,39 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     public async Task SetMutedAsync(bool muted, CancellationToken cancellationToken = default)
     {
         await InitializeAsync(cancellationToken);
+        Volatile.Write(ref _isMuted, muted);
         await _gate.WaitAsync(cancellationToken);
 
         try
         {
             if (_mediaPlayer is not null)
             {
-                _mediaPlayer.Mute = muted;
+                ApplyDesiredAudioState(_mediaPlayer);
             }
+
+            EmitAudioState();
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
+    public async Task SetVolumeAsync(int volume, CancellationToken cancellationToken = default)
+    {
+        var clampedVolume = Math.Clamp(volume, 0, 100);
+        await InitializeAsync(cancellationToken);
+        Volatile.Write(ref _volume, clampedVolume);
+        await _gate.WaitAsync(cancellationToken);
+
+        try
+        {
+            if (_mediaPlayer is not null)
+            {
+                ApplyDesiredAudioState(_mediaPlayer);
+            }
+
+            EmitAudioState();
         }
         finally
         {
@@ -402,69 +473,14 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
 
     private void EnterPlaybackGcLatencyMode()
     {
-        lock (_gcLatencyGate)
-        {
-            if (_playbackGcLatencyActive)
-            {
-                return;
-            }
-
-            var currentMode = GCSettings.LatencyMode;
-            if (currentMode is GCLatencyMode.SustainedLowLatency or GCLatencyMode.LowLatency or GCLatencyMode.NoGCRegion)
-            {
-                return;
-            }
-
-            try
-            {
-                _previousGcLatencyMode = currentMode;
-                GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
-                _playbackGcLatencyActive = true;
-
-                if (_diagnosticsEnabled)
-                {
-                    _logger.LogInformation(
-                        "Playback diagnostics: GC latency mode changed for active playback. PreviousMode={PreviousMode}; ActiveMode={ActiveMode}",
-                        currentMode,
-                        GCSettings.LatencyMode);
-                }
-            }
-            catch (InvalidOperationException exception)
-            {
-                _logger.LogDebug(exception, "GC latency mode was not changed for active playback");
-            }
-        }
+        // Keep normal interactive GC latency mode during playback. VLC renders natively
+        // via Direct3D/HWND on unmanaged threads, so managed GC passes do not impact video,
+        // while allowing .NET to naturally reclaim transient heap memory during playback.
     }
 
     private void RestoreGcLatencyMode()
     {
-        lock (_gcLatencyGate)
-        {
-            if (!_playbackGcLatencyActive)
-            {
-                return;
-            }
-
-            try
-            {
-                GCSettings.LatencyMode = _previousGcLatencyMode;
-
-                if (_diagnosticsEnabled)
-                {
-                    _logger.LogInformation(
-                        "Playback diagnostics: GC latency mode restored after playback. RestoredMode={RestoredMode}",
-                        _previousGcLatencyMode);
-                }
-            }
-            catch (InvalidOperationException exception)
-            {
-                _logger.LogDebug(exception, "GC latency mode was not restored after playback");
-            }
-            finally
-            {
-                _playbackGcLatencyActive = false;
-            }
-        }
+        // No-op to match EnterPlaybackGcLatencyMode.
     }
 
     private bool ShouldSuppressTransientBuffering(double cachePercent)
@@ -660,6 +676,10 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
 
     private void HookPlayerEvents(MediaPlayer mediaPlayer)
     {
+        mediaPlayer.VolumeChanged += (_, _) => SynchronizeAndEmitAudioState(mediaPlayer);
+        mediaPlayer.Muted += (_, _) => SynchronizeAndEmitAudioState(mediaPlayer);
+        mediaPlayer.Unmuted += (_, _) => SynchronizeAndEmitAudioState(mediaPlayer);
+
         mediaPlayer.Opening += (_, _) =>
         {
             if (_diagnosticsEnabled)
@@ -725,6 +745,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                     elapsed.TotalMilliseconds);
             }
 
+            SynchronizeAndEmitAudioState(mediaPlayer);
             _lastPlayingTimestamp = Stopwatch.GetTimestamp();
             Interlocked.Exchange(ref _activeRebuffering, 0);
             TryEmitPresentationReadyPlaying(Interlocked.Read(ref _activePlaybackSessionId), mediaPlayer);
@@ -781,6 +802,46 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
 
     private void Emit(PlayerStatus status)
         => StatusChanged?.Invoke(this, status);
+
+    private void SynchronizeAndEmitAudioState(MediaPlayer mediaPlayer)
+    {
+        ApplyDesiredAudioState(mediaPlayer);
+        EmitAudioState();
+    }
+
+    private void ApplyDesiredAudioState(MediaPlayer mediaPlayer)
+    {
+        if (Interlocked.CompareExchange(ref _isApplyingDesiredAudioState, 1, 0) != 0)
+        {
+            return;
+        }
+
+        try
+        {
+            var desiredVolume = Volume;
+            var desiredMuted = IsMuted;
+            if (mediaPlayer.Volume != desiredVolume)
+            {
+                mediaPlayer.Volume = desiredVolume;
+            }
+
+            if (mediaPlayer.Mute != desiredMuted)
+            {
+                mediaPlayer.Mute = desiredMuted;
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.LogDebug(exception, "Could not synchronize the selected audio state");
+        }
+        finally
+        {
+            Interlocked.Exchange(ref _isApplyingDesiredAudioState, 0);
+        }
+    }
+
+    private void EmitAudioState()
+        => AudioStateChanged?.Invoke(this, new PlayerAudioState(Volume, IsMuted));
 
     private static int GetConfiguredCachingMs(IConfiguration configuration, string key, int defaultValue)
     {

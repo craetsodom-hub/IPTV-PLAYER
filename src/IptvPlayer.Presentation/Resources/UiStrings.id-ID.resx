@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -173,4 +173,102 @@
   <data name="OneEpisodeFormat" xml:space="preserve"><value>{0} - 1 episode</value></data>
   <data name="EpisodeCountFormat" xml:space="preserve"><value>{0} - {1} episode</value></data>
   <data name="NotAvailableShort" xml:space="preserve"><value>Tidak tersedia</value></data>
+  <data name="TodaysEvents" xml:space="preserve"><value>Acara hari ini</value></data>
+  <data name="Today" xml:space="preserve"><value>Hari ini</value></data>
+  <data name="Tomorrow" xml:space="preserve"><value>Besok</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Segarkan</value></data>
+  <data name="TryAgainLater" xml:space="preserve"><value>Coba lagi nanti.</value></data>
+  <data name="LoadingEvents" xml:space="preserve"><value>Memuat acara...</value></data>
+  <data name="LoadingPlaylist" xml:space="preserve"><value>Memuat daftar putar Anda...</value></data>
+  <data name="RefreshingPlaylist" xml:space="preserve"><value>Menyegarkan daftar putar...</value></data>
+  <data name="FailedRefreshPlaylist" xml:space="preserve"><value>Gagal menyegarkan daftar putar.</value></data>
+  <data name="RefreshSelectedPlaylist" xml:space="preserve"><value>Segarkan Daftar Putar</value></data>
+  <data name="PlaylistRefreshed" xml:space="preserve"><value>Daftar putar berhasil disegarkan.</value></data>
+  <data name="EventsUnavailable" xml:space="preserve"><value>Acara tidak tersedia</value></data>
+  <data name="EventsRefreshFailed" xml:space="preserve"><value>Acara tidak dapat disegarkan.</value></data>
+  <data name="NoEventsToday" xml:space="preserve"><value>Tidak ada acara besar hari ini atau besok</value></data>
+  <data name="EventsUpdatedAutomatically" xml:space="preserve"><value>Acara diperbarui secara otomatis</value></data>
+  <data name="EventsMatchCurrentCategory" xml:space="preserve"><value>Pilih acara untuk melihat saluran yang cocok dari daftar Anda.</value></data>
+  <data name="EventsMatchLoadPlaylist" xml:space="preserve"><value>Muat kategori TV Langsung untuk melihat saluran yang cocok dari daftar Anda.</value></data>
+  <data name="SportFootball" xml:space="preserve"><value>Sepak bola</value></data>
+  <data name="SportBasketball" xml:space="preserve"><value>Bola basket</value></data>
+  <data name="SportTennis" xml:space="preserve"><value>Tenis</value></data>
+  <data name="SportFormulaOne" xml:space="preserve"><value>Formula 1</value></data>
+  <data name="SportCricket" xml:space="preserve"><value>Kriket</value></data>
+  <data name="SportRugby" xml:space="preserve"><value>Rugbi</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Tampilan</value></data>
+  <data name="Design" xml:space="preserve"><value>Gaya</value></data>
+  <data name="Color" xml:space="preserve"><value>Warna</value></data>
+  <data name="ColorTheme" xml:space="preserve"><value>Tema warna</value></data>
+  <data name="PlaybackPosition" xml:space="preserve"><value>Posisi pemutaran</value></data>
+  <data name="LiveProgress" xml:space="preserve"><value>Kemajuan siaran langsung</value></data>
+  <data name="Volume" xml:space="preserve"><value>Volume</value></data>
+  <data name="Live" xml:space="preserve"><value>LANGSUNG</value></data>
+  <data name="Screenshot" xml:space="preserve"><value>Tangkapan layar</value></data>
+  <data name="PlayerAction" xml:space="preserve"><value>Tindakan pemutar</value></data>
+  <data name="PlayerControlsTitle" xml:space="preserve"><value>Kontrol pemutar</value></data>
+  <data name="Account" xml:space="preserve"><value>Akun</value></data>
+  <data name="PlaylistLink" xml:space="preserve"><value>Tautan daftar</value></data>
+  <data name="PlaylistFile" xml:space="preserve"><value>File daftar</value></data>
+  <data name="DirectStream" xml:space="preserve"><value>Siaran langsung</value></data>
+  <data name="NoMatchingChannelForCountry" xml:space="preserve"><value>Tidak ada saluran yang cocok untuk negara ini</value></data>
+  <data name="VideoPlayer" xml:space="preserve"><value>Pemutar video</value></data>
+  <data name="Now" xml:space="preserve"><value>SEKARANG</value></data>
+  <data name="RecentChannels" xml:space="preserve"><value>Saluran terbaru</value></data>
+  <data name="ResumeLast" xml:space="preserve"><value>Lanjutkan yang terakhir</value></data>
+  <data name="TvShort" xml:space="preserve"><value>TV</value></data>
+  <data name="ResumeChannel" xml:space="preserve"><value>Lanjutkan saluran</value></data>
+  <data name="NoRecentChannels" xml:space="preserve"><value>Belum ada saluran terbaru</value></data>
+  <data name="ScreenshotSaved" xml:space="preserve"><value>Tangkapan layar disimpan</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Hentikan rekaman</value></data>
+  <data name="Record" xml:space="preserve"><value>Rekam</value></data>
+  <data name="DisplayStretch" xml:space="preserve"><value>Penuhi layar</value></data>
+  <data name="DisplayFit" xml:space="preserve"><value>Sesuaikan ke layar</value></data>
+  <data name="ExitFullscreen" xml:space="preserve"><value>Keluar dari layar penuh</value></data>
+  <data name="ScreenshotNeedsLive" xml:space="preserve"><value>Putar saluran langsung sebelum mengambil tangkapan layar.</value></data>
+  <data name="SaveScreenshot" xml:space="preserve"><value>Simpan tangkapan layar</value></data>
+  <data name="PngImageFilter" xml:space="preserve"><value>Gambar PNG (*.png)|*.png</value></data>
+  <data name="ScreenshotSaveFailed" xml:space="preserve"><value>Tangkapan layar tidak dapat disimpan.</value></data>
+  <data name="RecordingNeedsLive" xml:space="preserve"><value>Putar saluran langsung sebelum merekam.</value></data>
+  <data name="Recording" xml:space="preserve"><value>Perekaman</value></data>
+  <data name="SaveRecording" xml:space="preserve"><value>Simpan rekaman</value></data>
+  <data name="Mp4VideoFilter" xml:space="preserve"><value>Video MP4 (*.mp4)|*.mp4</value></data>
+  <data name="RecordingStartFailed" xml:space="preserve"><value>Perekaman tidak dapat dimulai.</value></data>
+  <data name="RecordingStopFailed" xml:space="preserve"><value>Perekaman berhenti karena kesalahan.</value></data>
+  <data name="RecordingSaved" xml:space="preserve"><value>Rekaman disimpan</value></data>
+  <data name="QualityBestMatch" xml:space="preserve"><value>Pilihan kualitas - kecocokan terbaik</value></data>
+  <data name="QualityBestMatchOnly" xml:space="preserve"><value>Pilihan kualitas - kecocokan terbaik (hanya {0})</value></data>
+  <data name="MinutesRemainingFormat" xml:space="preserve"><value>Sisa {0} mnt</value></data>
+  <data name="HoursRemainingFormat" xml:space="preserve"><value>Sisa {0} jam</value></data>
+  <data name="HoursMinutesRemainingFormat" xml:space="preserve"><value>Sisa {0} jam {1:00} mnt</value></data>
+  <data name="MinutesShortFormat" xml:space="preserve"><value>{0} mnt</value></data>
+  <data name="HoursMinutesShortFormat" xml:space="preserve"><value>{0} jam {1:00} mnt</value></data>
+  <data name="LowQuality" xml:space="preserve"><value>Rendah</value></data>
+  <data name="HighQuality" xml:space="preserve"><value>Tinggi</value></data>
+  <data name="OriginalQuality" xml:space="preserve"><value>Asli</value></data>
+  <data name="LowerQuality" xml:space="preserve"><value>Kualitas lebih rendah</value></data>
+  <data name="HigherQuality" xml:space="preserve"><value>Kualitas lebih tinggi</value></data>
+  <data name="EfficientVideo" xml:space="preserve"><value>Video hemat</value></data>
+  <data name="StandardVideo" xml:space="preserve"><value>Video standar</value></data>
+  <data name="NewerVideo" xml:space="preserve"><value>Video lebih baru</value></data>
+  <data name="FromProvider" xml:space="preserve"><value>Dari penyedia</value></data>
+  <data name="ExactVersion" xml:space="preserve"><value>Versi yang tepat</value></data>
+  <data name="RecentlyWatched" xml:space="preserve"><value>Baru ditonton</value></data>
+  <data name="EpisodeTitleFormat" xml:space="preserve"><value>Episode {0}: {1}</value></data>
+  <data name="Active" xml:space="preserve"><value>Aktif</value></data>
+  <data name="Available" xml:space="preserve"><value>Tersedia</value></data>
+  <data name="Disabled" xml:space="preserve"><value>Dinonaktifkan</value></data>
+  <data name="Blocked" xml:space="preserve"><value>Diblokir</value></data>
+  <data name="Trial" xml:space="preserve"><value>Uji coba</value></data>
+  <data name="DesignRounded" xml:space="preserve"><value>Membulat</value></data>
+  <data name="DesignSharp" xml:space="preserve"><value>Sudut tajam</value></data>
+  <data name="ThemeMidnightBlue" xml:space="preserve"><value>Biru tengah malam</value></data>
+  <data name="ThemeEmeraldNight" xml:space="preserve"><value>Malam zamrud</value></data>
+  <data name="ThemeDeepTeal" xml:space="preserve"><value>Hijau kebiruan gelap</value></data>
+  <data name="ThemeCinemaNavy" xml:space="preserve"><value>Biru sinema</value></data>
+  <data name="ThemeArcticIce" xml:space="preserve"><value>Es arktik</value></data>
+  <data name="ThemeForestMoss" xml:space="preserve"><value>Lumut hutan</value></data>
+  <data name="ThemeSlateCyan" xml:space="preserve"><value>Sian batu tulis</value></data>
+  <data name="TeamsVersusFormat" xml:space="preserve"><value>{0} melawan {1}</value></data>
+  <data name="Worldwide" xml:space="preserve"><value>Seluruh dunia</value></data>
 </root>

@@ -1,18 +1,23 @@
+using IptvPlayer.App.Services;
+using IptvPlayer.App.Themes;
 using IptvPlayer.Contracts.Player;
 using IptvPlayer.Contracts.Services;
 using IptvPlayer.Presentation.ViewModels;
 using IptvPlayer.Presentation.Localization;
+using System.Collections.Specialized;
 using LibVLCSharp.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Win32;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
@@ -22,11 +27,16 @@ namespace IptvPlayer.App.Views;
 
 public partial class MainWindow : Window
 {
-    private const double LogicalWheelStep = 1d;
-    private const double PhysicalWheelStep = 64d;
-    private const double SmoothScrollCompletionThreshold = 0.08d;
-    private const double SmoothScrollEase = 0.34d;
-    private const double DefaultVideoAspectRatio = 16d / 9d;
+    public static readonly DependencyProperty IsFullscreenPresentationActiveProperty = DependencyProperty.Register(
+        nameof(IsFullscreenPresentationActive),
+        typeof(bool),
+        typeof(MainWindow),
+        new PropertyMetadata(false));
+
+    private const double LogicalWheelStep = 0.72d;
+    private const double PhysicalWheelStep = 52d;
+    private const double SmoothScrollCompletionThreshold = 0.06d;
+    private const double SmoothScrollEase = 0.22d;
     private const int NativeArrowCursorId = 32512;
     private const int NativeHandCursorId = 32649;
     private const int ClassLongCursor = -12;
@@ -35,13 +45,22 @@ public partial class MainWindow : Window
     private const int WindowMessageCreate = 0x0001;
     private const int WindowMessageLeftButtonDown = 0x0201;
     private const int WindowMessageLeftButtonUp = 0x0202;
+    private const int WindowMessageMouseMove = 0x0200;
     private const int WindowMessageParentNotify = 0x0210;
+    private const double PlayerControlsOverlayHeight = 82d;
+    private const double PlayerActionIndicatorSize = 92d;
+    private static readonly TimeSpan PlayerControlsAutoHideDelay = TimeSpan.FromSeconds(2.5);
+    private static readonly HttpClient RecordingHttpClient = CreateRecordingHttpClient();
+    private static readonly Regex InvalidFileNameCharactersPattern = new(
+        $"[{Regex.Escape(new string(Path.GetInvalidFileNameChars()))}]",
+        RegexOptions.Compiled | RegexOptions.CultureInvariant);
     private static readonly IntPtr ArrowCursorHandle = LoadCursor(IntPtr.Zero, new IntPtr(NativeArrowCursorId));
     private static readonly IntPtr HandCursorHandle = LoadCursor(IntPtr.Zero, new IntPtr(NativeHandCursorId));
 
     private readonly MainShellViewModel _viewModel;
     private readonly UiLocalization _localization = UiLocalization.Current;
     private readonly INativePlayerBridge _nativePlayerBridge;
+    private readonly IPlaybackService _playbackService;
     private readonly ILogger<MainWindow> _logger;
     private readonly bool _playbackDiagnosticsEnabled;
     private readonly Dictionary<ScrollViewer, SmoothScrollState> _smoothScrollStates = [];
@@ -69,6 +88,8 @@ public partial class MainWindow : Window
     private int _playerRowHostGridColumn;
     private int _playerRowHostGridRowSpan = 1;
     private int _playerRowHostGridColumnSpan = 1;
+    private GridLength _playerRowHostVideoRowHeight;
+    private GridLength _playerRowHostControlsRowHeight;
     private HorizontalAlignment _playerSurfaceHostHorizontalAlignment;
     private VerticalAlignment _playerSurfaceHostVerticalAlignment;
     private double _playerSurfaceHostWidth;
@@ -78,9 +99,13 @@ public partial class MainWindow : Window
     private IntPtr _previousNativeWindowStyle;
     private NativeRect _previousNativeWindowBounds;
     private bool _previousNativeTopmost;
+    private WindowState _previousManagedWindowState = WindowState.Normal;
     private bool _hasNativeFullscreenSnapshot;
     private readonly DispatcherTimer _fullscreenExitHintTimer;
-    private readonly DispatcherTimer _miniPlayerControlsTimer;
+    private readonly DispatcherTimer _playerControlsAutoHideTimer;
+    private readonly DispatcherTimer _playerPointerPollTimer;
+    private readonly DispatcherTimer _playerTimelineTimer;
+    private readonly DispatcherTimer _mediaSavedToastTimer;
     private CancellationTokenSource? _playbackDiagnosticsCts;
     private int _lastGen0Collections;
     private int _lastGen1Collections;
@@ -90,8 +115,29 @@ public partial class MainWindow : Window
     private int _pendingGen2Collections;
     private DateTimeOffset _lastUiStallLogUtc = DateTimeOffset.MinValue;
     private DateTimeOffset _lastGcLogUtc = DateTimeOffset.MinValue;
+    private DateTimeOffset _lastPlayerControlsActivityUtc = DateTimeOffset.MinValue;
     private FullscreenHudWindow? _fullscreenHudWindow;
+    private PlayerControlsOverlayWindow? _playerControlsOverlayWindow;
+    private PlayerActionIndicatorWindow? _playerActionIndicatorWindow;
     private HwndHost? _playerVideoHost;
+    private MediaPlayer? _boundMediaPlayer;
+    private CancellationTokenSource? _recordingCts;
+    private Task? _recordingTask;
+    private static readonly TimeSpan MinimumStartupLoadingDuration = TimeSpan.FromSeconds(1);
+    private DateTimeOffset _startupLoadingShownUtc = DateTimeOffset.UtcNow;
+    private CancellationTokenSource? _startupLoadingDismissCts;
+    private string? _recordingOutputPath;
+    private int _recordingSessionId;
+    private bool _isRecording;
+    private bool _isStretchDisplayMode;
+    private bool _suppressPlayerControlsUntilPointerMoves;
+    private NativePoint? _lastPointerPosition;
+
+    public bool IsFullscreenPresentationActive
+    {
+        get => (bool)GetValue(IsFullscreenPresentationActiveProperty);
+        private set => SetValue(IsFullscreenPresentationActiveProperty, value);
+    }
 
     public MainWindow(
         MainShellViewModel viewModel,
@@ -104,6 +150,7 @@ public partial class MainWindow : Window
 
         _viewModel = viewModel;
         _nativePlayerBridge = nativePlayerBridge;
+        _playbackService = playbackService;
         _logger = logger;
 #if DEBUG
         _playbackDiagnosticsEnabled = configuration.GetValue("PlaybackDiagnostics:Enabled", defaultValue: false);
@@ -112,6 +159,21 @@ public partial class MainWindow : Window
 #endif
 
         InitializeComponent();
+        WindowState = WindowState.Maximized;
+        if (_viewModel.IsStartupLoading)
+        {
+            StartupLoadingOverlay.Visibility = Visibility.Visible;
+            StartupLoadingOverlay.Opacity = 1.0;
+            PlayerView.Visibility = Visibility.Hidden;
+            ApplyStartupBlur(true);
+        }
+        else
+        {
+            StartupLoadingOverlay.Visibility = Visibility.Collapsed;
+            StartupLoadingOverlay.Opacity = 0;
+            PlayerView.ClearValue(VisibilityProperty);
+            ApplyStartupBlur(false);
+        }
         ApplyUiFlowDirection();
         _localization.CultureChanged += Localization_OnCultureChanged;
 
@@ -124,56 +186,164 @@ public partial class MainWindow : Window
         _playerEffect = PlayerSurface.Effect;
         _fullscreenExitHintTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromSeconds(3),
+            Interval = TimeSpan.FromSeconds(4),
         };
         _fullscreenExitHintTimer.Tick += FullscreenExitHintTimer_OnTick;
-        _miniPlayerControlsTimer = new DispatcherTimer
+        _playerControlsAutoHideTimer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromSeconds(2.5),
+            Interval = PlayerControlsAutoHideDelay,
         };
-        _miniPlayerControlsTimer.Tick += MiniPlayerControlsTimer_OnTick;
+        _playerControlsAutoHideTimer.Tick += PlayerControlsAutoHideTimer_OnTick;
+        _playerPointerPollTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(500),
+        };
+        _playerPointerPollTimer.Tick += PlayerPointerPollTimer_OnTick;
+        _playerTimelineTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(5),
+        };
+        _playerTimelineTimer.Tick += PlayerTimelineTimer_OnTick;
+        _mediaSavedToastTimer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromSeconds(2),
+        };
+        _mediaSavedToastTimer.Tick += MediaSavedToastTimer_OnTick;
         DataContext = _viewModel;
+        _viewModel.PropertyChanged += ViewModel_OnPropertyChanged;
+        _viewModel.VisibleChannels.CollectionChanged += VisibleChannels_OnCollectionChanged;
+        PlayerSurface.LayoutUpdated += PlayerSurface_OnLayoutUpdated;
 
+        ThemeManager.Current.ThemeChanged += ThemeManager_OnThemeChanged;
         SourceInitialized += MainWindow_OnSourceInitialized;
         Loaded += MainWindow_OnLoaded;
         LocationChanged += MainWindow_OnFullscreenBoundsChanged;
         SizeChanged += MainWindow_OnFullscreenBoundsChanged;
+        StateChanged += MainWindow_OnFullscreenBoundsChanged;
         Closed += MainWindow_OnClosed;
     }
 
     private void MainWindow_OnSourceInitialized(object? sender, EventArgs e)
-        => ApplyPremiumTitleBar();
+    {
+        WindowState = WindowState.Maximized;
+        ApplyPremiumTitleBar();
+    }
+
+    private void ThemeManager_OnThemeChanged(object? sender, EventArgs e)
+    {
+        ApplyPremiumTitleBar();
+        RefreshThemeSensitiveVisuals();
+    }
 
     private void Localization_OnCultureChanged(object? sender, EventArgs e)
         => ApplyUiFlowDirection();
+
+    public void SetStartupLoadingState(bool hasSavedPlaylists)
+    {
+        _viewModel.SetStartupLoadingInitialState(hasSavedPlaylists);
+        if (hasSavedPlaylists)
+        {
+            StartupLoadingOverlay.Visibility = Visibility.Visible;
+            StartupLoadingOverlay.Opacity = 1.0;
+            PlayerView.Visibility = Visibility.Hidden;
+            ApplyStartupBlur(true);
+        }
+        else
+        {
+            StartupLoadingOverlay.Visibility = Visibility.Collapsed;
+            StartupLoadingOverlay.Opacity = 0;
+            PlayerView.ClearValue(VisibilityProperty);
+            ApplyStartupBlur(false);
+        }
+    }
 
     private void ApplyUiFlowDirection()
         => RootLayout.FlowDirection = System.Windows.FlowDirection.LeftToRight;
 
     private async void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
     {
-        _logger.LogInformation("Main window loaded. Fullscreen overlay visibility: {OverlayVisibility}", FullscreenOverlay.Visibility);
-
-        await _viewModel.InitializeAsync();
-
-        if (_nativePlayerBridge.NativePlayer is MediaPlayer mediaPlayer)
+        Loaded -= MainWindow_OnLoaded;
+        if (WindowState != WindowState.Maximized)
         {
-            mediaPlayer.EnableMouseInput = false;
-            PlayerView.MediaPlayer = mediaPlayer;
-            AttachPlayerVideoInputHook();
-            _logger.LogInformation("Player view bound to native media player instance: {PlayerType}", mediaPlayer.GetType().FullName);
+            WindowState = WindowState.Maximized;
+        }
+        Activate();
+        _startupLoadingShownUtc = DateTimeOffset.UtcNow;
+        if (_viewModel.IsStartupLoading)
+        {
+            HandleStartupLoadingChanged(true);
         }
         else
         {
-            _logger.LogWarning("Native player bridge did not provide a media player instance on load");
+            StartupLoadingOverlay.Visibility = Visibility.Collapsed;
+            StartupLoadingOverlay.Opacity = 0;
+            PlayerView.ClearValue(VisibilityProperty);
+            ApplyStartupBlur(false);
         }
+        ResetPlayerControlsOverlayForContextChange();
+        RefreshPlayerActionIndicatorOverlayVisibility();
+        _playerPointerPollTimer.Start();
+        _playerTimelineTimer.Start();
+        await Dispatcher.Yield(DispatcherPriority.ApplicationIdle);
+        await InitializeAfterFirstRenderAsync();
+    }
 
-        UpdateMiniPlayerLayout();
-        StartPlaybackDiagnostics();
+    private async Task InitializeAfterFirstRenderAsync()
+    {
+        _logger.LogInformation("Main window loaded. Fullscreen overlay visibility: {OverlayVisibility}", FullscreenOverlay.Visibility);
+
+        try
+        {
+            var handleAttempts = 0;
+            while (PlayerView.Handle == IntPtr.Zero && handleAttempts < 50)
+            {
+                await Task.Delay(20);
+                handleAttempts++;
+            }
+
+            if (PlayerView.Handle != IntPtr.Zero)
+            {
+                _nativePlayerBridge.SetVideoHostHandle(PlayerView.Handle);
+            }
+
+            await _playbackService.InitializeAsync();
+
+            if (_nativePlayerBridge.NativePlayer is MediaPlayer mediaPlayer)
+            {
+                mediaPlayer.EnableMouseInput = false;
+                BindNativePlayerHost(mediaPlayer);
+                AttachPlayerVideoInputHook();
+                _logger.LogInformation("Player view bound to native media player instance: {PlayerType}", mediaPlayer.GetType().FullName);
+            }
+            else
+            {
+                _logger.LogWarning("Native player bridge did not provide a media player instance on load");
+            }
+
+            await _viewModel.InitializeAsync();
+
+            if (_boundMediaPlayer is null && _nativePlayerBridge.NativePlayer is MediaPlayer fallbackPlayer)
+            {
+                fallbackPlayer.EnableMouseInput = false;
+                BindNativePlayerHost(fallbackPlayer);
+                AttachPlayerVideoInputHook();
+                _logger.LogInformation("Player view fallback bound to native media player instance: {PlayerType}", fallbackPlayer.GetType().FullName);
+            }
+
+            StartPlaybackDiagnostics();
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Main window initialization failed after first render");
+        }
     }
 
     private void MainWindow_OnClosed(object? sender, EventArgs e)
     {
+        _startupLoadingDismissCts?.Cancel();
+        _startupLoadingDismissCts?.Dispose();
+        _startupLoadingDismissCts = null;
+
         if (_isFullscreen)
         {
             ExitFullscreen(animate: false);
@@ -181,22 +351,287 @@ public partial class MainWindow : Window
 
         _fullscreenExitHintTimer.Stop();
         _fullscreenExitHintTimer.Tick -= FullscreenExitHintTimer_OnTick;
-        _miniPlayerControlsTimer.Stop();
-        _miniPlayerControlsTimer.Tick -= MiniPlayerControlsTimer_OnTick;
+        _playerControlsAutoHideTimer.Stop();
+        _playerControlsAutoHideTimer.Tick -= PlayerControlsAutoHideTimer_OnTick;
+        _playerPointerPollTimer.Stop();
+        _playerPointerPollTimer.Tick -= PlayerPointerPollTimer_OnTick;
+        _playerTimelineTimer.Stop();
+        _playerTimelineTimer.Tick -= PlayerTimelineTimer_OnTick;
+        _mediaSavedToastTimer.Stop();
+        _mediaSavedToastTimer.Tick -= MediaSavedToastTimer_OnTick;
+        StopRecordingOnClose();
         StopPlaybackDiagnostics();
+        ThemeManager.Current.ThemeChanged -= ThemeManager_OnThemeChanged;
         SourceInitialized -= MainWindow_OnSourceInitialized;
         LocationChanged -= MainWindow_OnFullscreenBoundsChanged;
         SizeChanged -= MainWindow_OnFullscreenBoundsChanged;
+        StateChanged -= MainWindow_OnFullscreenBoundsChanged;
+        _viewModel.PropertyChanged -= ViewModel_OnPropertyChanged;
+        _viewModel.VisibleChannels.CollectionChanged -= VisibleChannels_OnCollectionChanged;
+        PlayerSurface.LayoutUpdated -= PlayerSurface_OnLayoutUpdated;
         _localization.CultureChanged -= Localization_OnCultureChanged;
         DetachPlayerVideoInputHook();
-        PlayerView.MediaPlayer = null;
+        UnbindNativePlayerHost();
+        ClosePlayerControlsOverlay();
+        ClosePlayerActionIndicatorOverlay();
 
         foreach (var state in _smoothScrollStates.Values)
         {
-            state.Timer.Stop();
+            state.Stop();
         }
 
         _smoothScrollStates.Clear();
+    }
+
+    private async void ScreenshotButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (_nativePlayerBridge.NativePlayer is not MediaPlayer mediaPlayer || !_viewModel.IsNativeVideoSurfaceVisible)
+        {
+            MessageBox.Show(this, _localization.GetString("ScreenshotNeedsLive"), _localization.GetString("Screenshot"), MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Title = _localization.GetString("SaveScreenshot"),
+            Filter = _localization.GetString("PngImageFilter"),
+            DefaultExt = ".png",
+            AddExtension = true,
+            OverwritePrompt = true,
+            FileName = BuildDefaultMediaFileName("screenshot", ".png"),
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        try
+        {
+            var path = Path.GetFullPath(dialog.FileName);
+            Directory.CreateDirectory(Path.GetDirectoryName(path) ?? Environment.CurrentDirectory);
+
+            if (!mediaPlayer.TakeSnapshot(0, path, 0, 0))
+            {
+                throw new InvalidOperationException("VLC could not capture the current frame.");
+            }
+
+            await WaitForSnapshotFileAsync(path);
+            ShowSavedToast(_localization.GetString("ScreenshotSaved"));
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Screenshot capture failed");
+            MessageBox.Show(this, _localization.GetString("ScreenshotSaveFailed"), _localization.GetString("Screenshot"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private async void RecordLiveButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        if (_isRecording)
+        {
+            await StopRecordingFromUserAsync();
+            return;
+        }
+
+        var channel = _viewModel.SelectedChannel;
+        if (channel is null)
+        {
+            MessageBox.Show(this, _localization.GetString("RecordingNeedsLive"), _localization.GetString("Recording"), MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Title = _localization.GetString("SaveRecording"),
+            Filter = _localization.GetString("Mp4VideoFilter"),
+            DefaultExt = ".mp4",
+            AddExtension = true,
+            OverwritePrompt = true,
+            FileName = BuildDefaultMediaFileName("recording", ".mp4"),
+        };
+
+        if (dialog.ShowDialog(this) != true)
+        {
+            return;
+        }
+
+        StartRecording(channel.StreamUri, Path.GetFullPath(dialog.FileName));
+    }
+
+    private void StartRecording(Uri streamUri, string outputPath)
+    {
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory);
+            var cts = new CancellationTokenSource();
+            var sessionId = ++_recordingSessionId;
+
+            _recordingCts = cts;
+            _recordingOutputPath = outputPath;
+            _isRecording = true;
+            UpdateRecordingButton();
+
+            _recordingTask = Task.Run(() => RecordCurrentStreamAsync(streamUri, outputPath, cts.Token), cts.Token);
+            _ = ObserveRecordingTaskAsync(_recordingTask, cts, sessionId, outputPath);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Recording could not be started");
+            ResetRecordingState();
+            MessageBox.Show(this, _localization.GetString("RecordingStartFailed"), _localization.GetString("Recording"), MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private async Task StopRecordingFromUserAsync()
+    {
+        var cts = _recordingCts;
+        var task = _recordingTask;
+        var outputPath = _recordingOutputPath;
+        ++_recordingSessionId;
+        ResetRecordingState();
+
+        if (cts is null || task is null)
+        {
+            return;
+        }
+
+        cts.Cancel();
+        try
+        {
+            await task.ConfigureAwait(true);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Recording failed while stopping");
+            MessageBox.Show(this, _localization.GetString("RecordingStopFailed"), _localization.GetString("Recording"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+        finally
+        {
+            cts.Dispose();
+        }
+
+        if (!string.IsNullOrWhiteSpace(outputPath))
+        {
+            ShowSavedToast(_localization.GetString("RecordingSaved"));
+        }
+    }
+
+    private async Task ObserveRecordingTaskAsync(Task recordingTask, CancellationTokenSource cts, int sessionId, string outputPath)
+    {
+        Exception? failure = null;
+        try
+        {
+            await recordingTask.ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (Exception exception)
+        {
+            failure = exception;
+        }
+        finally
+        {
+            cts.Dispose();
+        }
+
+        await Dispatcher.InvokeAsync(() =>
+        {
+            if (_recordingSessionId != sessionId)
+            {
+                return;
+            }
+
+            ResetRecordingState();
+            if (failure is not null)
+            {
+                _logger.LogWarning(failure, "Recording failed");
+                MessageBox.Show(this, _localization.GetString("RecordingStopFailed"), _localization.GetString("Recording"), MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            else if (File.Exists(outputPath))
+            {
+                ShowSavedToast(_localization.GetString("RecordingSaved"));
+            }
+        });
+    }
+
+    private void StopRecordingOnClose()
+    {
+        ++_recordingSessionId;
+        _recordingCts?.Cancel();
+        ResetRecordingState();
+    }
+
+    private void ResetRecordingState()
+    {
+        _recordingCts = null;
+        _recordingTask = null;
+        _recordingOutputPath = null;
+        _isRecording = false;
+        UpdateRecordingButton();
+    }
+
+    private void UpdateRecordingButton()
+    {
+        _playerControlsOverlayWindow?.SetRecordingState(_isRecording);
+        _fullscreenHudWindow?.SetRecordingState(_isRecording);
+
+        if (_isFullscreen)
+        {
+            ShowFullscreenExitHint();
+        }
+        else if (IsPlayerControlsSection)
+        {
+            ShowWindowedPlayerControls();
+        }
+    }
+
+    private void TogglePlayerDisplayMode()
+    {
+        _isStretchDisplayMode = !_isStretchDisplayMode;
+        ApplyPlayerDisplayMode();
+        _playerControlsOverlayWindow?.SetDisplayModeState(_isStretchDisplayMode);
+        _fullscreenHudWindow?.SetDisplayModeState(_isStretchDisplayMode);
+
+        if (_isFullscreen)
+        {
+            ShowFullscreenExitHint();
+        }
+        else if (IsPlayerControlsSection)
+        {
+            ShowWindowedPlayerControls();
+        }
+    }
+
+    private void ApplyPlayerDisplayMode()
+    {
+        var mediaPlayer = _boundMediaPlayer;
+        if (mediaPlayer is null)
+        {
+            return;
+        }
+
+        try
+        {
+            if (!_isStretchDisplayMode)
+            {
+                mediaPlayer.AspectRatio = null;
+                return;
+            }
+
+            var width = Math.Max(1, (int)Math.Round(PlayerSurface.ActualWidth));
+            var height = Math.Max(1, (int)Math.Round(PlayerSurface.ActualHeight));
+            mediaPlayer.AspectRatio = $"{width}:{height}";
+        }
+        catch (Exception exception)
+        {
+            _logger.LogWarning(exception, "Could not apply player display mode");
+        }
     }
 
     private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -218,14 +653,29 @@ public partial class MainWindow : Window
     }
 
     private void PlayerSurfaceHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
-        => UpdateMiniPlayerLayout();
+        => Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+        {
+            UpdatePlayerOverlayBounds();
+            ApplyPlayerDisplayMode();
+        }));
+
+    private void PlayerSurface_OnLayoutUpdated(object? sender, EventArgs e)
+    {
+        if (_playerActionIndicatorWindow?.IsVisible == true && !_isFullscreen && !_isFullscreenTransitioning)
+        {
+            UpdatePlayerActionIndicatorOverlayBounds();
+        }
+    }
 
     private void MainWindow_OnFullscreenBoundsChanged(object? sender, EventArgs e)
     {
         if (_isFullscreen)
         {
             UpdateFullscreenHudBounds();
+            return;
         }
+
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(UpdatePlayerOverlayBounds));
     }
 
     private void StartPlaybackDiagnostics()
@@ -376,32 +826,6 @@ public partial class MainWindow : Window
     private bool IsLivePlaybackActiveForDiagnostics()
         => _viewModel.IsNativeVideoSurfaceVisible && !_viewModel.IsOnDemandPlaybackActive;
 
-    private void UpdateMiniPlayerLayout()
-    {
-        if (!_isFullscreen)
-        {
-            var availableWidth = PlayerRowHost.ActualWidth;
-            var availableHeight = PlayerRowHost.ActualHeight;
-            if (availableWidth > 0d && availableHeight > 0d)
-            {
-                var targetHeight = Math.Min(availableHeight, availableWidth / DefaultVideoAspectRatio);
-                var targetWidth = targetHeight * DefaultVideoAspectRatio;
-
-                if (double.IsNaN(PlayerSurfaceHost.Width)
-                    || Math.Abs(PlayerSurfaceHost.Width - targetWidth) > 0.5d)
-                {
-                    PlayerSurfaceHost.Width = targetWidth;
-                }
-
-                if (double.IsNaN(PlayerSurfaceHost.Height)
-                    || Math.Abs(PlayerSurfaceHost.Height - targetHeight) > 0.5d)
-                {
-                    PlayerSurfaceHost.Height = targetHeight;
-                }
-            }
-        }
-    }
-
     private void ToggleFullscreen()
     {
         if (_isFullscreenTransitioning)
@@ -425,6 +849,10 @@ public partial class MainWindow : Window
             return;
         }
 
+        _windowBackground = Background;
+        _rootLayoutBackground = RootLayout.Background;
+        _playerBackground = PlayerSurface.Background;
+        _playerEffect = PlayerSurface.Effect;
         _sourceColumnWidth = SourceColumn.Width;
         _channelColumnWidth = ChannelColumn.Width;
         _contentColumnWidth = ContentColumn.Width;
@@ -439,25 +867,32 @@ public partial class MainWindow : Window
         _playerRowHostGridColumn = Grid.GetColumn(PlayerRowHost);
         _playerRowHostGridRowSpan = Grid.GetRowSpan(PlayerRowHost);
         _playerRowHostGridColumnSpan = Grid.GetColumnSpan(PlayerRowHost);
+        _playerRowHostVideoRowHeight = PlayerRowHost.RowDefinitions[0].Height;
+        _playerRowHostControlsRowHeight = PlayerRowHost.RowDefinitions[1].Height;
         _playerSurfaceHostHorizontalAlignment = PlayerSurfaceHost.HorizontalAlignment;
         _playerSurfaceHostVerticalAlignment = PlayerSurfaceHost.VerticalAlignment;
         _playerSurfaceHostWidth = PlayerSurfaceHost.Width;
         _playerSurfaceHostHeight = PlayerSurfaceHost.Height;
         _isFullscreenTransitioning = true;
+        HidePlayerControlsOverlay();
+        HidePlayerActionIndicatorOverlay();
         CompleteEnterFullscreen();
     }
 
     private void CompleteEnterFullscreen()
     {
+        SuspendPlayerViewForFullscreenTransition();
+
         if (!TryEnterNativeFullscreen())
         {
+            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
             return;
         }
 
         RootLayout.Margin = new Thickness(0);
-        Background = System.Windows.Media.Brushes.Black;
-        RootLayout.Background = System.Windows.Media.Brushes.Black;
+        SetResourceReference(BackgroundProperty, "Brush.WindowBackground");
+        RootLayout.SetResourceReference(Panel.BackgroundProperty, "Brush.WindowBackground");
         SourceColumn.Width = new GridLength(0);
         ChannelColumn.Width = new GridLength(0);
         ContentColumn.Width = new GridLength(1, GridUnitType.Star);
@@ -466,8 +901,8 @@ public partial class MainWindow : Window
         PlaybackPanel.Margin = new Thickness(0);
         PlaybackPanel.Padding = new Thickness(0);
         PlaybackPanel.BorderThickness = new Thickness(0);
-        PlaybackPanel.Background = System.Windows.Media.Brushes.Black;
-        PlaybackPanel.BorderBrush = System.Windows.Media.Brushes.Black;
+        PlaybackPanel.SetResourceReference(Border.BackgroundProperty, "Brush.WindowBackground");
+        PlaybackPanel.SetResourceReference(Border.BorderBrushProperty, "Brush.WindowBackground");
 
         _fullscreenHiddenElementVisibility.Clear();
         foreach (UIElement child in PlaybackLayout.Children)
@@ -486,14 +921,17 @@ public partial class MainWindow : Window
         Grid.SetRowSpan(PlayerRowHost, Math.Max(1, PlaybackLayout.RowDefinitions.Count));
         Grid.SetColumnSpan(PlayerRowHost, Math.Max(1, PlaybackLayout.ColumnDefinitions.Count));
         Panel.SetZIndex(PlayerRowHost, 250);
+        PlayerRowHost.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+        PlayerRowHost.RowDefinitions[1].Height = new GridLength(0);
 
+        PlayerSurfaceHost.IsAspectRatioEnabled = false;
         PlayerSurfaceHost.HorizontalAlignment = HorizontalAlignment.Stretch;
         PlayerSurfaceHost.VerticalAlignment = VerticalAlignment.Stretch;
         PlayerSurfaceHost.ClearValue(WidthProperty);
         PlayerSurfaceHost.ClearValue(HeightProperty);
         PlayerSurface.CornerRadius = new CornerRadius(0);
         PlayerSurface.BorderThickness = new Thickness(0);
-        PlayerSurface.Background = System.Windows.Media.Brushes.Black;
+        PlayerSurface.SetResourceReference(Border.BackgroundProperty, "Theme.Brush.000000");
         PlayerSurface.Effect = null;
         PlayerSurface.HorizontalAlignment = HorizontalAlignment.Stretch;
         PlayerSurface.VerticalAlignment = VerticalAlignment.Stretch;
@@ -508,11 +946,11 @@ public partial class MainWindow : Window
         Focus();
         Keyboard.Focus(this);
         _isFullscreen = true;
+        IsFullscreenPresentationActive = true;
         UpdatePlayerVideoCursor();
-        HideMiniVodControls(immediate: true);
-
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
+            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
 
             _logger.LogInformation(
@@ -546,9 +984,11 @@ public partial class MainWindow : Window
     private void CompleteExitFullscreen()
     {
         CloseFullscreenHud();
+        SuspendPlayerViewForFullscreenTransition();
 
         if (!TryExitNativeFullscreen())
         {
+            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
             return;
         }
@@ -558,8 +998,7 @@ public partial class MainWindow : Window
         FullscreenOverlay.Opacity = 1d;
         FullscreenOverlay.Visibility = Visibility.Collapsed;
         RootLayout.Margin = _rootLayoutMargin;
-        Background = _windowBackground;
-        RootLayout.Background = _rootLayoutBackground;
+        RestoreWindowedThemeResourceReferences();
         SourceColumn.Width = _sourceColumnWidth;
         ChannelColumn.Width = _channelColumnWidth;
         ContentColumn.Width = _contentColumnWidth;
@@ -568,8 +1007,6 @@ public partial class MainWindow : Window
         PlaybackPanel.Margin = _playbackPanelMargin;
         PlaybackPanel.Padding = _playbackPanelPadding;
         PlaybackPanel.BorderThickness = _playbackPanelBorderThickness;
-        PlaybackPanel.Background = _playbackPanelBackground;
-        PlaybackPanel.BorderBrush = _playbackPanelBorderBrush;
         foreach (var (element, visibility) in _fullscreenHiddenElementVisibility)
         {
             element.Visibility = visibility;
@@ -581,23 +1018,45 @@ public partial class MainWindow : Window
         Grid.SetRowSpan(PlayerRowHost, _playerRowHostGridRowSpan);
         Grid.SetColumnSpan(PlayerRowHost, _playerRowHostGridColumnSpan);
         Panel.SetZIndex(PlayerRowHost, 0);
+        PlayerRowHost.RowDefinitions[0].Height = _playerRowHostVideoRowHeight;
+        PlayerRowHost.RowDefinitions[1].Height = _playerRowHostControlsRowHeight;
+        PlayerSurfaceHost.IsAspectRatioEnabled = true;
         PlayerSurfaceHost.HorizontalAlignment = _playerSurfaceHostHorizontalAlignment;
         PlayerSurfaceHost.VerticalAlignment = _playerSurfaceHostVerticalAlignment;
         PlayerSurfaceHost.Width = _playerSurfaceHostWidth;
         PlayerSurfaceHost.Height = _playerSurfaceHostHeight;
         PlayerSurface.CornerRadius = _playerCornerRadius;
         PlayerSurface.BorderThickness = _playerBorderThickness;
-        PlayerSurface.Background = _playerBackground;
         PlayerSurface.Effect = _playerEffect;
         _fullscreenExitHintTimer.Stop();
 
         _isFullscreen = false;
+        IsFullscreenPresentationActive = false;
         UpdatePlayerVideoCursor();
 
-        UpdateMiniPlayerLayout();
-        _isFullscreenTransitioning = false;
+        Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
+        {
+            RestorePlayerViewAfterFullscreenTransition();
+            _isFullscreenTransitioning = false;
+            RefreshPlayerControlsOverlayVisibility(showControls: true);
+            RefreshPlayerActionIndicatorOverlayVisibility();
+            _logger.LogInformation("Exited fullscreen. Overlay visibility={OverlayVisibility}", FullscreenOverlay.Visibility);
+        });
+    }
 
-        _logger.LogInformation("Exited fullscreen. Overlay visibility={OverlayVisibility}", FullscreenOverlay.Visibility);
+    private void SuspendPlayerViewForFullscreenTransition()
+    {
+        // LibVLCSharp's transparent foreground window follows this surface during layout.
+        // Collapse it for the native frame resize so it never receives transient invalid bounds.
+        PlayerView.Visibility = Visibility.Collapsed;
+        RootLayout.UpdateLayout();
+    }
+
+    private void RestorePlayerViewAfterFullscreenTransition()
+    {
+        PlayerView.ClearValue(VisibilityProperty);
+        PlayerView.InvalidateMeasure();
+        PlayerView.InvalidateVisual();
     }
 
     private bool TryEnterNativeFullscreen()
@@ -624,6 +1083,13 @@ public partial class MainWindow : Window
         var previousStyle = GetWindowLongPtr(handle, WindowLongStyle);
         var previousExtendedStyle = GetWindowLongPtr(handle, WindowLongExtendedStyle);
         var fullscreenStyle = new IntPtr(previousStyle.ToInt64() & ~FullscreenRemovedStyleMask);
+        var previousWindowState = WindowState;
+
+        if (WindowState != WindowState.Normal)
+        {
+            WindowState = WindowState.Normal;
+            UpdateLayout();
+        }
 
         _ = SetWindowLongPtr(handle, WindowLongStyle, fullscreenStyle);
         var monitorBounds = monitorInfo.Monitor;
@@ -648,6 +1114,7 @@ public partial class MainWindow : Window
                 previousBounds.Right - previousBounds.Left,
                 previousBounds.Bottom - previousBounds.Top,
                 SetWindowPosFrameChanged | SetWindowPosShowWindow | SetWindowPosNoOwnerZOrder);
+            WindowState = previousWindowState;
             _logger.LogError("Fullscreen native window transaction failed. Error={NativeError}", nativeError);
             return false;
         }
@@ -656,6 +1123,7 @@ public partial class MainWindow : Window
         _previousNativeWindowStyle = previousStyle;
         _previousNativeWindowBounds = previousBounds;
         _previousNativeTopmost = (previousExtendedStyle.ToInt64() & WindowExtendedStyleTopmost) != 0;
+        _previousManagedWindowState = previousWindowState;
         _hasNativeFullscreenSnapshot = true;
         return true;
     }
@@ -685,10 +1153,13 @@ public partial class MainWindow : Window
             return false;
         }
 
+        WindowState = _previousManagedWindowState;
+
         _fullscreenWindowHandle = IntPtr.Zero;
         _previousNativeWindowStyle = IntPtr.Zero;
         _previousNativeWindowBounds = default;
         _previousNativeTopmost = false;
+        _previousManagedWindowState = WindowState.Normal;
         _hasNativeFullscreenSnapshot = false;
         return true;
     }
@@ -725,6 +1196,13 @@ public partial class MainWindow : Window
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    private struct NativePoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     private struct MonitorInfo
     {
         public int Size;
@@ -736,6 +1214,10 @@ public partial class MainWindow : Window
     [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool GetWindowRect(IntPtr window, out NativeRect rectangle);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetCursorPos(out NativePoint point);
 
     [DllImport("user32.dll")]
     private static extern IntPtr LoadCursor(IntPtr instance, IntPtr cursorName);
@@ -826,23 +1308,47 @@ public partial class MainWindow : Window
 
     private void AttachPlayerVideoInputHook()
     {
-        PlayerView.ApplyTemplate();
-        if (PlayerView.Template.FindName("PART_PlayerHost", PlayerView) is not HwndHost playerVideoHost)
+        if (PlayerView.Handle == IntPtr.Zero)
         {
             _logger.LogWarning("Native video host was not available for mini-player input");
             return;
         }
 
-        if (ReferenceEquals(_playerVideoHost, playerVideoHost))
+        if (ReferenceEquals(_playerVideoHost, PlayerView))
         {
             return;
         }
 
         DetachPlayerVideoInputHook();
-        _playerVideoHost = playerVideoHost;
+        _playerVideoHost = PlayerView;
         _playerVideoHost.MessageHook += PlayerVideoHost_OnMessage;
         UpdatePlayerVideoCursor();
         _ = AttachNativeVideoCursorAfterWindowCreatedAsync();
+    }
+
+    private void BindNativePlayerHost(MediaPlayer mediaPlayer)
+    {
+        if (PlayerView.Handle == IntPtr.Zero)
+        {
+            _logger.LogWarning("Native video host handle was not available for media player binding");
+            return;
+        }
+
+        mediaPlayer.Hwnd = PlayerView.Handle;
+        _nativePlayerBridge.SetVideoHostHandle(PlayerView.Handle);
+        _boundMediaPlayer = mediaPlayer;
+        ApplyPlayerDisplayMode();
+    }
+
+    private void UnbindNativePlayerHost()
+    {
+        if (_boundMediaPlayer is null)
+        {
+            return;
+        }
+
+        _boundMediaPlayer.Hwnd = IntPtr.Zero;
+        _boundMediaPlayer = null;
     }
 
     private async Task AttachNativeVideoCursorAfterWindowCreatedAsync()
@@ -934,6 +1440,17 @@ public partial class MainWindow : Window
             return new IntPtr(1);
         }
 
+        if (message == WindowMessageMouseMove && !_isFullscreen && IsPlayerControlsSection)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Input, new Action(() =>
+            {
+                if (AcceptPlayerControlsPointerActivity())
+                {
+                    ShowWindowedPlayerControls();
+                }
+            }));
+        }
+
         var isDirectClick = message == WindowMessageLeftButtonUp;
         var parentNotification = message == WindowMessageParentNotify
             ? (int)((long)wParam & 0xFFFF)
@@ -1014,29 +1531,22 @@ public partial class MainWindow : Window
 
     private void SmoothList_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
-        if (sender is not ListBox listBox)
-        {
-            return;
-        }
-
-        var scrollViewer = FindVisualChild<ScrollViewer>(listBox);
+        var scrollViewer = sender as ScrollViewer
+            ?? (sender is DependencyObject dependencyObject ? FindVisualChild<ScrollViewer>(dependencyObject) : null);
         if (scrollViewer is null)
         {
             return;
         }
 
-        var notches = Math.Max(1d, Math.Abs(e.Delta) / 120d);
-        var direction = e.Delta > 0 ? -1d : 1d;
-        var step = GetWheelStep(listBox, scrollViewer);
-        QueueSmoothScroll(scrollViewer, direction * step * notches);
+        var wheelStep = GetWheelStep(sender, scrollViewer);
+        QueueSmoothScroll(scrollViewer, (-((double)e.Delta / 120.0)) * wheelStep);
         e.Handled = true;
     }
 
-    private static double GetWheelStep(ListBox listBox, ScrollViewer scrollViewer)
+    private static double GetWheelStep(object sender, ScrollViewer scrollViewer)
     {
-        var itemCount = Math.Max(1, listBox.Items.Count);
-        var averageExtentPerItem = scrollViewer.ExtentHeight / itemCount;
-        return averageExtentPerItem > 3d ? PhysicalWheelStep : LogicalWheelStep;
+        // 92px to 128px step provides fluid, effortless scrolling aligned with 60fps physics
+        return Math.Clamp(scrollViewer.ViewportHeight * 0.22d, 92.0d, 128.0d);
     }
 
     private void QueueSmoothScroll(ScrollViewer scrollViewer, double delta)
@@ -1048,13 +1558,13 @@ public partial class MainWindow : Window
         }
 
         var state = GetSmoothScrollState(scrollViewer);
-        if (!state.Timer.IsEnabled)
+        if (!state.IsActive)
         {
             state.TargetOffset = scrollViewer.VerticalOffset;
         }
 
         state.TargetOffset = Math.Clamp(state.TargetOffset + delta, 0d, maxOffset);
-        state.Timer.Start();
+        state.Start();
     }
 
     private SmoothScrollState GetSmoothScrollState(ScrollViewer scrollViewer)
@@ -1064,60 +1574,82 @@ public partial class MainWindow : Window
             return state;
         }
 
-        state = new SmoothScrollState
-        {
-            TargetOffset = scrollViewer.VerticalOffset,
-            Timer = new DispatcherTimer(DispatcherPriority.Render)
-            {
-                Interval = TimeSpan.FromMilliseconds(16),
-            },
-        };
-
-        state.Timer.Tick += (_, _) => SmoothScrollTimer_OnTick(scrollViewer, state);
+        state = new SmoothScrollState(scrollViewer);
         _smoothScrollStates[scrollViewer] = state;
         return state;
     }
 
-    private static void SmoothScrollTimer_OnTick(ScrollViewer scrollViewer, SmoothScrollState state)
-    {
-        if (!scrollViewer.IsVisible)
-        {
-            state.Timer.Stop();
-            return;
-        }
-
-        var maxOffset = Math.Max(0d, scrollViewer.ScrollableHeight);
-        state.TargetOffset = Math.Clamp(state.TargetOffset, 0d, maxOffset);
-
-        var currentOffset = scrollViewer.VerticalOffset;
-        var remaining = state.TargetOffset - currentOffset;
-        if (Math.Abs(remaining) <= SmoothScrollCompletionThreshold)
-        {
-            scrollViewer.ScrollToVerticalOffset(state.TargetOffset);
-            state.Timer.Stop();
-            return;
-        }
-
-        var nextOffset = currentOffset + (remaining * SmoothScrollEase);
-        if (Math.Abs(nextOffset - currentOffset) < 0.02d)
-        {
-            nextOffset = state.TargetOffset;
-        }
-
-        scrollViewer.ScrollToVerticalOffset(nextOffset);
-
-        if (Math.Abs(scrollViewer.VerticalOffset - currentOffset) < 0.001d)
-        {
-            scrollViewer.ScrollToVerticalOffset(state.TargetOffset);
-            state.Timer.Stop();
-        }
-    }
-
     private sealed class SmoothScrollState
     {
-        public required DispatcherTimer Timer { get; init; }
+        private readonly ScrollViewer _scrollViewer;
+        private EventHandler? _renderingHandler;
 
         public double TargetOffset { get; set; }
+        public bool IsActive { get; private set; }
+
+        public SmoothScrollState(ScrollViewer scrollViewer)
+        {
+            _scrollViewer = scrollViewer;
+        }
+
+        public void Start()
+        {
+            if (IsActive)
+            {
+                return;
+            }
+
+            IsActive = true;
+            _renderingHandler = OnRendering;
+            System.Windows.Media.CompositionTarget.Rendering += _renderingHandler;
+        }
+
+        public void Stop()
+        {
+            if (!IsActive)
+            {
+                return;
+            }
+
+            IsActive = false;
+            if (_renderingHandler is not null)
+            {
+                System.Windows.Media.CompositionTarget.Rendering -= _renderingHandler;
+                _renderingHandler = null;
+            }
+        }
+
+        private void OnRendering(object? sender, EventArgs e)
+        {
+            if (!_scrollViewer.IsVisible || _scrollViewer.ScrollableHeight <= 0d)
+            {
+                Stop();
+                return;
+            }
+
+            var maxOffset = Math.Max(0d, _scrollViewer.ScrollableHeight);
+            TargetOffset = Math.Clamp(TargetOffset, 0d, maxOffset);
+
+            var currentOffset = _scrollViewer.VerticalOffset;
+            var remaining = TargetOffset - currentOffset;
+
+            if (Math.Abs(remaining) <= 0.35d)
+            {
+                _scrollViewer.ScrollToVerticalOffset(TargetOffset);
+                Stop();
+                return;
+            }
+
+            // Smooth 60fps exponential easing curve (0.165 factor gives fluid, non-jarring glide)
+            var nextOffset = currentOffset + (remaining * 0.165d);
+            _scrollViewer.ScrollToVerticalOffset(nextOffset);
+
+            if (Math.Abs(_scrollViewer.VerticalOffset - currentOffset) < 0.001d && Math.Abs(remaining) < 0.8d)
+            {
+                _scrollViewer.ScrollToVerticalOffset(TargetOffset);
+                Stop();
+            }
+        }
     }
 
     private static T? FindVisualChild<T>(DependencyObject parent)
@@ -1141,23 +1673,6 @@ public partial class MainWindow : Window
         return null;
     }
 
-    private static T? FindVisualParent<T>(DependencyObject child)
-        where T : DependencyObject
-    {
-        var parent = System.Windows.Media.VisualTreeHelper.GetParent(child);
-        while (parent is not null)
-        {
-            if (parent is T typedParent)
-            {
-                return typedParent;
-            }
-
-            parent = System.Windows.Media.VisualTreeHelper.GetParent(parent);
-        }
-
-        return null;
-    }
-
     private void FullscreenOverlay_OnMouseMove(object sender, MouseEventArgs e)
     {
         if (!_isFullscreen)
@@ -1172,7 +1687,10 @@ public partial class MainWindow : Window
     {
         ShowFullscreenHud();
         _fullscreenExitHintTimer.Stop();
-        _fullscreenExitHintTimer.Start();
+        if (_viewModel.IsPlaybackPlaying && !_isRecording)
+        {
+            _fullscreenExitHintTimer.Start();
+        }
     }
 
     private void FullscreenExitHintTimer_OnTick(object? sender, EventArgs e)
@@ -1181,6 +1699,19 @@ public partial class MainWindow : Window
 
         if (_isFullscreen)
         {
+            if (!_viewModel.IsPlaybackPlaying
+                || _isRecording
+                || _fullscreenHudWindow?.IsPointerOverControls == true)
+            {
+                _fullscreenHudWindow?.SetChromeVisible(true);
+                if (_viewModel.IsPlaybackPlaying && !_isRecording)
+                {
+                    _fullscreenExitHintTimer.Start();
+                }
+
+                return;
+            }
+
             _fullscreenHudWindow?.SetChromeVisible(false);
         }
     }
@@ -1197,12 +1728,23 @@ public partial class MainWindow : Window
 
             hudWindow.ActivityDetected += FullscreenHudWindow_OnActivityDetected;
             hudWindow.ExitRequested += FullscreenHudWindow_OnExitRequested;
+            hudWindow.ScreenshotRequested += FullscreenHudWindow_OnScreenshotRequested;
+            hudWindow.RecordRequested += FullscreenHudWindow_OnRecordRequested;
+            hudWindow.DisplayModeRequested += FullscreenHudWindow_OnDisplayModeRequested;
             hudWindow.Closed += FullscreenHudWindow_OnClosed;
             _fullscreenHudWindow = hudWindow;
+            hudWindow.SetRecordingState(_isRecording);
+            hudWindow.SetDisplayModeState(_isStretchDisplayMode);
         }
 
         if (!_fullscreenHudWindow.IsVisible)
         {
+            if (!TryApplyFullscreenHudLogicalBounds(_fullscreenHudWindow))
+            {
+                _logger.LogWarning("Fullscreen HUD was not shown because finite owner bounds were unavailable");
+                return;
+            }
+
             _fullscreenHudWindow.Show();
         }
 
@@ -1226,6 +1768,8 @@ public partial class MainWindow : Window
             return;
         }
 
+        ApplyFullscreenHudLogicalBounds(_fullscreenHudWindow, ownerBounds);
+
         _ = SetWindowPos(
             hudHandle,
             IntPtr.Zero,
@@ -1234,6 +1778,52 @@ public partial class MainWindow : Window
             ownerBounds.Right - ownerBounds.Left,
             ownerBounds.Bottom - ownerBounds.Top,
             SetWindowPosNoZOrder | SetWindowPosNoActivate | SetWindowPosNoOwnerZOrder);
+    }
+
+    private bool TryApplyFullscreenHudLogicalBounds(FullscreenHudWindow hudWindow)
+    {
+        var ownerHandle = new WindowInteropHelper(this).Handle;
+        if (ownerHandle == IntPtr.Zero || !GetWindowRect(ownerHandle, out var ownerBounds))
+        {
+            return false;
+        }
+
+        return ApplyFullscreenHudLogicalBounds(hudWindow, ownerBounds);
+    }
+
+    private bool ApplyFullscreenHudLogicalBounds(FullscreenHudWindow hudWindow, NativeRect ownerBounds)
+    {
+        var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(this);
+        var scaleX = dpi.DpiScaleX;
+        var scaleY = dpi.DpiScaleY;
+        var width = (ownerBounds.Right - ownerBounds.Left) / scaleX;
+        var height = (ownerBounds.Bottom - ownerBounds.Top) / scaleY;
+        var left = ownerBounds.Left / scaleX;
+        var top = ownerBounds.Top / scaleY;
+
+        if (!double.IsFinite(width)
+            || !double.IsFinite(height)
+            || !double.IsFinite(left)
+            || !double.IsFinite(top)
+            || width <= 0d
+            || height <= 0d)
+        {
+            _logger.LogWarning(
+                "Rejected invalid fullscreen HUD bounds. Left={Left}; Top={Top}; Width={Width}; Height={Height}; ScaleX={ScaleX}; ScaleY={ScaleY}",
+                left,
+                top,
+                width,
+                height,
+                scaleX,
+                scaleY);
+            return false;
+        }
+
+        hudWindow.Left = left;
+        hudWindow.Top = top;
+        hudWindow.Width = width;
+        hudWindow.Height = height;
+        return true;
     }
 
     private void CloseFullscreenHud()
@@ -1248,6 +1838,9 @@ public partial class MainWindow : Window
 
         hudWindow.ActivityDetected -= FullscreenHudWindow_OnActivityDetected;
         hudWindow.ExitRequested -= FullscreenHudWindow_OnExitRequested;
+        hudWindow.ScreenshotRequested -= FullscreenHudWindow_OnScreenshotRequested;
+        hudWindow.RecordRequested -= FullscreenHudWindow_OnRecordRequested;
+        hudWindow.DisplayModeRequested -= FullscreenHudWindow_OnDisplayModeRequested;
         hudWindow.Closed -= FullscreenHudWindow_OnClosed;
         hudWindow.Close();
     }
@@ -1263,86 +1856,684 @@ public partial class MainWindow : Window
     private void FullscreenHudWindow_OnExitRequested(object? sender, EventArgs e)
         => ExitFullscreen();
 
+    private void FullscreenHudWindow_OnScreenshotRequested(object? sender, EventArgs e)
+        => ScreenshotButton_OnClick(this, new RoutedEventArgs());
+
+    private void FullscreenHudWindow_OnRecordRequested(object? sender, EventArgs e)
+        => RecordLiveButton_OnClick(this, new RoutedEventArgs());
+
+    private void FullscreenHudWindow_OnDisplayModeRequested(object? sender, EventArgs e)
+        => TogglePlayerDisplayMode();
+
     private void FullscreenHudWindow_OnClosed(object? sender, EventArgs e)
         => _fullscreenHudWindow = null;
 
+    private void EnsurePlayerControlsOverlay()
+    {
+        if (_playerControlsOverlayWindow is not null)
+        {
+            return;
+        }
+
+        var overlayWindow = new PlayerControlsOverlayWindow
+        {
+            Owner = this,
+            DataContext = _viewModel,
+        };
+        overlayWindow.ActivityDetected += PlayerControlsOverlayWindow_OnActivityDetected;
+        overlayWindow.ScreenshotRequested += PlayerControlsOverlayWindow_OnScreenshotRequested;
+        overlayWindow.RecordRequested += PlayerControlsOverlayWindow_OnRecordRequested;
+        overlayWindow.DisplayModeRequested += PlayerControlsOverlayWindow_OnDisplayModeRequested;
+        overlayWindow.FullscreenRequested += PlayerControlsOverlayWindow_OnFullscreenRequested;
+        overlayWindow.Closed += PlayerControlsOverlayWindow_OnClosed;
+        overlayWindow.SetRecordingState(_isRecording);
+        overlayWindow.SetDisplayModeState(_isStretchDisplayMode);
+        _playerControlsOverlayWindow = overlayWindow;
+    }
+
+    private void RefreshPlayerControlsOverlayVisibility(bool showControls, bool immediate = false)
+    {
+        var shouldShow = IsLoaded
+                         && IsVisible
+                         && WindowState != WindowState.Minimized
+                         && !_isFullscreen
+                         && !_isFullscreenTransitioning
+                         && IsPlayerControlsSection;
+        if (!shouldShow)
+        {
+            HidePlayerControlsOverlay();
+            return;
+        }
+
+        EnsurePlayerControlsOverlay();
+        UpdatePlayerControlsOverlayBounds();
+        if (_playerControlsOverlayWindow is null)
+        {
+            return;
+        }
+
+        if (!_playerControlsOverlayWindow.IsVisible)
+        {
+            _playerControlsOverlayWindow.Show();
+            UpdatePlayerControlsOverlayBounds();
+        }
+
+        if (showControls)
+        {
+            _lastPlayerControlsActivityUtc = DateTimeOffset.UtcNow;
+            _playerControlsOverlayWindow.SetControlsVisible(true, immediate);
+            SchedulePlayerControlsAutoHide();
+        }
+    }
+
+    private void ShowWindowedPlayerControls()
+    {
+        _lastPlayerControlsActivityUtc = DateTimeOffset.UtcNow;
+        RefreshPlayerControlsOverlayVisibility(showControls: false);
+        if (_playerControlsOverlayWindow is null || !_playerControlsOverlayWindow.IsVisible)
+        {
+            return;
+        }
+
+        _playerControlsOverlayWindow.SetControlsVisible(true);
+        SchedulePlayerControlsAutoHide();
+    }
+
+    private void SchedulePlayerControlsAutoHide()
+    {
+        _playerControlsAutoHideTimer.Stop();
+        if (_viewModel.IsPlaybackPlaying && !_isRecording)
+        {
+            var idleTime = DateTimeOffset.UtcNow - _lastPlayerControlsActivityUtc;
+            var remainingDelay = PlayerControlsAutoHideDelay - idleTime;
+            _playerControlsAutoHideTimer.Interval = remainingDelay > TimeSpan.FromMilliseconds(50)
+                ? remainingDelay
+                : TimeSpan.FromMilliseconds(50);
+            _playerControlsAutoHideTimer.Start();
+        }
+    }
+
+    private void PlayerControlsAutoHideTimer_OnTick(object? sender, EventArgs e)
+    {
+        _playerControlsAutoHideTimer.Stop();
+        var overlayWindow = _playerControlsOverlayWindow;
+        if (overlayWindow is null || !overlayWindow.IsVisible)
+        {
+            return;
+        }
+
+        if (!_viewModel.IsPlaybackPlaying || _isRecording || overlayWindow.IsPointerOverControls)
+        {
+            _lastPlayerControlsActivityUtc = DateTimeOffset.UtcNow;
+            overlayWindow.SetControlsVisible(true);
+            SchedulePlayerControlsAutoHide();
+            return;
+        }
+
+        var idleTime = DateTimeOffset.UtcNow - _lastPlayerControlsActivityUtc;
+        if (idleTime < PlayerControlsAutoHideDelay)
+        {
+            SchedulePlayerControlsAutoHide();
+            return;
+        }
+
+        overlayWindow.SetControlsVisible(false);
+    }
+
+    private void PlayerPointerPollTimer_OnTick(object? sender, EventArgs e)
+    {
+        if (!IsLoaded || !GetCursorPos(out var pointerPosition))
+        {
+            return;
+        }
+
+        var pointerMoved = !_lastPointerPosition.HasValue
+                           || _lastPointerPosition.Value.X != pointerPosition.X
+                           || _lastPointerPosition.Value.Y != pointerPosition.Y;
+        _lastPointerPosition = pointerPosition;
+        if (!pointerMoved)
+        {
+            return;
+        }
+
+        _suppressPlayerControlsUntilPointerMoves = false;
+
+        if (_isFullscreen)
+        {
+            ShowFullscreenExitHint();
+            return;
+        }
+
+        if (IsPlayerControlsSection && IsPointerInsidePlayerSurface(pointerPosition))
+        {
+            ShowWindowedPlayerControls();
+        }
+    }
+
+    private bool IsPointerInsidePlayerSurface(NativePoint pointerPosition)
+    {
+        if (!PlayerSurface.IsVisible || PlayerSurface.ActualWidth <= 0d || PlayerSurface.ActualHeight <= 0d)
+        {
+            return false;
+        }
+
+        try
+        {
+            var topLeft = PlayerSurface.PointToScreen(new Point(0d, 0d));
+            var bottomRight = PlayerSurface.PointToScreen(new Point(PlayerSurface.ActualWidth, PlayerSurface.ActualHeight));
+            return pointerPosition.X >= topLeft.X
+                   && pointerPosition.X <= bottomRight.X
+                   && pointerPosition.Y >= topLeft.Y
+                   && pointerPosition.Y <= bottomRight.Y;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+    }
+
+    private void UpdatePlayerOverlayBounds()
+    {
+        UpdatePlayerControlsOverlayBounds();
+        UpdatePlayerActionIndicatorOverlayBounds();
+    }
+
+    private void UpdatePlayerControlsOverlayBounds()
+    {
+        var overlayWindow = _playerControlsOverlayWindow;
+        if (overlayWindow is null
+            || _isFullscreen
+            || !PlayerSurface.IsVisible
+            || PlayerSurface.ActualWidth <= 0d
+            || PlayerSurface.ActualHeight <= 0d)
+        {
+            return;
+        }
+
+        try
+        {
+            var overlayHeight = Math.Min(PlayerControlsOverlayHeight, PlayerSurface.ActualHeight);
+            var screenPoint = PlayerSurface.PointToScreen(new Point(0d, PlayerSurface.ActualHeight - overlayHeight));
+            var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(PlayerSurface);
+            var left = screenPoint.X / dpi.DpiScaleX;
+            var top = screenPoint.Y / dpi.DpiScaleY;
+            if (!double.IsFinite(left) || !double.IsFinite(top))
+            {
+                return;
+            }
+
+            overlayWindow.Left = left;
+            overlayWindow.Top = top;
+            overlayWindow.Width = PlayerSurface.ActualWidth;
+            overlayWindow.Height = overlayHeight;
+        }
+        catch (InvalidOperationException)
+        {
+            // The visual can be temporarily disconnected during fullscreen and DPI transitions.
+        }
+    }
+
+    private void EnsurePlayerActionIndicatorOverlay()
+    {
+        if (_playerActionIndicatorWindow is not null)
+        {
+            return;
+        }
+
+        var indicatorWindow = new PlayerActionIndicatorWindow
+        {
+            Owner = this,
+            DataContext = _viewModel,
+        };
+        indicatorWindow.Closed += PlayerActionIndicatorWindow_OnClosed;
+        _playerActionIndicatorWindow = indicatorWindow;
+    }
+
+    private void RefreshPlayerActionIndicatorOverlayVisibility()
+    {
+        var shouldShow = IsLoaded
+                         && IsVisible
+                         && WindowState != WindowState.Minimized
+                         && !_isFullscreen
+                         && !_isFullscreenTransitioning
+                         && _viewModel.IsPlayerActionIndicatorVisible;
+        if (!shouldShow)
+        {
+            HidePlayerActionIndicatorOverlay();
+            return;
+        }
+
+        EnsurePlayerActionIndicatorOverlay();
+        UpdatePlayerActionIndicatorOverlayBounds();
+        if (_playerActionIndicatorWindow is null || _playerActionIndicatorWindow.IsVisible)
+        {
+            return;
+        }
+
+        _playerActionIndicatorWindow.Show();
+        UpdatePlayerActionIndicatorOverlayBounds();
+    }
+
+    private void UpdatePlayerActionIndicatorOverlayBounds()
+    {
+        var indicatorWindow = _playerActionIndicatorWindow;
+        if (indicatorWindow is null
+            || _isFullscreen
+            || !PlayerSurface.IsVisible
+            || PlayerSurface.ActualWidth <= 0d
+            || PlayerSurface.ActualHeight <= 0d)
+        {
+            return;
+        }
+
+        try
+        {
+            if (!TryGetPlayerVideoScreenBounds(out var playerBounds))
+            {
+                return;
+            }
+
+            var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(PlayerSurface);
+            var playerWidth = playerBounds.Right - playerBounds.Left;
+            var playerHeight = playerBounds.Bottom - playerBounds.Top;
+            var indicatorWidth = Math.Min(playerWidth, Math.Max(1, (int)Math.Round(PlayerActionIndicatorSize * dpi.DpiScaleX)));
+            var indicatorHeight = Math.Min(playerHeight, Math.Max(1, (int)Math.Round(PlayerActionIndicatorSize * dpi.DpiScaleY)));
+            var leftPixels = playerBounds.Left + ((playerWidth - indicatorWidth) / 2);
+            var topPixels = playerBounds.Top + ((playerHeight - indicatorHeight) / 2);
+            var left = leftPixels / dpi.DpiScaleX;
+            var top = topPixels / dpi.DpiScaleY;
+            if (!double.IsFinite(left) || !double.IsFinite(top))
+            {
+                return;
+            }
+
+            indicatorWindow.Left = left;
+            indicatorWindow.Top = top;
+            indicatorWindow.Width = indicatorWidth / dpi.DpiScaleX;
+            indicatorWindow.Height = indicatorHeight / dpi.DpiScaleY;
+
+            var indicatorHandle = new WindowInteropHelper(indicatorWindow).Handle;
+            if (indicatorHandle != IntPtr.Zero
+                && (!GetWindowRect(indicatorHandle, out var currentBounds)
+                    || currentBounds.Left != leftPixels
+                    || currentBounds.Top != topPixels
+                    || currentBounds.Right - currentBounds.Left != indicatorWidth
+                    || currentBounds.Bottom - currentBounds.Top != indicatorHeight))
+            {
+                _ = SetWindowPos(
+                    indicatorHandle,
+                    IntPtr.Zero,
+                    leftPixels,
+                    topPixels,
+                    indicatorWidth,
+                    indicatorHeight,
+                    SetWindowPosNoZOrder | SetWindowPosNoActivate | SetWindowPosNoOwnerZOrder);
+            }
+        }
+        catch (InvalidOperationException)
+        {
+            // The player can be briefly disconnected while switching fullscreen or DPI contexts.
+        }
+    }
+
+    private bool TryGetPlayerVideoScreenBounds(out NativeRect bounds)
+    {
+        var playerHandle = PlayerView.Handle;
+        if (PlayerView.IsVisible
+            && playerHandle != IntPtr.Zero
+            && GetWindowRect(playerHandle, out bounds)
+            && bounds.Right > bounds.Left
+            && bounds.Bottom > bounds.Top)
+        {
+            return true;
+        }
+
+        var topLeft = PlayerSurface.PointToScreen(new Point(0d, 0d));
+        var bottomRight = PlayerSurface.PointToScreen(
+            new Point(PlayerSurface.ActualWidth, PlayerSurface.ActualHeight));
+        bounds = new NativeRect
+        {
+            Left = (int)Math.Round(topLeft.X),
+            Top = (int)Math.Round(topLeft.Y),
+            Right = (int)Math.Round(bottomRight.X),
+            Bottom = (int)Math.Round(bottomRight.Y),
+        };
+        return bounds.Right > bounds.Left && bounds.Bottom > bounds.Top;
+    }
+
+    private void HidePlayerActionIndicatorOverlay()
+        => _playerActionIndicatorWindow?.Hide();
+
+    private void ClosePlayerActionIndicatorOverlay()
+    {
+        if (_playerActionIndicatorWindow is null)
+        {
+            return;
+        }
+
+        var indicatorWindow = _playerActionIndicatorWindow;
+        _playerActionIndicatorWindow = null;
+        indicatorWindow.Closed -= PlayerActionIndicatorWindow_OnClosed;
+        indicatorWindow.Close();
+    }
+
+    private void PlayerActionIndicatorWindow_OnClosed(object? sender, EventArgs e)
+        => _playerActionIndicatorWindow = null;
+
+    private void HidePlayerControlsOverlay()
+    {
+        _playerControlsAutoHideTimer.Stop();
+        _playerControlsOverlayWindow?.SetControlsVisible(false, immediate: true);
+        _playerControlsOverlayWindow?.Hide();
+    }
+
+    private bool IsPlayerControlsSection
+        => _viewModel.ActiveSection is ShellSection.LiveTv
+            or ShellSection.Movies
+            or ShellSection.Series
+            or ShellSection.Events;
+
+    private void ResetPlayerControlsOverlayForContextChange()
+    {
+        _playerControlsAutoHideTimer.Stop();
+        _lastPlayerControlsActivityUtc = DateTimeOffset.MinValue;
+        _suppressPlayerControlsUntilPointerMoves = true;
+        _lastPointerPosition = GetCursorPos(out var pointerPosition)
+            ? pointerPosition
+            : null;
+        HidePlayerControlsOverlay();
+
+        if (_isFullscreen)
+        {
+            _fullscreenExitHintTimer.Stop();
+            _fullscreenHudWindow?.SetChromeVisible(false);
+        }
+    }
+
+    private bool AcceptPlayerControlsPointerActivity()
+    {
+        if (!_suppressPlayerControlsUntilPointerMoves)
+        {
+            return true;
+        }
+
+        if (!GetCursorPos(out var pointerPosition))
+        {
+            return false;
+        }
+
+        var pointerMoved = !_lastPointerPosition.HasValue
+                           || _lastPointerPosition.Value.X != pointerPosition.X
+                           || _lastPointerPosition.Value.Y != pointerPosition.Y;
+        _lastPointerPosition = pointerPosition;
+        if (!pointerMoved)
+        {
+            return false;
+        }
+
+        _suppressPlayerControlsUntilPointerMoves = false;
+        return true;
+    }
+
+    private void ClosePlayerControlsOverlay()
+    {
+        if (_playerControlsOverlayWindow is null)
+        {
+            return;
+        }
+
+        var overlayWindow = _playerControlsOverlayWindow;
+        _playerControlsOverlayWindow = null;
+        overlayWindow.ActivityDetected -= PlayerControlsOverlayWindow_OnActivityDetected;
+        overlayWindow.ScreenshotRequested -= PlayerControlsOverlayWindow_OnScreenshotRequested;
+        overlayWindow.RecordRequested -= PlayerControlsOverlayWindow_OnRecordRequested;
+        overlayWindow.DisplayModeRequested -= PlayerControlsOverlayWindow_OnDisplayModeRequested;
+        overlayWindow.FullscreenRequested -= PlayerControlsOverlayWindow_OnFullscreenRequested;
+        overlayWindow.Closed -= PlayerControlsOverlayWindow_OnClosed;
+        overlayWindow.Close();
+    }
+
+    private void PlayerControlsOverlayWindow_OnActivityDetected(object? sender, EventArgs e)
+        => ShowWindowedPlayerControls();
+
+    private void PlayerControlsOverlayWindow_OnScreenshotRequested(object? sender, EventArgs e)
+        => ScreenshotButton_OnClick(this, new RoutedEventArgs());
+
+    private void PlayerControlsOverlayWindow_OnRecordRequested(object? sender, EventArgs e)
+        => RecordLiveButton_OnClick(this, new RoutedEventArgs());
+
+    private void PlayerControlsOverlayWindow_OnDisplayModeRequested(object? sender, EventArgs e)
+        => TogglePlayerDisplayMode();
+
+    private void PlayerControlsOverlayWindow_OnFullscreenRequested(object? sender, EventArgs e)
+        => ToggleFullscreen();
+
+    private void PlayerControlsOverlayWindow_OnClosed(object? sender, EventArgs e)
+        => _playerControlsOverlayWindow = null;
+
+    private void VisibleChannels_OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        if (_viewModel.VisibleChannels.Count > 0)
+        {
+            LogoCacheService.Instance.PreloadLogos(_viewModel.VisibleChannels.Select(channel => channel.LogoUri));
+        }
+    }
+
+    private void ViewModel_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainShellViewModel.IsStartupLoading))
+        {
+            HandleStartupLoadingChanged(_viewModel.IsStartupLoading);
+            return;
+        }
+
+        if (e.PropertyName is nameof(MainShellViewModel.ActiveSection)
+            or nameof(MainShellViewModel.SelectedChannel)
+            or nameof(MainShellViewModel.SelectedMovie)
+            or nameof(MainShellViewModel.SelectedSeries)
+            or nameof(MainShellViewModel.CurrentChannelTitle))
+        {
+            ResetPlayerControlsOverlayForContextChange();
+            return;
+        }
+
+        if (e.PropertyName == nameof(MainShellViewModel.IsPlayerActionIndicatorVisible))
+        {
+            if (_isFullscreen && !_suppressPlayerControlsUntilPointerMoves)
+            {
+                ShowFullscreenExitHint();
+            }
+            else
+            {
+                RefreshPlayerActionIndicatorOverlayVisibility();
+            }
+
+            return;
+        }
+
+        if (e.PropertyName != nameof(MainShellViewModel.IsPlaybackPlaying))
+        {
+            return;
+        }
+
+        if (_suppressPlayerControlsUntilPointerMoves)
+        {
+            return;
+        }
+
+        if (_isFullscreen)
+        {
+            ShowFullscreenExitHint();
+            return;
+        }
+
+        if (!IsPlayerControlsSection)
+        {
+            HidePlayerControlsOverlay();
+            return;
+        }
+
+        if (_viewModel.IsPlaybackPlaying)
+        {
+            SchedulePlayerControlsAutoHide();
+            return;
+        }
+
+        ShowWindowedPlayerControls();
+    }
+
+
+    private void ApplyStartupBlur(bool enable)
+    {
+        // Panel-level BlurEffects force offscreen bitmap allocation and multi-pass shaders across
+        // large virtualized item lists, dropping animation framerates below 60fps.
+        // StartupLoadingOverlay's dark translucent scrim achieves the modern focused backdrop at 60fps.
+        if (!enable && SourcePanel.Effect is not null)
+        {
+            SourcePanel.Effect = null;
+            ChannelPanel.Effect = null;
+            PlaybackPanel.Effect = null;
+        }
+    }
+
+    private async void HandleStartupLoadingChanged(bool isLoading)
+    {
+        _startupLoadingDismissCts?.Cancel();
+        _startupLoadingDismissCts?.Dispose();
+        _startupLoadingDismissCts = null;
+
+        if (isLoading)
+        {
+            _startupLoadingShownUtc = DateTimeOffset.UtcNow;
+            PlayerView.Visibility = Visibility.Hidden;
+            ApplyStartupBlur(true);
+
+            if (StartupLoadingOverlay.Visibility == Visibility.Visible && Math.Abs(StartupLoadingOverlay.Opacity - 1.0) < 0.01)
+            {
+                StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+                StartupLoadingOverlay.Opacity = 1.0;
+                return;
+            }
+
+            StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+            StartupLoadingOverlay.Visibility = Visibility.Visible;
+
+            var fadeIn = new DoubleAnimation
+            {
+                From = StartupLoadingOverlay.Opacity,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(150),
+                EasingFunction = new SineEase { EasingMode = EasingMode.EaseOut }
+            };
+            fadeIn.Completed += (_, _) =>
+            {
+                StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+                StartupLoadingOverlay.Opacity = 1.0;
+            };
+            StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, fadeIn);
+        }
+        else
+        {
+            if (StartupLoadingOverlay.Visibility != Visibility.Visible)
+            {
+                StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+                StartupLoadingOverlay.Opacity = 0;
+                StartupLoadingOverlay.Visibility = Visibility.Collapsed;
+                ApplyStartupBlur(false);
+                PlayerView.ClearValue(VisibilityProperty);
+                PlayerView.InvalidateMeasure();
+                PlayerView.InvalidateVisual();
+                return;
+            }
+
+            var elapsed = DateTimeOffset.UtcNow - _startupLoadingShownUtc;
+            var remaining = MinimumStartupLoadingDuration - elapsed;
+
+            if (remaining > TimeSpan.Zero)
+            {
+                var cts = new CancellationTokenSource();
+                _startupLoadingDismissCts = cts;
+
+                try
+                {
+                    await Task.Delay(remaining, cts.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+
+                if (_viewModel.IsStartupLoading || cts.IsCancellationRequested)
+                {
+                    return;
+                }
+            }
+
+            if (StartupLoadingOverlay.Visibility != Visibility.Visible)
+            {
+                return;
+            }
+
+            var fadeOut = new DoubleAnimation
+            {
+                From = StartupLoadingOverlay.Opacity,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(250),
+                EasingFunction = new SineEase { EasingMode = EasingMode.EaseOut }
+            };
+
+            fadeOut.Completed += (_, _) =>
+            {
+                StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, null);
+                StartupLoadingOverlay.Opacity = 0;
+                StartupLoadingOverlay.Visibility = Visibility.Collapsed;
+                ApplyStartupBlur(false);
+                PlayerView.ClearValue(VisibilityProperty);
+                PlayerView.InvalidateMeasure();
+                PlayerView.InvalidateVisual();
+            };
+
+            StartupLoadingOverlay.BeginAnimation(UIElement.OpacityProperty, fadeOut);
+        }
+    }
+
     private void PlayerSurface_OnMouseActivity(object sender, MouseEventArgs e)
     {
-        if (_isFullscreen || !_viewModel.IsOnDemandPlaybackControlVisible)
+        if (_isFullscreen)
         {
             return;
         }
 
-        ShowMiniVodControls();
-    }
-
-    private void PlayerSurface_OnMouseLeave(object sender, MouseEventArgs e)
-        => HideMiniVodControls();
-
-    private void VodTimelineSlider_OnPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        if (sender is not Slider slider || !slider.IsEnabled || slider.ActualWidth <= 0d)
+        if (IsPlayerControlsSection && AcceptPlayerControlsPointerActivity())
         {
-            return;
-        }
-
-        if (e.OriginalSource is DependencyObject source && FindVisualParent<Thumb>(source) is not null)
-        {
-            return;
-        }
-
-        var ratio = GetTimelineSeekRatio(slider, e);
-        slider.Value = slider.Minimum + ((slider.Maximum - slider.Minimum) * ratio);
-        e.Handled = true;
-
-        if (!_isFullscreen)
-        {
-            ShowMiniVodControls();
+            ShowWindowedPlayerControls();
         }
     }
 
-    private static double GetTimelineSeekRatio(Slider slider, MouseButtonEventArgs e)
+    private void PlayerTimelineTimer_OnTick(object? sender, EventArgs e)
     {
-        slider.ApplyTemplate();
-
-        if (slider.Template.FindName("PART_Track", slider) is Track track && track.ActualWidth > 0d)
+        if (_viewModel.IsLivePlaybackActive)
         {
-            return Math.Clamp(e.GetPosition(track).X / track.ActualWidth, 0d, 1d);
+            _viewModel.SelectedChannel?.RefreshEpgClock();
         }
-
-        return Math.Clamp(e.GetPosition(slider).X / slider.ActualWidth, 0d, 1d);
     }
 
-    private void MiniPlayerControlsTimer_OnTick(object? sender, EventArgs e)
+    private void MediaSavedToastTimer_OnTick(object? sender, EventArgs e)
     {
-        _miniPlayerControlsTimer.Stop();
-        HideMiniVodControls();
+        _mediaSavedToastTimer.Stop();
+        AnimateSavedToast(0d, TimeSpan.FromMilliseconds(180));
     }
 
-    private void ShowMiniVodControls()
+    private void ShowSavedToast(string message)
     {
-        MiniVodControlsOverlay.IsHitTestVisible = true;
-        AnimateMiniVodControlsOpacity(1d, TimeSpan.FromMilliseconds(160));
-        _miniPlayerControlsTimer.Stop();
-        _miniPlayerControlsTimer.Start();
+        _mediaSavedToastTimer.Stop();
+        MediaSavedToastText.Text = message;
+        MediaSavedToast.BeginAnimation(OpacityProperty, null);
+        AnimateSavedToast(1d, TimeSpan.FromMilliseconds(120));
+        _mediaSavedToastTimer.Start();
     }
 
-    private void HideMiniVodControls(bool immediate = false)
-    {
-        _miniPlayerControlsTimer.Stop();
-        MiniVodControlsOverlay.IsHitTestVisible = false;
-
-        if (immediate)
-        {
-            MiniVodControlsOverlay.BeginAnimation(OpacityProperty, null);
-            MiniVodControlsOverlay.Opacity = 0d;
-            return;
-        }
-
-        AnimateMiniVodControlsOpacity(0d, TimeSpan.FromMilliseconds(360));
-    }
-
-    private void AnimateMiniVodControlsOpacity(double opacity, TimeSpan duration)
+    private void AnimateSavedToast(double opacity, TimeSpan duration)
     {
         var animation = new DoubleAnimation
         {
@@ -1351,7 +2542,280 @@ public partial class MainWindow : Window
             EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
         };
 
-        MiniVodControlsOverlay.BeginAnimation(OpacityProperty, animation);
+        MediaSavedToast.BeginAnimation(OpacityProperty, animation);
+    }
+
+    private static HttpClient CreateRecordingHttpClient()
+    {
+        var client = new HttpClient
+        {
+            Timeout = Timeout.InfiniteTimeSpan,
+        };
+
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("VLC/3.0 WhoseIPTV/1.0");
+        client.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "*/*");
+        return client;
+    }
+
+    private async Task WaitForSnapshotFileAsync(string path)
+    {
+        for (var attempt = 0; attempt < 30; attempt++)
+        {
+            if (File.Exists(path) && new FileInfo(path).Length > 0)
+            {
+                return;
+            }
+
+            await Task.Delay(50);
+        }
+
+        throw new IOException("The screenshot file was not created.");
+    }
+
+    private string BuildDefaultMediaFileName(string kind, string extension)
+    {
+        var title = _viewModel.SelectedChannel?.DisplayName ?? _viewModel.CurrentChannelDisplayTitle;
+        var safeTitle = InvalidFileNameCharactersPattern.Replace(title, " ").Trim();
+        if (string.IsNullOrWhiteSpace(safeTitle))
+        {
+            safeTitle = "channel";
+        }
+
+        var timestamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
+        return $"{safeTitle}-{kind}-{timestamp}{extension}";
+    }
+
+    private static async Task RecordCurrentStreamAsync(Uri streamUri, string outputPath, CancellationToken cancellationToken)
+    {
+        if (streamUri.Scheme is not ("http" or "https"))
+        {
+            throw new NotSupportedException("Only HTTP and HTTPS streams can be recorded by the built-in recorder.");
+        }
+
+        using var response = await SendRecordingRequestAsync(streamUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? string.Empty;
+        var isPlaylist = streamUri.AbsolutePath.EndsWith(".m3u8", StringComparison.OrdinalIgnoreCase)
+                         || contentType.Contains("mpegurl", StringComparison.OrdinalIgnoreCase)
+                         || contentType.Contains("vnd.apple", StringComparison.OrdinalIgnoreCase);
+
+        await using var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read);
+        if (!isPlaylist)
+        {
+            await using var input = await response.Content.ReadAsStreamAsync(cancellationToken);
+            await input.CopyToAsync(output, cancellationToken);
+            return;
+        }
+
+        var playlistText = await response.Content.ReadAsStringAsync(cancellationToken);
+        await RecordHlsPlaylistAsync(streamUri, playlistText, output, cancellationToken);
+    }
+
+    private static async Task<HttpResponseMessage> SendRecordingRequestAsync(
+        Uri uri,
+        HttpCompletionOption completionOption,
+        CancellationToken cancellationToken)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, uri);
+        request.Headers.UserAgent.ParseAdd("VLC/3.0 WhoseIPTV/1.0");
+        request.Headers.TryAddWithoutValidation("Accept", "*/*");
+        return await RecordingHttpClient.SendAsync(request, completionOption, cancellationToken);
+    }
+
+    private static async Task RecordHlsPlaylistAsync(
+        Uri originalPlaylistUri,
+        string initialPlaylistText,
+        FileStream output,
+        CancellationToken cancellationToken)
+    {
+        var playlistUri = ResolveVariantPlaylist(originalPlaylistUri, initialPlaylistText) ?? originalPlaylistUri;
+        var downloadedSegments = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var firstRead = playlistUri == originalPlaylistUri;
+        var targetDuration = TimeSpan.FromSeconds(2);
+
+        while (true)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var playlistText = firstRead
+                ? initialPlaylistText
+                : await FetchPlaylistTextAsync(playlistUri, cancellationToken);
+            firstRead = false;
+
+            var variantPlaylist = ResolveVariantPlaylist(playlistUri, playlistText);
+            if (variantPlaylist is not null && variantPlaylist != playlistUri)
+            {
+                playlistUri = variantPlaylist;
+                firstRead = false;
+                continue;
+            }
+
+            var playlist = ParseMediaPlaylist(playlistUri, playlistText);
+            targetDuration = playlist.TargetDuration;
+
+            foreach (var segmentUri in playlist.Segments)
+            {
+                if (!downloadedSegments.Add(segmentUri.AbsoluteUri))
+                {
+                    continue;
+                }
+
+                await DownloadSegmentAsync(segmentUri, output, cancellationToken);
+                await output.FlushAsync(cancellationToken);
+            }
+
+            if (playlist.IsEndList)
+            {
+                return;
+            }
+
+            var delay = TimeSpan.FromMilliseconds(Math.Clamp(targetDuration.TotalMilliseconds / 2d, 1000d, 5000d));
+            await Task.Delay(delay, cancellationToken);
+        }
+    }
+
+    private static async Task<string> FetchPlaylistTextAsync(Uri playlistUri, CancellationToken cancellationToken)
+    {
+        using var response = await SendRecordingRequestAsync(playlistUri, HttpCompletionOption.ResponseContentRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync(cancellationToken);
+    }
+
+    private static async Task DownloadSegmentAsync(Uri segmentUri, Stream output, CancellationToken cancellationToken)
+    {
+        using var response = await SendRecordingRequestAsync(segmentUri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        await using var input = await response.Content.ReadAsStreamAsync(cancellationToken);
+        await input.CopyToAsync(output, cancellationToken);
+    }
+
+    private static Uri? ResolveVariantPlaylist(Uri playlistUri, string playlistText)
+    {
+        Uri? bestUri = null;
+        var bestBandwidth = -1L;
+        long pendingBandwidth = -1L;
+
+        foreach (var rawLine in EnumeratePlaylistLines(playlistText))
+        {
+            if (rawLine.StartsWith("#EXT-X-STREAM-INF", StringComparison.OrdinalIgnoreCase))
+            {
+                pendingBandwidth = ParseLongAttribute(rawLine, "BANDWIDTH") ?? 0L;
+                continue;
+            }
+
+            if (pendingBandwidth < 0 || rawLine.StartsWith('#'))
+            {
+                continue;
+            }
+
+            if (pendingBandwidth >= bestBandwidth)
+            {
+                bestBandwidth = pendingBandwidth;
+                bestUri = new Uri(playlistUri, rawLine);
+            }
+
+            pendingBandwidth = -1L;
+        }
+
+        return bestUri;
+    }
+
+    private static HlsMediaPlaylist ParseMediaPlaylist(Uri playlistUri, string playlistText)
+    {
+        var segments = new List<Uri>();
+        var targetDuration = TimeSpan.FromSeconds(2);
+        var isEndList = false;
+
+        foreach (var line in EnumeratePlaylistLines(playlistText))
+        {
+            if (line.StartsWith("#EXT-X-TARGETDURATION:", StringComparison.OrdinalIgnoreCase)
+                && double.TryParse(line["#EXT-X-TARGETDURATION:".Length..], out var seconds)
+                && seconds > 0)
+            {
+                targetDuration = TimeSpan.FromSeconds(seconds);
+                continue;
+            }
+
+            if (line.StartsWith("#EXT-X-KEY:", StringComparison.OrdinalIgnoreCase)
+                && !line.Contains("METHOD=NONE", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException("Encrypted HLS streams cannot be recorded by the built-in recorder.");
+            }
+
+            if (line.StartsWith("#EXT-X-ENDLIST", StringComparison.OrdinalIgnoreCase))
+            {
+                isEndList = true;
+                continue;
+            }
+
+            if (line.StartsWith('#'))
+            {
+                continue;
+            }
+
+            segments.Add(new Uri(playlistUri, line));
+        }
+
+        return new HlsMediaPlaylist(segments, targetDuration, isEndList);
+    }
+
+    private static IEnumerable<string> EnumeratePlaylistLines(string playlistText)
+    {
+        using var reader = new StringReader(playlistText);
+        while (reader.ReadLine() is { } line)
+        {
+            line = line.Trim();
+            if (!string.IsNullOrWhiteSpace(line))
+            {
+                yield return line;
+            }
+        }
+    }
+
+    private static long? ParseLongAttribute(string line, string attributeName)
+    {
+        var pattern = attributeName + "=";
+        var start = line.IndexOf(pattern, StringComparison.OrdinalIgnoreCase);
+        if (start < 0)
+        {
+            return null;
+        }
+
+        start += pattern.Length;
+        var end = line.IndexOf(',', start);
+        var value = end < 0 ? line[start..] : line[start..end];
+        return long.TryParse(value.Trim('"'), out var parsed) ? parsed : null;
+    }
+
+    private void RefreshThemeSensitiveVisuals()
+    {
+        if (_isFullscreen)
+        {
+            SetResourceReference(BackgroundProperty, "Brush.WindowBackground");
+            RootLayout.SetResourceReference(Panel.BackgroundProperty, "Brush.WindowBackground");
+            PlaybackPanel.SetResourceReference(Border.BackgroundProperty, "Brush.WindowBackground");
+            PlaybackPanel.SetResourceReference(Border.BorderBrushProperty, "Brush.WindowBackground");
+            PlayerSurface.SetResourceReference(Border.BackgroundProperty, "Theme.Brush.000000");
+        }
+        else
+        {
+            RestoreWindowedThemeResourceReferences();
+        }
+
+        PlayerSurface.InvalidateVisual();
+        PlaybackPanel.InvalidateVisual();
+        _fullscreenHudWindow?.InvalidateVisual();
+    }
+
+    private void RestoreWindowedThemeResourceReferences()
+    {
+        SetResourceReference(BackgroundProperty, "Brush.WindowBackground");
+        RootLayout.ClearValue(Panel.BackgroundProperty);
+        PlaybackPanel.SetResourceReference(Border.BackgroundProperty, "Brush.CardBackground");
+        PlaybackPanel.SetResourceReference(Border.BorderBrushProperty, "Brush.CardBorder");
+        PlayerSurface.SetResourceReference(Border.BackgroundProperty, "Theme.Brush.000000");
+        PlayerSurface.SetResourceReference(Border.BorderBrushProperty, "Theme.Brush.604EA2FF");
     }
 
     private void ApplyPremiumTitleBar()
@@ -1373,13 +2837,25 @@ public partial class MainWindow : Window
             _ = DwmSetWindowAttribute(windowHandle, DwmWindowAttribute.UseImmersiveDarkModeBefore20H1, ref darkMode, sizeof(int));
         }
 
-        SetDwmColor(windowHandle, DwmWindowAttribute.CaptionColor, 0x00160C07);
-        SetDwmColor(windowHandle, DwmWindowAttribute.TextColor, 0x00FFF7F4);
-        SetDwmColor(windowHandle, DwmWindowAttribute.BorderColor, 0x00543827);
+        SetDwmColor(windowHandle, DwmWindowAttribute.CaptionColor, GetDwmColor("Brush.WindowBackground", "#070C16"));
+        SetDwmColor(windowHandle, DwmWindowAttribute.TextColor, GetDwmColor("Brush.TextPrimary", "#F4F7FF"));
+        SetDwmColor(windowHandle, DwmWindowAttribute.BorderColor, GetDwmColor("Brush.CardBorder", "#273854"));
     }
 
     private static void SetDwmColor(IntPtr windowHandle, DwmWindowAttribute attribute, int color)
         => _ = DwmSetWindowAttribute(windowHandle, attribute, ref color, sizeof(int));
+
+    private int GetDwmColor(string resourceKey, string fallbackHex)
+    {
+        var color = TryFindResource(resourceKey) switch
+        {
+            System.Windows.Media.SolidColorBrush brush => brush.Color,
+            System.Windows.Media.Color resourceColor => resourceColor,
+            _ => (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(fallbackHex),
+        };
+
+        return color.R | (color.G << 8) | (color.B << 16);
+    }
 
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(
@@ -1396,4 +2872,9 @@ public partial class MainWindow : Window
         CaptionColor = 35,
         TextColor = 36,
     }
+
+    private sealed record HlsMediaPlaylist(
+        IReadOnlyList<Uri> Segments,
+        TimeSpan TargetDuration,
+        bool IsEndList);
 }

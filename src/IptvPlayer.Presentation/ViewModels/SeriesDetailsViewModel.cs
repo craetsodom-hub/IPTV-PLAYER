@@ -1,9 +1,10 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Models;
 using IptvPlayer.Presentation.Localization;
 
 namespace IptvPlayer.Presentation.ViewModels;
 
-public sealed class SeriesDetailsViewModel
+public sealed class SeriesDetailsViewModel : ObservableObject
 {
     private SeriesDetailsViewModel(
         string id,
@@ -53,6 +54,16 @@ public sealed class SeriesDetailsViewModel
         => string.Join("  ", new[] { Year, Rating }.Where(value => !string.IsNullOrWhiteSpace(value)));
 
     public bool HasEpisodes => Seasons.Any(season => season.Episodes.Count > 0);
+
+    public void RefreshLocalizedText()
+    {
+        OnPropertyChanged(nameof(DescriptionText));
+        OnPropertyChanged(nameof(RatingLabel));
+        foreach (var season in Seasons)
+        {
+            season.RefreshLocalizedText();
+        }
+    }
 
     public static SeriesDetailsViewModel FromModel(SeriesDetailsModel model)
         => new(
