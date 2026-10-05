@@ -7,6 +7,6 @@ dotnet restore "%REPO%\src\IptvPlayer.App\IptvPlayer.App.csproj" -r win-x64
 "%MSBUILD%" "%REPO%\src\WhoseIptv.Package\WhoseIptv.Package.wapproj" /p:Configuration=Release /p:Platform=x64 /p:RuntimeIdentifier=win-x64 /p:GenerateAppxPackageOnBuild=true
 echo.
 echo Expected Store files on Desktop after the build:
-echo   WhoseIptv.Package_1.0.18.0_x64_bundle.msixupload
-echo   WhoseIptv.Package_1.0.18.0_x64.msixbundle
+echo   WhoseIptv.Package_1.0.19.0_x64_bundle.msixupload
+echo   WhoseIptv.Package_1.0.19.0_x64.msixbundle
 pause

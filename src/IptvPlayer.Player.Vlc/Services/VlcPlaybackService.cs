@@ -54,7 +54,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
         _networkCachingMs = GetConfiguredCachingMs(configuration, "Playback:NetworkCachingMs", DefaultNetworkCachingMs);
         _liveCachingMs = GetConfiguredCachingMs(configuration, "Playback:LiveCachingMs", DefaultLiveCachingMs);
         _httpReconnect = GetConfiguredBool(configuration, "Playback:HttpReconnect", defaultValue: true);
-#if DEBUG
+#if DEBUG || PLAYBACK_DIAGNOSTICS
         _diagnosticsEnabled = GetConfiguredBool(configuration, "PlaybackDiagnostics:Enabled", defaultValue: false);
 #else
         _diagnosticsEnabled = false;
@@ -67,6 +67,13 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     public event EventHandler<PlayerAudioState>? AudioStateChanged;
 
     public object? NativePlayer => _mediaPlayer;
+
+#if PLAYBACK_DIAGNOSTICS
+    public string? ReadNativeVersion() => _libVlc?.Version;
+    public double[] ReadNativeRenderIntervals(long sinceTick) => _diagnosticsProbe.ReadNativeRenderIntervals(sinceTick);
+    public object[] ReadNativeTimingEvents(long sinceTick) => _diagnosticsProbe.ReadNativeTimingEvents(sinceTick)
+        .Select(item => (object)new { offsetMs = Stopwatch.GetElapsedTime(sinceTick, item.Tick).TotalMilliseconds, item.Module, item.Kind }).ToArray();
+#endif
 
     public void SetVideoHostHandle(IntPtr handle)
     {
@@ -146,6 +153,12 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     public async Task PlayAsync(Uri streamUri, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(streamUri);
+#if PLAYBACK_DIAGNOSTICS
+        // This investigation must use real live inputs. Reject old replay flags
+        // even when the executable is launched directly rather than by the runner.
+        if (Environment.GetCommandLineArgs().Contains("--playback-fixture", StringComparer.Ordinal))
+            throw new InvalidOperationException("Recorded playback test inputs are disabled");
+#endif
 
         await InitializeAsync(cancellationToken);
 
@@ -218,10 +231,23 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                 }
             }
 
+            // Starting VLC without a native host permits its automatic standalone
+            // video window. Wait for the app's host instead of allowing a popout.
+            if (_mediaPlayer.Hwnd == IntPtr.Zero)
+            {
+#if PLAYBACK_DIAGNOSTICS
+                _logger.LogInformation("Playback test missing embedded host. StoredHandlePresent={StoredHandlePresent}", _videoHostHandle != IntPtr.Zero);
+#endif
+                Emit(new PlayerStatus(PlaybackState.Failed, "The video surface is not ready", null, "VIDEO_HOST_UNAVAILABLE"));
+                return;
+            }
+
             EnterPlaybackGcLatencyMode();
+            _diagnosticsProbe.StartSession(_activeMedia, _mediaPlayer, streamUri.Scheme);
             var started = _mediaPlayer.Play(_activeMedia);
             if (!started)
             {
+                await _diagnosticsProbe.StopSessionAsync();
                 RestoreGcLatencyMode();
                 Emit(new PlayerStatus(PlaybackState.Failed, "Failed to start playback", null, "PLAYBACK_START_FAILED"));
                 return;
@@ -229,7 +255,6 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
 
             ApplyDesiredAudioState(_mediaPlayer);
 
-            _diagnosticsProbe.StartSession(_activeMedia, _mediaPlayer, streamUri.Scheme);
             StartFirstFrameMonitor(
                 _activeMedia,
                 _mediaPlayer,
@@ -244,6 +269,7 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
         }
         catch (Exception exception)
         {
+            await _diagnosticsProbe.StopSessionAsync();
             RestoreGcLatencyMode();
             _logger.LogError(exception, "VLC playback failed. Scheme={StreamScheme}", streamUri.Scheme);
             Emit(new PlayerStatus(PlaybackState.Failed, "Playback error occurred", null, "PLAYBACK_EXCEPTION"));
@@ -554,6 +580,13 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
                     return;
                 }
 
+                // An input can fail or finish before displaying its first frame.
+                // Do not keep polling that dead input every four milliseconds.
+                if (mediaPlayer.State is VLCState.Error or VLCState.Ended)
+                {
+                    return;
+                }
+
                 var statistics = media.Statistics;
                 if (statistics.DemuxCorrupted != demuxCorruptedBaseline)
                 {
@@ -801,7 +834,16 @@ public sealed class VlcPlaybackService : IPlaybackService, INativePlayerBridge
     }
 
     private void Emit(PlayerStatus status)
-        => StatusChanged?.Invoke(this, status);
+    {
+#if PLAYBACK_DIAGNOSTICS
+        if (status.State is PlaybackState.Connecting or PlaybackState.Stopped or PlaybackState.Failed)
+            _logger.LogInformation("Playback test player status. State={State}; ErrorCode={ErrorCode}; Session={Session}; Callers={Callers}",
+                status.State, status.ErrorCode ?? "none", Interlocked.Read(ref _activePlaybackSessionId),
+                string.Join(" > ", new StackTrace(false).GetFrames().Skip(1).Take(10)
+                    .Select(frame => frame.GetMethod()).Select(method => method?.DeclaringType?.Name + "." + method?.Name)));
+#endif
+        StatusChanged?.Invoke(this, status);
+    }
 
     private void SynchronizeAndEmitAudioState(MediaPlayer mediaPlayer)
     {

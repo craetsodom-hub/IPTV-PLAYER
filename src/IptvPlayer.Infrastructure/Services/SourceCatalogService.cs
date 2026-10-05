@@ -71,6 +71,11 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             "catalog");
 
         _catalogFilePath = Path.Combine(root, "sources.json");
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT") is { Length: > 0 } testRoot)
+            root = Path.Combine(Path.GetFullPath(testRoot), "catalog");
+        _catalogFilePath = Path.Combine(root, "sources.json");
+#endif
         _metadataCacheFilePath = Path.Combine(root, "metadata-cache.json");
         _storeLoadTask = Task.Run(LoadFromDiskOrSeed);
     }
@@ -141,6 +146,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
             var channels = new List<ChannelModel>(category.Channels.Count);
             foreach (var channel in category.Channels)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 if (!Uri.TryCreate(channel.StreamUri, UriKind.Absolute, out var streamUri))
                 {
                     continue;
@@ -200,6 +206,7 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
                 cancellationToken.ThrowIfCancellationRequested();
                 foreach (var channel in category.Channels)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (!seenIds.Add(channel.Id)
                         || !StreamVariantIdentityNormalizer.CanGroup(
                             selectedIdentity,
@@ -3066,15 +3073,20 @@ public sealed class SourceCatalogService : ISourceCatalogService, ISourceImportS
 
     private async Task SaveUnsafeAsync(CancellationToken cancellationToken)
     {
-        var payload = JsonSerializer.SerializeToUtf8Bytes(_store, JsonOptions);
-        try
+        // The caller holds the catalog gate until this save finishes. Move CPU work
+        // off the caller without allowing a newer catalog save to overtake it.
+        await Task.Run(async () =>
         {
-            await ProtectedCatalogFile.WriteAtomicAsync(_catalogFilePath, payload, cancellationToken).ConfigureAwait(false);
-        }
-        finally
-        {
-            CryptographicOperations.ZeroMemory(payload);
-        }
+            var payload = JsonSerializer.SerializeToUtf8Bytes(_store, JsonOptions);
+            try
+            {
+                await ProtectedCatalogFile.WriteAtomicAsync(_catalogFilePath, payload, cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(payload);
+            }
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     private void MigrateLegacyCatalogToProtectedStorage()

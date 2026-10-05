@@ -25,12 +25,23 @@ public sealed class JsonUserStateStore : IUserStateStore
             "state");
 
         _stateFilePath = Path.Combine(root, "session-state.json");
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT") is { Length: > 0 } testRoot)
+            _stateFilePath = Path.Combine(Path.GetFullPath(testRoot), "state", "session-state.json");
+#endif
     }
 
     public async Task<UserSessionState> LoadAsync(CancellationToken cancellationToken = default)
+        // File opens, JSON normalization, and atomic replacement can block even
+        // when serialization uses an async API. Keep the whole operation off UI callers.
     {
-        await _gate.WaitAsync(cancellationToken);
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { return await Task.Run(() => LoadCoreAsync(cancellationToken)).ConfigureAwait(false); }
+        finally { _gate.Release(); }
+    }
 
+    private async Task<UserSessionState> LoadCoreAsync(CancellationToken cancellationToken)
+    {
         try
         {
             if (!File.Exists(_stateFilePath))
@@ -47,18 +58,18 @@ public sealed class JsonUserStateStore : IUserStateStore
             _logger.LogError(exception, "Failed to load user session state");
             return UserSessionState.Empty;
         }
-        finally
-        {
-            _gate.Release();
-        }
     }
 
     public async Task SaveAsync(UserSessionState state, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(state);
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { await Task.Run(() => SaveCoreAsync(state, cancellationToken)).ConfigureAwait(false); }
+        finally { _gate.Release(); }
+    }
 
-        await _gate.WaitAsync(cancellationToken);
-
+    private async Task SaveCoreAsync(UserSessionState state, CancellationToken cancellationToken)
+    {
         try
         {
             var directory = Path.GetDirectoryName(_stateFilePath)!;
@@ -76,10 +87,6 @@ public sealed class JsonUserStateStore : IUserStateStore
         catch (Exception exception)
         {
             _logger.LogError(exception, "Failed to save user session state");
-        }
-        finally
-        {
-            _gate.Release();
         }
     }
 

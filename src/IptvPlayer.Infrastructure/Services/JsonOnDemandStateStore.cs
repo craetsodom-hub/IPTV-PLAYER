@@ -26,12 +26,21 @@ public sealed class JsonOnDemandStateStore : IOnDemandStateStore
             "state");
 
         _stateFilePath = Path.Combine(root, "on-demand-state.json");
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT") is { Length: > 0 } testRoot)
+            _stateFilePath = Path.Combine(Path.GetFullPath(testRoot), "state", "on-demand-state.json");
+#endif
     }
 
     public async Task<OnDemandState> LoadAsync(CancellationToken cancellationToken = default)
     {
-        await _gate.WaitAsync(cancellationToken);
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { return await Task.Run(() => LoadCoreAsync(cancellationToken)).ConfigureAwait(false); }
+        finally { _gate.Release(); }
+    }
 
+    private async Task<OnDemandState> LoadCoreAsync(CancellationToken cancellationToken)
+    {
         try
         {
             if (!File.Exists(_stateFilePath))
@@ -66,18 +75,18 @@ public sealed class JsonOnDemandStateStore : IOnDemandStateStore
             _logger.LogError(exception, "Failed to load on-demand state");
             return OnDemandState.Empty;
         }
-        finally
-        {
-            _gate.Release();
-        }
     }
 
     public async Task SaveAsync(OnDemandState state, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(state);
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try { await Task.Run(() => SaveCoreAsync(state, cancellationToken)).ConfigureAwait(false); }
+        finally { _gate.Release(); }
+    }
 
-        await _gate.WaitAsync(cancellationToken);
-
+    private async Task SaveCoreAsync(OnDemandState state, CancellationToken cancellationToken)
+    {
         try
         {
             await SaveProtectedAsync(Normalize(state), cancellationToken);
@@ -85,10 +94,6 @@ public sealed class JsonOnDemandStateStore : IOnDemandStateStore
         catch (Exception exception)
         {
             _logger.LogError(exception, "Failed to save on-demand state");
-        }
-        finally
-        {
-            _gate.Release();
         }
     }
 

@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using IptvPlayer.Contracts.Models;
+using IptvPlayer.Contracts.Channels;
 using IptvPlayer.Presentation.Localization;
 using System.Text.RegularExpressions;
 
@@ -42,6 +43,7 @@ public sealed partial class ChannelItemViewModel : ObservableObject
         Id = id;
         CategoryId = categoryId;
         Name = name;
+        VariantIdentity = StreamVariantIdentityNormalizer.Normalize(name);
         DisplayName = StripCountryPrefix(name);
         CountryPrefixFreeDisplayName = StripChannelDisplayPrefix(name);
         StreamUri = streamUri;
@@ -62,6 +64,10 @@ public sealed partial class ChannelItemViewModel : ObservableObject
     public string CategoryId { get; }
 
     public string Name { get; }
+
+    // Names are immutable; reuse their identity during selection and quality
+    // refresh instead of parsing every channel again on the dispatcher.
+    internal StreamVariantIdentity VariantIdentity { get; }
 
     public string DisplayName { get; }
 

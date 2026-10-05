@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -11,8 +12,14 @@ internal static class EventPopularityRanker
 {
     private static readonly Regex NonAlphaNumeric = new("[^a-z0-9]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
     private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, double>> SportScores = LoadSportScores();
+    private static readonly ConditionalWeakTable<SportsEventModel, EventScore> Scores = new();
 
     public static double Score(SportsEventModel sportsEvent)
+        => Scores.GetValue(sportsEvent, static model => new EventScore(CalculateScore(model))).Value;
+
+    private sealed record EventScore(double Value);
+
+    private static double CalculateScore(SportsEventModel sportsEvent)
         => new[] { sportsEvent.HomeTeam?.Name, sportsEvent.AwayTeam?.Name }
             .Where(name => !string.IsNullOrWhiteSpace(name))
             .Select(name => SportScores.TryGetValue(sportsEvent.Sport, out var scores)

@@ -1,4 +1,4 @@
-<Window x:Class="IptvPlayer.App.Views.MainWindow"
+﻿<Window x:Class="IptvPlayer.App.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -136,97 +136,20 @@
                                     BorderBrush="{DynamicResource Brush.InputBorder}"
                                     BorderThickness="1"
                                     CornerRadius="3" />
-                            <Grid x:Name="PART_Indicator"
-                                  HorizontalAlignment="Left">
-                                <Border CornerRadius="3">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Color="{DynamicResource Theme.Color.AccentHover}" Offset="0" />
-                                            <GradientStop Color="{DynamicResource Theme.Color.Accent}" Offset="0.45" />
-                                            <GradientStop Color="{DynamicResource Theme.Color.AccentPressed}" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                    <Border.Effect>
-                                        <DropShadowEffect Color="{DynamicResource Theme.Color.AccentHover}"
-                                                          BlurRadius="3"
-                                                          ShadowDepth="0"
-                                                          Opacity="0.24" />
-                                    </Border.Effect>
-                                </Border>
-                                <Border Height="1.5"
-                                        Margin="1,1,1,0"
-                                        VerticalAlignment="Top"
-                                        Background="{DynamicResource Brush.AccentHover}"
-                                        CornerRadius="1"
-                                        Opacity="0.72" />
-                            </Grid>
+                            <Border Background="{DynamicResource Brush.AccentHover}"
+                                    CornerRadius="3"
+                                    RenderTransformOrigin="0,0.5">
+                                <Border.RenderTransform>
+                                    <ScaleTransform ScaleX="{Binding DataContext.ImportProgressFraction, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Border.RenderTransform>
+                            </Border>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
 
-        <Style x:Key="StartupLoadingProgressBarStyle" TargetType="ProgressBar">
-            <Setter Property="Height" Value="4" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="UseLayoutRounding" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ProgressBar">
-                        <Grid Height="4" ClipToBounds="True" SnapsToDevicePixels="True" UseLayoutRounding="True">
-                            <Border Background="{DynamicResource Theme.Brush.10FFFFFF}"
-                                    BorderBrush="{DynamicResource Theme.Brush.16FFFFFF}"
-                                    BorderThickness="1"
-                                    CornerRadius="2"
-                                    SnapsToDevicePixels="True" />
-                            <Border x:Name="IndeterminateBar"
-                                    Width="120"
-                                    Height="4"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    CornerRadius="2"
-                                    SnapsToDevicePixels="True"
-                                    UseLayoutRounding="True">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                        <GradientStop Color="#004EA2FF" Offset="0" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.AccentHover}" Offset="0.25" />
-                                        <GradientStop Color="#FFFFFFFF" Offset="0.5" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.AccentHover}" Offset="0.75" />
-                                        <GradientStop Color="#004EA2FF" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Border.RenderTransform>
-                                    <TranslateTransform x:Name="BarTransform" X="-120" />
-                                </Border.RenderTransform>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsIndeterminate" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard x:Name="IndeterminateAnimation">
-                                        <Storyboard RepeatBehavior="Forever">
-                                            <DoubleAnimation Storyboard.TargetName="BarTransform"
-                                                             Storyboard.TargetProperty="X"
-                                                             From="-120"
-                                                             To="320"
-                                                             Duration="0:0:1.0">
-                                                <DoubleAnimation.EasingFunction>
-                                                    <CubicEase EasingMode="EaseInOut" />
-                                                </DoubleAnimation.EasingFunction>
-                                            </DoubleAnimation>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <StopStoryboard BeginStoryboardName="IndeterminateAnimation" />
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+
 
         <Style x:Key="RecentChannelPlayButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="30" />
@@ -1105,122 +1028,12 @@
             <Setter Property="HorizontalAlignment" Value="Left" />
         </Style>
 
-        <Style x:Key="GoldenEventsButtonStyle" TargetType="Button" BasedOn="{StaticResource BuiltInCategoryButtonStyle}">
+        <Style x:Key="EventsButtonStyle" TargetType="Button" BasedOn="{StaticResource BuiltInCategoryButtonStyle}">
             <Setter Property="Height" Value="58" />
             <Setter Property="MinHeight" Value="58" />
             <Setter Property="Padding" Value="8,7" />
-            <Setter Property="Background" Value="{DynamicResource Theme.Brush.101A2C}" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="{DynamicResource Theme.Brush.D4AF37}" />
             <Setter Property="Foreground" Value="{DynamicResource Theme.Brush.F5C84B}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="Container"
-                              RenderTransformOrigin="0.5,0.5"
-                              SnapsToDevicePixels="True">
-                            <Grid.RenderTransform>
-                                <TranslateTransform Y="0" />
-                            </Grid.RenderTransform>
-                            <Grid.Effect>
-                                <DropShadowEffect Color="{DynamicResource Theme.Color.000000}"
-                                                  BlurRadius="4"
-                                                  ShadowDepth="2"
-                                                  Opacity="{DynamicResource Design.Opacity.0_58}" />
-                            </Grid.Effect>
-                            <Border x:Name="Glow"
-                                    Margin="0"
-                                    CornerRadius="{DynamicResource Shape.CornerRadius.16}"
-                                    Opacity="{DynamicResource Design.Opacity.0_24}"
-                                    IsHitTestVisible="False">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <GradientStop Color="{DynamicResource Theme.Color.007A4D08}" Offset="0" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFD4AF37}" Offset="0.34" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFFFE59A}" Offset="0.5" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFD4AF37}" Offset="0.66" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.009C6510}" Offset="1" />
-                                        <LinearGradientBrush.RelativeTransform>
-                                            <RotateTransform x:Name="GlowRotate" CenterX="0.5" CenterY="0.5" />
-                                        </LinearGradientBrush.RelativeTransform>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                            </Border>
-                            <Border x:Name="GradientShell"
-                                    Padding="2"
-                                    CornerRadius="{DynamicResource Shape.CornerRadius.16}"
-                                    ClipToBounds="True">
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <GradientStop Color="{DynamicResource Theme.Color.007A4D08}" Offset="0" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FF7A4D08}" Offset="0.18" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFD4AF37}" Offset="0.35" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFFFE59A}" Offset="0.48" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FFD4AF37}" Offset="0.58" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.007A4D08}" Offset="0.72" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.FF9C6510}" Offset="0.9" />
-                                        <GradientStop Color="{DynamicResource Theme.Color.007A4D08}" Offset="1" />
-                                        <LinearGradientBrush.RelativeTransform>
-                                            <RotateTransform x:Name="MovingBorderRotate" CenterX="0.5" CenterY="0.5" />
-                                        </LinearGradientBrush.RelativeTransform>
-                                    </LinearGradientBrush>
-                                </Border.Background>
-                                <Border x:Name="ButtonSurface"
-                                        CornerRadius="{DynamicResource Shape.CornerRadius.14}"
-                                        Padding="{TemplateBinding Padding}"
-                                        SnapsToDevicePixels="True">
-                                    <Border.Background>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Color="{DynamicResource Theme.Color.17253B}" Offset="0" />
-                                            <GradientStop Color="{DynamicResource Theme.Color.101A2C}" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Border.Background>
-                                    <ContentPresenter HorizontalAlignment="Center"
-                                                      VerticalAlignment="Center" />
-                                </Border>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Glow" Property="Opacity" Value="{DynamicResource Design.Opacity.0_58}" />
-                                <Setter TargetName="ButtonSurface" Property="Background">
-                                    <Setter.Value>
-                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                            <GradientStop Color="{DynamicResource Theme.Color.1D304A}" Offset="0" />
-                                            <GradientStop Color="{DynamicResource Theme.Color.132238}" Offset="1" />
-                                        </LinearGradientBrush>
-                                    </Setter.Value>
-                                </Setter>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
-                                <Setter TargetName="Glow" Property="Opacity" Value="{DynamicResource Design.Opacity.0_22}" />
-                            </DataTrigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Glow" Property="Opacity" Value="{DynamicResource Design.Opacity.0_18}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Container" Property="Opacity" Value="0.55" />
-                            </Trigger>
-                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                <BeginStoryboard>
-                                    <Storyboard RepeatBehavior="Forever">
-                                        <DoubleAnimation Storyboard.TargetName="MovingBorderRotate"
-                                                         Storyboard.TargetProperty="Angle"
-                                                         From="0"
-                                                         To="360"
-                                                         Duration="0:0:5" />
-                                        <DoubleAnimation Storyboard.TargetName="GlowRotate"
-                                                         Storyboard.TargetProperty="Angle"
-                                                         From="0"
-                                                         To="360"
-                                                         Duration="0:0:5" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </EventTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
         <Style x:Key="EventSportCategoryButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="0,0,1,0" />
@@ -1592,20 +1405,24 @@
                                     <GradientStop Color="{DynamicResource Theme.Color.14243A}" Offset="1" />
                                 </LinearGradientBrush>
                             </Border.Background>
-                            <Border.Triggers>
-                                <EventTrigger RoutedEvent="Loaded">
-                                    <BeginStoryboard>
-                                        <Storyboard RepeatBehavior="Forever">
+
+                        </Border>
+                    <ControlTemplate.Triggers>
+                            <Trigger Property="IsVisible" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard x:Name="SkeletonShimmerAnimation">
+                                        <Storyboard RepeatBehavior="Forever" Timeline.DesiredFrameRate="30">
                                             <DoubleAnimation Storyboard.TargetName="SkeletonShimmerTransform"
-                                                             Storyboard.TargetProperty="X"
-                                                             From="-1.4"
-                                                             To="1.4"
-                                                              Duration="0:0:1.85" />
+                                                             Storyboard.TargetProperty="X" From="-1.4" To="1.4"
+                                                             Duration="0:0:1.85" />
                                         </Storyboard>
                                     </BeginStoryboard>
-                                </EventTrigger>
-                            </Border.Triggers>
-                        </Border>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="SkeletonShimmerAnimation" />
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -2142,7 +1959,7 @@
                     </StackPanel>
 
                     <Button Command="{Binding SelectEventsSectionCommand}"
-                            Style="{StaticResource GoldenEventsButtonStyle}"
+                            Style="{StaticResource EventsButtonStyle}"
                             Tag="{Binding IsEventsSection}"
                             Margin="0,0,0,8"
                             ToolTip="{loc:Loc TodaysEvents}">
@@ -2160,12 +1977,7 @@
                                         Background="{DynamicResource Theme.Brush.24200F}"
                                         BorderBrush="{DynamicResource Theme.Brush.D4AF37}"
                                         BorderThickness="1">
-                                    <Border.Effect>
-                                        <DropShadowEffect Color="{DynamicResource Theme.Color.D4AF37}"
-                                                          BlurRadius="8"
-                                                          ShadowDepth="0"
-                                                          Opacity="{DynamicResource Design.Opacity.0_42}" />
-                                    </Border.Effect>
+
                                     <Viewbox Width="21" Height="21">
                                         <Canvas Width="24" Height="24">
                                             <Path Data="M6,4 L18,4 C19.1,4 20,4.9 20,6 L20,18 C20,19.1 19.1,20 18,20 L6,20 C4.9,20 4,19.1 4,18 L4,6 C4,4.9 4.9,4 6,4 Z"
@@ -2306,7 +2118,7 @@
                                        Foreground="{DynamicResource Brush.TextMuted}"
                                        FontSize="12" />
                             <TextBlock Grid.Column="1"
-                                       Text="{Binding ImportProgressPercent, StringFormat={}{0:0}%}"
+                                       Text="{Binding ImportProgressDisplayPercent, StringFormat={}{0}%}"
                                        Foreground="{DynamicResource Brush.AccentHover}"
                                        FontSize="12" />
                             <ProgressBar Grid.Row="1"
@@ -2754,30 +2566,8 @@
                                  ScrollViewer.CanContentScroll="True"
                                  PreviewMouseWheel="SmoothList_OnPreviewMouseWheel"
                                  Visibility="{Binding IsEventsListVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <ListBox.RenderTransform>
-                                <TranslateTransform Y="0" />
-                            </ListBox.RenderTransform>
                             <ListBox.Style>
-                                <Style TargetType="ListBox">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsVisible" Value="True">
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard Timeline.DesiredFrameRate="60">
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0.0" To="1.0"
-                                                                         Duration="0:0:0.16"
-                                                                         DecelerationRatio="0.8" />
-                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                                         From="8.0" To="0.0"
-                                                                         Duration="0:0:0.16"
-                                                                         DecelerationRatio="0.8" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.EnterActions>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
+                                <Style TargetType="ListBox" />
                             </ListBox.Style>
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -2967,30 +2757,8 @@
                                 CornerRadius="{DynamicResource Shape.CornerRadius.16}"
                                 Padding="18"
                                 Visibility="{Binding HasSelectedSportsEvent, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Border.RenderTransform>
-                                <TranslateTransform Y="0" />
-                            </Border.RenderTransform>
                             <Border.Style>
-                                <Style TargetType="Border">
-                                    <Style.Triggers>
-                                        <Trigger Property="IsVisible" Value="True">
-                                            <Trigger.EnterActions>
-                                                <BeginStoryboard>
-                                                    <Storyboard Timeline.DesiredFrameRate="60">
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                         From="0.0" To="1.0"
-                                                                         Duration="0:0:0.16"
-                                                                         DecelerationRatio="0.8" />
-                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
-                                                                         From="8.0" To="0.0"
-                                                                         Duration="0:0:0.16"
-                                                                         DecelerationRatio="0.8" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </Trigger.EnterActions>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
+                                <Style TargetType="Border" />
                             </Border.Style>
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -3375,46 +3143,9 @@
                                             VerticalAlignment="Center"
                                             IsHitTestVisible="False"
                                             Visibility="{Binding IsSelectedEventChannelsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid Width="52"
-                                          Height="52"
-                                          HorizontalAlignment="Center"
-                                          RenderTransformOrigin="0.5,0.5"
-                                          SnapsToDevicePixels="False"
-                                          UseLayoutRounding="False">
-                                        <Grid.RenderTransform>
-                                            <RotateTransform Angle="0" />
-                                        </Grid.RenderTransform>
-                                        <Grid.Style>
-                                            <Style TargetType="Grid">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsSelectedEventChannelsLoading}" Value="True">
-                                                        <DataTrigger.EnterActions>
-                                                            <BeginStoryboard x:Name="EventChannelsLoadingStoryboard">
-                                                                <Storyboard RepeatBehavior="Forever"
-                                                                            Timeline.DesiredFrameRate="60">
-                                                                    <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
-                                                                                     From="0"
-                                                                                     To="360"
-                                                                                     Duration="0:0:0.8" />
-                                                                </Storyboard>
-                                                            </BeginStoryboard>
-                                                        </DataTrigger.EnterActions>
-                                                        <DataTrigger.ExitActions>
-                                                            <StopStoryboard BeginStoryboardName="EventChannelsLoadingStoryboard" />
-                                                        </DataTrigger.ExitActions>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Grid.Style>
-                                        <Ellipse Stroke="{DynamicResource Brush.Accent}"
-                                                 Opacity="0.2"
-                                                 StrokeThickness="4" />
-                                        <Path Stroke="{DynamicResource Brush.Accent}"
-                                              StrokeThickness="4"
-                                              StrokeStartLineCap="Round"
-                                              StrokeEndLineCap="Round"
-                                              Data="M 26,4 A 22,22 0 1 1 10,42" />
-                                    </Grid>
+                                    <controls:SmoothLoadingIndicator Width="52" Height="52"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Foreground="{DynamicResource Brush.Accent}" />
                                     <TextBlock Text="Loading channels"
                                                Foreground="{DynamicResource Brush.TextPrimary}"
                                                FontSize="14"
@@ -3697,16 +3428,6 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsMovieSkeletonVisible}" Value="True">
                                         <Setter Property="Opacity" Value="0" />
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     From="0"
-                                                                     To="1"
-                                                                     Duration="0:0:0.38" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -3747,29 +3468,10 @@
                                     IsHitTestVisible="False">
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
-                                <Setter Property="Opacity" Value="0" />
+                                <Setter Property="Visibility" Value="Hidden" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsMovieSkeletonVisible}" Value="True">
-                                        <Setter Property="Opacity" Value="1" />
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     From="0"
-                                                                     To="1"
-                                                                     Duration="0:0:0.28" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     To="0"
-                                                                     Duration="0:0:0.36" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
+                                        <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -4005,16 +3707,6 @@
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsSeriesSkeletonVisible}" Value="True">
                                         <Setter Property="Opacity" Value="0" />
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     From="0"
-                                                                     To="1"
-                                                                     Duration="0:0:0.38" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -4055,29 +3747,10 @@
                                     IsHitTestVisible="False">
                         <ContentControl.Style>
                             <Style TargetType="ContentControl">
-                                <Setter Property="Opacity" Value="0" />
+                                <Setter Property="Visibility" Value="Hidden" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsSeriesSkeletonVisible}" Value="True">
-                                        <Setter Property="Opacity" Value="1" />
-                                        <DataTrigger.EnterActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     From="0"
-                                                                     To="1"
-                                                                     Duration="0:0:0.28" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.EnterActions>
-                                        <DataTrigger.ExitActions>
-                                            <BeginStoryboard>
-                                                <Storyboard>
-                                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                     To="0"
-                                                                     Duration="0:0:0.36" />
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </DataTrigger.ExitActions>
+                                        <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -4108,7 +3781,7 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0">
-                    <Border Background="{DynamicResource Theme.Brush.10FFFFFF}"
+                    <Border x:Name="LiveChannelHeader" Background="{DynamicResource Theme.Brush.10FFFFFF}"
                             BorderThickness="0"
                             CornerRadius="{DynamicResource Shape.CornerRadius.16}"
                             Height="62"
@@ -4266,29 +3939,10 @@
                                                 IsHitTestVisible="False">
                                     <ContentControl.Style>
                                         <Style TargetType="ContentControl">
-                                            <Setter Property="Opacity" Value="0" />
+                                            <Setter Property="Visibility" Value="Hidden" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsMovieFeaturedSkeletonVisible}" Value="True">
-                                                    <Setter Property="Opacity" Value="1" />
-                                                    <DataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                                 From="0"
-                                                                                 To="1"
-                                                                                 Duration="0:0:0.22" />
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </DataTrigger.EnterActions>
-                                                    <DataTrigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                                 To="0"
-                                                                                 Duration="0:0:0.36" />
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </DataTrigger.ExitActions>
+                                                    <Setter Property="Visibility" Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -4409,29 +4063,10 @@
                                                 IsHitTestVisible="False">
                                     <ContentControl.Style>
                                         <Style TargetType="ContentControl">
-                                            <Setter Property="Opacity" Value="0" />
+                                            <Setter Property="Visibility" Value="Hidden" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSeriesFeaturedSkeletonVisible}" Value="True">
-                                                    <Setter Property="Opacity" Value="1" />
-                                                    <DataTrigger.EnterActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                                 From="0"
-                                                                                 To="1"
-                                                                                 Duration="0:0:0.22" />
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </DataTrigger.EnterActions>
-                                                    <DataTrigger.ExitActions>
-                                                        <BeginStoryboard>
-                                                            <Storyboard>
-                                                                <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                                                 To="0"
-                                                                                 Duration="0:0:0.36" />
-                                                            </Storyboard>
-                                                        </BeginStoryboard>
-                                                    </DataTrigger.ExitActions>
+                                                    <Setter Property="Visibility" Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
@@ -4555,38 +4190,10 @@
                                       IsHitTestVisible="False"
                                       Panel.ZIndex="20"
                                       Visibility="{Binding IsPlayerSurfaceOverlayVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <Grid HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          Width="62"
-                                          Height="62"
-                                          RenderTransformOrigin="0.5,0.5"
-                                          SnapsToDevicePixels="False"
-                                          UseLayoutRounding="False"
-                                          Visibility="{Binding IsPlayerSurfaceLoadingVisible, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <Grid.RenderTransform>
-                                            <RotateTransform Angle="0" />
-                                        </Grid.RenderTransform>
-                                        <Grid.Triggers>
-                                            <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                                <BeginStoryboard>
-                                                    <Storyboard RepeatBehavior="Forever">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
-                                                                         From="0"
-                                                                         To="360"
-                                                                         Duration="0:0:0.8" />
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </EventTrigger>
-                                        </Grid.Triggers>
-                                        <Ellipse Stroke="{DynamicResource Brush.Accent}"
-                                                 Opacity="0.2"
-                                                 StrokeThickness="4" />
-                                        <Path Stroke="{DynamicResource Brush.Accent}"
-                                              StrokeThickness="4"
-                                              StrokeStartLineCap="Round"
-                                              StrokeEndLineCap="Round"
-                                              Data="M 31,5 A 26,26 0 1 1 12,49" />
-                                    </Grid>
+                                    <controls:SmoothLoadingIndicator Width="62" Height="62"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center"
+                                          Foreground="{DynamicResource Brush.Accent}"
+                                          Visibility="{Binding IsPlayerSurfaceLoadingVisible, Converter={StaticResource BoolToVisibilityConverter}}" />
                                     <StackPanel HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 Margin="28"
@@ -4667,21 +4274,8 @@
 
                 </Grid>
 
-                <Grid Grid.Row="4">
-                    <Grid.Style>
-                        <Style TargetType="Grid">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsLiveTvOrEventsSection}" Value="True" />
-                                        <Condition Binding="{Binding IsOnDemandSection}" Value="False" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </MultiDataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
+                <Grid x:Name="LiveProgramPanel" Grid.Row="4"
+                      Visibility="{Binding IsLiveTvOrEventsSection, Converter={StaticResource BoolToVisibilityConverter}}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" MaxHeight="12" />
@@ -4689,7 +4283,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Border Grid.Row="0"
+                    <Border x:Name="LiveEpgCard" Grid.Row="0"
                             Background="{DynamicResource Brush.EpgCardBackground}"
                             BorderBrush="{DynamicResource Brush.EpgCardBorder}"
                             BorderThickness="1"
@@ -5130,23 +4724,28 @@
 
         </Grid>
 
-        <!-- Startup Loading Overlay with Centered Card & Animated Loading Bar -->
+        <!-- Startup card above a blurred, translucent view of the app. -->
         <Grid x:Name="StartupLoadingOverlay"
               Grid.Column="0"
               Grid.ColumnSpan="3"
               Margin="-16"
               HorizontalAlignment="Stretch"
               VerticalAlignment="Stretch"
-              Background="{DynamicResource Brush.WindowBackground}"
+              Background="Transparent"
               Panel.ZIndex="350"
               Visibility="Collapsed"
               Opacity="0">
+            <Image x:Name="StartupBackdrop" Stretch="Fill" IsHitTestVisible="False"
+                   RenderOptions.BitmapScalingMode="LowQuality">
+                <Image.Effect><BlurEffect Radius="9" RenderingBias="Performance" /></Image.Effect>
+            </Image>
+            <Border Background="#60000000" IsHitTestVisible="False" />
             <Grid HorizontalAlignment="Center"
                   VerticalAlignment="Center"
                   Width="380"
                   SnapsToDevicePixels="True"
                   UseLayoutRounding="True">
-                <!-- Static cached background border with drop shadow (ZERO per-frame invalidations) -->
+                <!-- Shadow is separate from the animated visual. -->
                 <Border CornerRadius="20"
                         Background="{DynamicResource Theme.Brush.101A2C}">
                     <Border.Effect>
@@ -5157,7 +4756,7 @@
                     </Border.Effect>
                 </Border>
 
-                <!-- Foreground card content (animates at a flawless 60 FPS without triggering shadow redraws) -->
+                <!-- Loading animation remains active until the card is dismissed. -->
                 <Border CornerRadius="20"
                         Padding="32,28"
                         Background="{DynamicResource Theme.Brush.101A2C}"
@@ -5190,10 +4789,10 @@
                                    TextAlignment="Center"
                                    Margin="0,0,0,18" />
 
-                        <ProgressBar Style="{StaticResource StartupLoadingProgressBarStyle}"
-                                     IsIndeterminate="{Binding IsStartupLoading}"
-                                     Width="316"
-                                     HorizontalAlignment="Center" />
+                        <controls:SmoothLoadingBar x:Name="StartupLoadingBar"
+                                                   Width="316" Height="4"
+                                                   Foreground="{DynamicResource Brush.AccentHover}"
+                                                   HorizontalAlignment="Center" />
                     </StackPanel>
                 </Border>
             </Grid>

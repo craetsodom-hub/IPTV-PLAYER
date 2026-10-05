@@ -23,7 +23,9 @@ public sealed class SourceImportOrchestrator
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Import requested with mode {Mode}", request.Mode);
-        return await _sourceImportService.ImportAsync(request, progress, cancellationToken);
+        return await Task.Run(
+            () => _sourceImportService.ImportAsync(request, progress, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<SourceImportResult> UpdateAsync(
@@ -32,7 +34,9 @@ public sealed class SourceImportOrchestrator
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Updating source {SourceId}", request.SourceId);
-        return await _sourceImportService.UpdateSourceAsync(request, progress, cancellationToken);
+        return await Task.Run(
+            () => _sourceImportService.UpdateSourceAsync(request, progress, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<SourceImportResult> RefreshAsync(
@@ -41,12 +45,16 @@ public sealed class SourceImportOrchestrator
         CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Refreshing source {SourceId}", sourceId);
-        return await _sourceImportService.RefreshSourceAsync(sourceId, progress, cancellationToken);
+        return await Task.Run(
+            () => _sourceImportService.RefreshSourceAsync(sourceId, progress, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<bool> DeleteAsync(Guid sourceId, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Deleting source {SourceId}", sourceId);
-        return await _sourceImportService.DeleteSourceAsync(sourceId, cancellationToken);
+        return await Task.Run(
+            () => _sourceImportService.DeleteSourceAsync(sourceId, cancellationToken),
+            cancellationToken).ConfigureAwait(false);
     }
 }

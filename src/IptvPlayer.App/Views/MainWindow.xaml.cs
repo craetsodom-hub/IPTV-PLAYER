@@ -18,10 +18,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace IptvPlayer.App.Views;
 
@@ -40,6 +44,18 @@ public partial class MainWindow : Window
     private const int NativeArrowCursorId = 32512;
     private const int NativeHandCursorId = 32649;
     private const int ClassLongCursor = -12;
+#if PLAYBACK_DIAGNOSTICS
+    private bool _nativeWindowTransitionsDisabled;
+    private int _diagnosticAspectRatioUpdates;
+    private bool _diagnosticFullscreenLayoutOnlySnapshot;
+    private readonly List<DiagnosticFullscreenTiming> _diagnosticFullscreenTimings = [];
+    private int _diagnosticPlaybackPanelGridColumn;
+    private int _diagnosticPlaybackPanelGridColumnSpan;
+    private bool _diagnosticFullscreenChromeVisible;
+    private IntPtr _diagnosticFullscreenHiddenCursorHandle;
+    private static readonly bool DiagnosticOverlaySeparateBoundsBaseline =
+        Environment.GetCommandLineArgs().Contains("--overlay-separate-bounds-baseline", StringComparer.Ordinal);
+#endif
     private const string VlcVideoWindowClassPrefix = "VLC video ";
     private const int WindowMessageSetCursor = 0x0020;
     private const int WindowMessageCreate = 0x0001;
@@ -66,7 +82,11 @@ public partial class MainWindow : Window
     private readonly Dictionary<ScrollViewer, SmoothScrollState> _smoothScrollStates = [];
 
     private bool _isFullscreen;
+    private bool _isClosed;
     private bool _isFullscreenTransitioning;
+    private bool _playerBoundsRefreshRequested;
+    private bool _playerBoundsRefreshQueued;
+    private bool _playerDisplayModeRefreshRequested;
     private Thickness _rootLayoutMargin;
     private CornerRadius _playerCornerRadius;
     private Thickness _playerBorderThickness;
@@ -94,7 +114,7 @@ public partial class MainWindow : Window
     private VerticalAlignment _playerSurfaceHostVerticalAlignment;
     private double _playerSurfaceHostWidth;
     private double _playerSurfaceHostHeight;
-    private readonly Dictionary<UIElement, Visibility> _fullscreenHiddenElementVisibility = [];
+    private readonly Dictionary<UIElement, object> _fullscreenHiddenElementVisibility = [];
     private IntPtr _fullscreenWindowHandle;
     private IntPtr _previousNativeWindowStyle;
     private NativeRect _previousNativeWindowBounds;
@@ -126,6 +146,7 @@ public partial class MainWindow : Window
     private static readonly TimeSpan MinimumStartupLoadingDuration = TimeSpan.FromSeconds(1);
     private DateTimeOffset _startupLoadingShownUtc = DateTimeOffset.UtcNow;
     private CancellationTokenSource? _startupLoadingDismissCts;
+    private bool _startupBackdropRefreshQueued;
     private string? _recordingOutputPath;
     private int _recordingSessionId;
     private bool _isRecording;
@@ -152,13 +173,16 @@ public partial class MainWindow : Window
         _nativePlayerBridge = nativePlayerBridge;
         _playbackService = playbackService;
         _logger = logger;
-#if DEBUG
+#if DEBUG || PLAYBACK_DIAGNOSTICS
         _playbackDiagnosticsEnabled = configuration.GetValue("PlaybackDiagnostics:Enabled", defaultValue: false);
 #else
         _playbackDiagnosticsEnabled = false;
 #endif
 
         InitializeComponent();
+#if PLAYBACK_DIAGNOSTICS
+        InitializeDiagnosticMarkers(configuration);
+#endif
         WindowState = WindowState.Maximized;
         if (_viewModel.IsStartupLoading)
         {
@@ -217,6 +241,10 @@ public partial class MainWindow : Window
         ThemeManager.Current.ThemeChanged += ThemeManager_OnThemeChanged;
         SourceInitialized += MainWindow_OnSourceInitialized;
         Loaded += MainWindow_OnLoaded;
+        RootLayout.SizeChanged += (_, _) =>
+        {
+            if (StartupLoadingOverlay.Visibility == Visibility.Visible) ApplyStartupBlur(true);
+        };
         LocationChanged += MainWindow_OnFullscreenBoundsChanged;
         SizeChanged += MainWindow_OnFullscreenBoundsChanged;
         StateChanged += MainWindow_OnFullscreenBoundsChanged;
@@ -227,6 +255,9 @@ public partial class MainWindow : Window
     {
         WindowState = WindowState.Maximized;
         ApplyPremiumTitleBar();
+#if PLAYBACK_DIAGNOSTICS
+        UpdatePlaybackWindowTransitions();
+#endif
     }
 
     private void ThemeManager_OnThemeChanged(object? sender, EventArgs e)
@@ -298,15 +329,32 @@ public partial class MainWindow : Window
             while (PlayerView.Handle == IntPtr.Zero && handleAttempts < 50)
             {
                 await Task.Delay(20);
+                if (_isClosed) return;
                 handleAttempts++;
             }
+
+            if (_isClosed) return;
 
             if (PlayerView.Handle != IntPtr.Zero)
             {
                 _nativePlayerBridge.SetVideoHostHandle(PlayerView.Handle);
             }
 
-            await _playbackService.InitializeAsync();
+#if PLAYBACK_DIAGNOSTICS
+            var playerInitialization = System.Diagnostics.Stopwatch.StartNew();
+            _diagnosticStartupPhase = "player-engine";
+            if (Environment.GetCommandLineArgs().Contains("--startup-ui-init-baseline", StringComparer.Ordinal))
+                await _playbackService.InitializeAsync();
+            else
+#endif
+                // Loading native DLLs and constructing VLC are synchronous work.
+                // Keep that work off the dispatcher so the loading UI can animate.
+                await Task.Run(() => _playbackService.InitializeAsync());
+            if (_isClosed) return;
+#if PLAYBACK_DIAGNOSTICS
+            _logger.LogInformation("Playback test startup phase. Phase=player-engine; DurationMs={DurationMs}", playerInitialization.Elapsed.TotalMilliseconds);
+            _diagnosticStartupPhase = "playlist-and-state";
+#endif
 
             if (_nativePlayerBridge.NativePlayer is MediaPlayer mediaPlayer)
             {
@@ -321,6 +369,10 @@ public partial class MainWindow : Window
             }
 
             await _viewModel.InitializeAsync();
+            if (_isClosed) return;
+#if PLAYBACK_DIAGNOSTICS
+            _diagnosticStartupPhase = "playlist-category-load";
+#endif
 
             if (_boundMediaPlayer is null && _nativePlayerBridge.NativePlayer is MediaPlayer fallbackPlayer)
             {
@@ -335,11 +387,18 @@ public partial class MainWindow : Window
         catch (Exception exception)
         {
             _logger.LogError(exception, "Main window initialization failed after first render");
+#if PLAYBACK_DIAGNOSTICS
+            _logger.LogInformation("Playback test initialization failed. ErrorType={ErrorType}", exception.GetType().Name);
+#endif
         }
+#if PLAYBACK_DIAGNOSTICS
+        finally { _diagnosticShellInitialized.TrySetResult(); }
+#endif
     }
 
     private void MainWindow_OnClosed(object? sender, EventArgs e)
     {
+        _isClosed = true;
         _startupLoadingDismissCts?.Cancel();
         _startupLoadingDismissCts?.Dispose();
         _startupLoadingDismissCts = null;
@@ -349,6 +408,7 @@ public partial class MainWindow : Window
             ExitFullscreen(animate: false);
         }
 
+        CloseFullscreenHud();
         _fullscreenExitHintTimer.Stop();
         _fullscreenExitHintTimer.Tick -= FullscreenExitHintTimer_OnTick;
         _playerControlsAutoHideTimer.Stop();
@@ -371,6 +431,13 @@ public partial class MainWindow : Window
         PlayerSurface.LayoutUpdated -= PlayerSurface_OnLayoutUpdated;
         _localization.CultureChanged -= Localization_OnCultureChanged;
         DetachPlayerVideoInputHook();
+#if PLAYBACK_DIAGNOSTICS
+        if (_diagnosticFullscreenHiddenCursorHandle != IntPtr.Zero)
+        {
+            DestroyCursor(_diagnosticFullscreenHiddenCursorHandle);
+            _diagnosticFullscreenHiddenCursorHandle = IntPtr.Zero;
+        }
+#endif
         UnbindNativePlayerHost();
         ClosePlayerControlsOverlay();
         ClosePlayerActionIndicatorOverlay();
@@ -620,13 +687,28 @@ public partial class MainWindow : Window
         {
             if (!_isStretchDisplayMode)
             {
+#if PLAYBACK_DIAGNOSTICS
+                if (!Environment.GetCommandLineArgs().Contains("--aspect-always-baseline", StringComparer.Ordinal)
+                    && string.IsNullOrEmpty(mediaPlayer.AspectRatio)) return;
+                _diagnosticAspectRatioUpdates++;
+#else
+                if (string.IsNullOrEmpty(mediaPlayer.AspectRatio)) return;
+#endif
                 mediaPlayer.AspectRatio = null;
                 return;
             }
 
             var width = Math.Max(1, (int)Math.Round(PlayerSurface.ActualWidth));
             var height = Math.Max(1, (int)Math.Round(PlayerSurface.ActualHeight));
-            mediaPlayer.AspectRatio = $"{width}:{height}";
+            var aspectRatio = $"{width}:{height}";
+#if PLAYBACK_DIAGNOSTICS
+            if (!Environment.GetCommandLineArgs().Contains("--aspect-always-baseline", StringComparer.Ordinal)
+                && mediaPlayer.AspectRatio == aspectRatio) return;
+            _diagnosticAspectRatioUpdates++;
+#else
+            if (mediaPlayer.AspectRatio == aspectRatio) return;
+#endif
+            mediaPlayer.AspectRatio = aspectRatio;
         }
         catch (Exception exception)
         {
@@ -636,6 +718,9 @@ public partial class MainWindow : Window
 
     private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--stability-suite", StringComparer.Ordinal)) { e.Handled = true; return; }
+#endif
         _logger.LogDebug("PreviewKeyDown received: {Key}. IsFullscreen={IsFullscreen}", e.Key, _isFullscreen);
 
         if (e.Key == Key.F11)
@@ -653,11 +738,7 @@ public partial class MainWindow : Window
     }
 
     private void PlayerSurfaceHost_OnSizeChanged(object sender, SizeChangedEventArgs e)
-        => Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
-        {
-            UpdatePlayerOverlayBounds();
-            ApplyPlayerDisplayMode();
-        }));
+        => RequestPlayerBoundsRefresh(applyDisplayMode: true);
 
     private void PlayerSurface_OnLayoutUpdated(object? sender, EventArgs e)
     {
@@ -668,14 +749,38 @@ public partial class MainWindow : Window
     }
 
     private void MainWindow_OnFullscreenBoundsChanged(object? sender, EventArgs e)
-    {
-        if (_isFullscreen)
-        {
-            UpdateFullscreenHudBounds();
-            return;
-        }
+        => RequestPlayerBoundsRefresh();
 
-        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(UpdatePlayerOverlayBounds));
+    private void RequestPlayerBoundsRefresh(bool applyDisplayMode = false)
+    {
+        if (_isClosed) return;
+        _playerBoundsRefreshRequested = true;
+        _playerDisplayModeRefreshRequested |= applyDisplayMode;
+        if (_isFullscreenTransitioning || _playerBoundsRefreshQueued) return;
+        _playerBoundsRefreshQueued = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+        {
+            _playerBoundsRefreshQueued = false;
+            ApplyPendingPlayerBoundsRefresh();
+        }));
+    }
+
+    private void ApplyPendingPlayerBoundsRefresh()
+    {
+        if (_isClosed || _isFullscreenTransitioning || !_playerBoundsRefreshRequested) return;
+        _playerBoundsRefreshRequested = false;
+        var applyDisplayMode = _playerDisplayModeRefreshRequested;
+        _playerDisplayModeRefreshRequested = false;
+        if (_isFullscreen) UpdateFullscreenHudBounds();
+        else UpdatePlayerOverlayBounds();
+        if (applyDisplayMode) ApplyPlayerDisplayMode();
+    }
+
+    private void CompletePlayerBoundsRefreshAfterTransition()
+    {
+        _playerBoundsRefreshRequested = true;
+        _playerDisplayModeRefreshRequested = true;
+        ApplyPendingPlayerBoundsRefresh();
     }
 
     private void StartPlaybackDiagnostics()
@@ -828,7 +933,9 @@ public partial class MainWindow : Window
 
     private void ToggleFullscreen()
     {
-        if (_isFullscreenTransitioning)
+        // A queued command can arrive after the owner was minimized. Capturing
+        // Windows' offscreen iconic bounds would corrupt the restore snapshot.
+        if (_isClosed || !IsVisible || WindowState == WindowState.Minimized || _isFullscreenTransitioning)
         {
             return;
         }
@@ -863,6 +970,13 @@ public partial class MainWindow : Window
         _playbackPanelBorderThickness = PlaybackPanel.BorderThickness;
         _playbackPanelBackground = PlaybackPanel.Background;
         _playbackPanelBorderBrush = PlaybackPanel.BorderBrush;
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticFullscreenPreserveSidebarLayout)
+        {
+            _diagnosticPlaybackPanelGridColumn = Grid.GetColumn(PlaybackPanel);
+            _diagnosticPlaybackPanelGridColumnSpan = Grid.GetColumnSpan(PlaybackPanel);
+        }
+#endif
         _playerRowHostGridRow = Grid.GetRow(PlayerRowHost);
         _playerRowHostGridColumn = Grid.GetColumn(PlayerRowHost);
         _playerRowHostGridRowSpan = Grid.GetRowSpan(PlayerRowHost);
@@ -881,23 +995,49 @@ public partial class MainWindow : Window
 
     private void CompleteEnterFullscreen()
     {
-        SuspendPlayerViewForFullscreenTransition();
-
+#if PLAYBACK_DIAGNOSTICS
+        using var videoPositionUpdate = new DiagnosticFullscreenPositionScope(
+            this, PlayerView.DeferPositionUpdates(), "host-commit-enter");
+#else
+        using var videoPositionUpdate = PlayerView.DeferPositionUpdates();
+#endif
+#if PLAYBACK_DIAGNOSTICS
+        if (!IsDiagnosticFullscreenLayoutBeforeWindow && !TryEnterNativeFullscreen())
+#else
         if (!TryEnterNativeFullscreen())
+#endif
         {
-            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
+            RequestPlayerBoundsRefresh(applyDisplayMode: true);
             return;
         }
 
+#if PLAYBACK_DIAGNOSTICS
+        var layoutStartedTick = Stopwatch.GetTimestamp();
+#endif
         RootLayout.Margin = new Thickness(0);
         SetResourceReference(BackgroundProperty, "Brush.WindowBackground");
         RootLayout.SetResourceReference(Panel.BackgroundProperty, "Brush.WindowBackground");
-        SourceColumn.Width = new GridLength(0);
-        ChannelColumn.Width = new GridLength(0);
-        ContentColumn.Width = new GridLength(1, GridUnitType.Star);
-        SourcePanel.Visibility = Visibility.Collapsed;
-        ChannelPanel.Visibility = Visibility.Collapsed;
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticFullscreenPreserveSidebarLayout)
+        {
+            // Hidden retains the sidebar viewport sizes and stops visibility-
+            // driven clocks while the existing playback panel spans the app.
+            ContentColumn.Width = new GridLength(1, GridUnitType.Star);
+            SourcePanel.Visibility = Visibility.Hidden;
+            ChannelPanel.Visibility = Visibility.Hidden;
+            Grid.SetColumn(PlaybackPanel, 0);
+            Grid.SetColumnSpan(PlaybackPanel, Math.Max(1, RootLayout.ColumnDefinitions.Count));
+        }
+        else
+#endif
+        {
+            SourceColumn.Width = new GridLength(0);
+            ChannelColumn.Width = new GridLength(0);
+            ContentColumn.Width = new GridLength(1, GridUnitType.Star);
+            SourcePanel.Visibility = Visibility.Collapsed;
+            ChannelPanel.Visibility = Visibility.Collapsed;
+        }
         PlaybackPanel.Margin = new Thickness(0);
         PlaybackPanel.Padding = new Thickness(0);
         PlaybackPanel.BorderThickness = new Thickness(0);
@@ -912,7 +1052,11 @@ public partial class MainWindow : Window
                 continue;
             }
 
-            _fullscreenHiddenElementVisibility[child] = child.Visibility;
+            // Preserve the value source, including section visibility triggers.
+            // Restoring the computed Visible value would override them forever.
+            _fullscreenHiddenElementVisibility[child] =
+                (object?)BindingOperations.GetBindingBase(child, VisibilityProperty)
+                ?? child.ReadLocalValue(VisibilityProperty);
             child.Visibility = Visibility.Collapsed;
         }
 
@@ -942,16 +1086,33 @@ public partial class MainWindow : Window
         FullscreenOverlay.Opacity = 1d;
         FullscreenOverlay.Visibility = Visibility.Collapsed;
         _fullscreenExitHintTimer.Stop();
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticFullscreenLayoutBeforeWindow)
+        {
+            RecordDiagnosticFullscreenTiming("layout-enter-properties", layoutStartedTick);
+            if (!TryEnterNativeFullscreen())
+                throw new InvalidOperationException("Diagnostic fullscreen entry failed after layout preparation");
+            layoutStartedTick = Stopwatch.GetTimestamp();
+        }
+        if (!IsDiagnosticFullscreenNoReactivate || !IsActive) Activate();
+#else
         Activate();
+#endif
         Focus();
         Keyboard.Focus(this);
         _isFullscreen = true;
         IsFullscreenPresentationActive = true;
         UpdatePlayerVideoCursor();
+        // Commit the final layout once, after the native window and all panels
+        // reach their fullscreen sizes. The video remains visible throughout.
+        RootLayout.UpdateLayout();
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("layout-enter", layoutStartedTick);
+#endif
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
-            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
+            CompletePlayerBoundsRefreshAfterTransition();
 
             _logger.LogInformation(
                 "Entered fullscreen. Overlay visibility={OverlayVisibility}; playerHost={HostWidth}x{HostHeight}; player={PlayerWidth}x{PlayerHeight}",
@@ -983,16 +1144,33 @@ public partial class MainWindow : Window
 
     private void CompleteExitFullscreen()
     {
-        CloseFullscreenHud();
-        SuspendPlayerViewForFullscreenTransition();
+#if PLAYBACK_DIAGNOSTICS
+        using var videoPositionUpdate = new DiagnosticFullscreenPositionScope(
+            this, PlayerView.DeferPositionUpdates(), "host-commit-exit");
+#else
+        using var videoPositionUpdate = PlayerView.DeferPositionUpdates();
+#endif
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--recreate-fullscreen-hud-baseline", StringComparer.Ordinal))
+            CloseFullscreenHud();
+        else
+#endif
+            HideFullscreenHud();
 
+#if PLAYBACK_DIAGNOSTICS
+        if (!IsDiagnosticFullscreenLayoutBeforeWindow && !TryExitNativeFullscreen())
+#else
         if (!TryExitNativeFullscreen())
+#endif
         {
-            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
+            RequestPlayerBoundsRefresh(applyDisplayMode: true);
             return;
         }
 
+#if PLAYBACK_DIAGNOSTICS
+        var layoutStartedTick = Stopwatch.GetTimestamp();
+#endif
         FullscreenHost.Children.Clear();
         FullscreenOverlay.BeginAnimation(OpacityProperty, null);
         FullscreenOverlay.Opacity = 1d;
@@ -1004,12 +1182,24 @@ public partial class MainWindow : Window
         ContentColumn.Width = _contentColumnWidth;
         SourcePanel.Visibility = _sourcePanelVisibility;
         ChannelPanel.Visibility = _channelPanelVisibility;
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticFullscreenPreserveSidebarLayout)
+        {
+            Grid.SetColumn(PlaybackPanel, _diagnosticPlaybackPanelGridColumn);
+            Grid.SetColumnSpan(PlaybackPanel, _diagnosticPlaybackPanelGridColumnSpan);
+        }
+#endif
         PlaybackPanel.Margin = _playbackPanelMargin;
         PlaybackPanel.Padding = _playbackPanelPadding;
         PlaybackPanel.BorderThickness = _playbackPanelBorderThickness;
         foreach (var (element, visibility) in _fullscreenHiddenElementVisibility)
         {
-            element.Visibility = visibility;
+            if (visibility == DependencyProperty.UnsetValue)
+                element.ClearValue(VisibilityProperty);
+            else if (visibility is BindingBase binding)
+                BindingOperations.SetBinding(element, VisibilityProperty, binding);
+            else
+                element.SetValue(VisibilityProperty, visibility);
         }
 
         _fullscreenHiddenElementVisibility.Clear();
@@ -1030,37 +1220,39 @@ public partial class MainWindow : Window
         PlayerSurface.Effect = _playerEffect;
         _fullscreenExitHintTimer.Stop();
 
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticFullscreenLayoutBeforeWindow)
+        {
+            RecordDiagnosticFullscreenTiming("layout-exit-properties", layoutStartedTick);
+            if (!TryExitNativeFullscreen())
+                throw new InvalidOperationException("Diagnostic fullscreen exit failed after layout preparation");
+            layoutStartedTick = Stopwatch.GetTimestamp();
+        }
+#endif
+
         _isFullscreen = false;
         IsFullscreenPresentationActive = false;
         UpdatePlayerVideoCursor();
+        RootLayout.UpdateLayout();
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("layout-exit", layoutStartedTick);
+#endif
 
         Dispatcher.BeginInvoke(DispatcherPriority.Background, () =>
         {
-            RestorePlayerViewAfterFullscreenTransition();
             _isFullscreenTransitioning = false;
+            CompletePlayerBoundsRefreshAfterTransition();
             RefreshPlayerControlsOverlayVisibility(showControls: true);
             RefreshPlayerActionIndicatorOverlayVisibility();
             _logger.LogInformation("Exited fullscreen. Overlay visibility={OverlayVisibility}", FullscreenOverlay.Visibility);
         });
     }
 
-    private void SuspendPlayerViewForFullscreenTransition()
-    {
-        // LibVLCSharp's transparent foreground window follows this surface during layout.
-        // Collapse it for the native frame resize so it never receives transient invalid bounds.
-        PlayerView.Visibility = Visibility.Collapsed;
-        RootLayout.UpdateLayout();
-    }
-
-    private void RestorePlayerViewAfterFullscreenTransition()
-    {
-        PlayerView.ClearValue(VisibilityProperty);
-        PlayerView.InvalidateMeasure();
-        PlayerView.InvalidateVisual();
-    }
-
     private bool TryEnterNativeFullscreen()
     {
+#if PLAYBACK_DIAGNOSTICS
+        using var timing = new DiagnosticFullscreenTimingScope(this, "native-enter");
+#endif
         var handle = new WindowInteropHelper(this).Handle;
         if (handle == IntPtr.Zero
             || !GetWindowRect(handle, out var previousBounds))
@@ -1085,13 +1277,32 @@ public partial class MainWindow : Window
         var fullscreenStyle = new IntPtr(previousStyle.ToInt64() & ~FullscreenRemovedStyleMask);
         var previousWindowState = WindowState;
 
-        if (WindowState != WindowState.Normal)
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--fullscreen-layout-only", StringComparer.Ordinal))
         {
-            WindowState = WindowState.Normal;
-            UpdateLayout();
+            // Isolate the existing in-app layout expansion from the parent's
+            // native style/bounds transaction. The child HWND/media stay intact.
+            _fullscreenWindowHandle = handle;
+            _previousNativeWindowStyle = previousStyle;
+            _previousNativeWindowBounds = previousBounds;
+            _previousNativeTopmost = (previousExtendedStyle.ToInt64() & WindowExtendedStyleTopmost) != 0;
+            _previousManagedWindowState = previousWindowState;
+            _hasNativeFullscreenSnapshot = true;
+            _diagnosticFullscreenLayoutOnlySnapshot = true;
+            return true;
         }
+#endif
 
+        // Resize the existing window directly. Restoring it first creates an
+        // intermediate video size and an unnecessary desktop animation.
+#if PLAYBACK_DIAGNOSTICS
+        var styleStartedTick = Stopwatch.GetTimestamp();
+#endif
         _ = SetWindowLongPtr(handle, WindowLongStyle, fullscreenStyle);
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("native-enter-style", styleStartedTick);
+        var positionStartedTick = Stopwatch.GetTimestamp();
+#endif
         var monitorBounds = monitorInfo.Monitor;
         var applied = SetWindowPos(
             handle,
@@ -1100,11 +1311,18 @@ public partial class MainWindow : Window
             monitorBounds.Top,
             monitorBounds.Right - monitorBounds.Left,
             monitorBounds.Bottom - monitorBounds.Top,
+#if PLAYBACK_DIAGNOSTICS
+            GetDiagnosticFullscreenPositionFlags());
+#else
             SetWindowPosFrameChanged | SetWindowPosShowWindow | SetWindowPosNoOwnerZOrder);
+#endif
 
+        var nativeError = applied ? 0 : Marshal.GetLastWin32Error();
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("native-enter-position", positionStartedTick);
+#endif
         if (!applied)
         {
-            var nativeError = Marshal.GetLastWin32Error();
             _ = SetWindowLongPtr(handle, WindowLongStyle, previousStyle);
             _ = SetWindowPos(
                 handle,
@@ -1113,7 +1331,11 @@ public partial class MainWindow : Window
                 previousBounds.Top,
                 previousBounds.Right - previousBounds.Left,
                 previousBounds.Bottom - previousBounds.Top,
+#if PLAYBACK_DIAGNOSTICS
+                GetDiagnosticFullscreenPositionFlags());
+#else
                 SetWindowPosFrameChanged | SetWindowPosShowWindow | SetWindowPosNoOwnerZOrder);
+#endif
             WindowState = previousWindowState;
             _logger.LogError("Fullscreen native window transaction failed. Error={NativeError}", nativeError);
             return false;
@@ -1130,13 +1352,37 @@ public partial class MainWindow : Window
 
     private bool TryExitNativeFullscreen()
     {
+#if PLAYBACK_DIAGNOSTICS
+        using var timing = new DiagnosticFullscreenTimingScope(this, "native-exit");
+#endif
         if (!_hasNativeFullscreenSnapshot || _fullscreenWindowHandle == IntPtr.Zero)
         {
             _logger.LogError("Fullscreen exit could not restore the native window because no valid snapshot exists");
             return false;
         }
 
+#if PLAYBACK_DIAGNOSTICS
+        if (_diagnosticFullscreenLayoutOnlySnapshot)
+        {
+            _diagnosticFullscreenLayoutOnlySnapshot = false;
+            _fullscreenWindowHandle = IntPtr.Zero;
+            _previousNativeWindowStyle = IntPtr.Zero;
+            _previousNativeWindowBounds = default;
+            _previousNativeTopmost = false;
+            _previousManagedWindowState = WindowState.Normal;
+            _hasNativeFullscreenSnapshot = false;
+            return true;
+        }
+#endif
+
+#if PLAYBACK_DIAGNOSTICS
+        var styleStartedTick = Stopwatch.GetTimestamp();
+#endif
         _ = SetWindowLongPtr(_fullscreenWindowHandle, WindowLongStyle, _previousNativeWindowStyle);
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("native-exit-style", styleStartedTick);
+        var positionStartedTick = Stopwatch.GetTimestamp();
+#endif
         var bounds = _previousNativeWindowBounds;
         var restored = SetWindowPos(
             _fullscreenWindowHandle,
@@ -1145,11 +1391,19 @@ public partial class MainWindow : Window
             bounds.Top,
             bounds.Right - bounds.Left,
             bounds.Bottom - bounds.Top,
+#if PLAYBACK_DIAGNOSTICS
+            GetDiagnosticFullscreenPositionFlags());
+#else
             SetWindowPosFrameChanged | SetWindowPosShowWindow | SetWindowPosNoOwnerZOrder);
+#endif
 
+        var nativeError = restored ? 0 : Marshal.GetLastWin32Error();
+#if PLAYBACK_DIAGNOSTICS
+        RecordDiagnosticFullscreenTiming("native-exit-position", positionStartedTick);
+#endif
         if (!restored)
         {
-            _logger.LogError("Fullscreen exit native window transaction failed. Error={NativeError}", Marshal.GetLastWin32Error());
+            _logger.LogError("Fullscreen exit native window transaction failed. Error={NativeError}", nativeError);
             return false;
         }
 
@@ -1163,6 +1417,121 @@ public partial class MainWindow : Window
         _hasNativeFullscreenSnapshot = false;
         return true;
     }
+
+#if PLAYBACK_DIAGNOSTICS
+    private static bool IsDiagnosticCompactFullscreenHud
+        => Environment.GetCommandLineArgs().Contains("--compact-fullscreen-hud", StringComparer.Ordinal);
+
+    private NativeRect GetDiagnosticFullscreenHudBounds(NativeRect ownerBounds)
+    {
+        if (!IsDiagnosticCompactFullscreenHud || _viewModel.IsFullscreenPlaybackLoadingVisible
+            || _viewModel.IsFullscreenNoSignalVisible || _viewModel.IsPlayerActionIndicatorVisible)
+            return ownerBounds;
+        var scaleY = System.Windows.Media.VisualTreeHelper.GetDpi(this).DpiScaleY;
+        var height = Math.Min(ownerBounds.Bottom - ownerBounds.Top,
+            Math.Max(1, (int)Math.Round(PlayerControlsOverlayHeight * scaleY)));
+        ownerBounds.Top = ownerBounds.Bottom - height;
+        return ownerBounds;
+    }
+
+    private IntPtr GetDiagnosticCompactFullscreenCursor()
+    {
+        if (!_isFullscreen) return HandCursorHandle;
+        if (_diagnosticFullscreenChromeVisible) return ArrowCursorHandle;
+        if (_diagnosticFullscreenHiddenCursorHandle == IntPtr.Zero)
+        {
+            var andMask = new byte[128];
+            Array.Fill(andMask, (byte)0xFF);
+            _diagnosticFullscreenHiddenCursorHandle = CreateCursor(IntPtr.Zero, 0, 0, 32, 32, andMask, new byte[128]);
+            if (_diagnosticFullscreenHiddenCursorHandle == IntPtr.Zero)
+                throw new InvalidOperationException("Diagnostic fullscreen cursor could not be created");
+        }
+        return _diagnosticFullscreenHiddenCursorHandle;
+    }
+
+    private bool UpdateDiagnosticCompactFullscreenCursor()
+    {
+        var host = _playerVideoHost ?? PlayerView;
+        var cursorHandle = GetDiagnosticCompactFullscreenCursor();
+        host.Cursor = _isFullscreen
+            ? (_diagnosticFullscreenChromeVisible ? Cursors.Arrow : Cursors.None)
+            : Cursors.Hand;
+        host.ForceCursor = true;
+        if (host.Handle == IntPtr.Zero) return false;
+        var cursorAssigned = false;
+        EnumChildWindows(host.Handle, (window, _) =>
+        {
+            var className = new StringBuilder(128);
+            if (GetClassName(window, className, className.Capacity) > 0
+                && className.ToString().StartsWith(VlcVideoWindowClassPrefix, StringComparison.Ordinal))
+            {
+                SetClassLongPtr(window, ClassLongCursor, cursorHandle);
+                cursorAssigned = true;
+            }
+            return true;
+        }, IntPtr.Zero);
+        return cursorAssigned;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern IntPtr CreateCursor(IntPtr instance, int hotSpotX, int hotSpotY,
+        int width, int height, byte[] andMask, byte[] xorMask);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool DestroyCursor(IntPtr cursor);
+
+    private static bool IsDiagnosticFullscreenPreserveSidebarLayout
+        => Environment.GetCommandLineArgs().Contains("--fullscreen-preserve-sidebar-layout", StringComparer.Ordinal);
+
+    private static bool IsDiagnosticFullscreenLayoutBeforeWindow
+        => Environment.GetCommandLineArgs().Contains("--fullscreen-layout-before-window", StringComparer.Ordinal);
+
+    private static bool IsDiagnosticFullscreenNoReactivate
+        => Environment.GetCommandLineArgs().Contains("--fullscreen-no-reactivate", StringComparer.Ordinal);
+
+    private static uint GetDiagnosticFullscreenPositionFlags()
+    {
+        var flags = SetWindowPosFrameChanged | SetWindowPosShowWindow | SetWindowPosNoOwnerZOrder;
+        return IsDiagnosticFullscreenNoReactivate ? flags | SetWindowPosNoActivate : flags;
+    }
+
+    private sealed record DiagnosticFullscreenTiming(string Stage, long StartedTick, double DurationMs, bool IsActive);
+
+    private void RecordDiagnosticFullscreenTiming(string stage, long startedTick)
+    {
+        var durationMs = Stopwatch.GetElapsedTime(startedTick).TotalMilliseconds;
+        _diagnosticFullscreenTimings.Add(new(stage, startedTick, durationMs, IsActive));
+        if (_diagnosticFullscreenTimings.Count > 1000) _diagnosticFullscreenTimings.RemoveAt(0);
+    }
+
+    private object[] ReadDiagnosticFullscreenTimings(long sinceTick)
+        => _diagnosticFullscreenTimings.Where(item => item.StartedTick >= sinceTick)
+            .Select(item => (object)new
+            {
+                stage = item.Stage,
+                offsetMs = Stopwatch.GetElapsedTime(sinceTick, item.StartedTick).TotalMilliseconds,
+                durationMs = item.DurationMs,
+                isActive = item.IsActive,
+            }).ToArray();
+
+    private sealed class DiagnosticFullscreenTimingScope(MainWindow owner, string stage) : IDisposable
+    {
+        private readonly long _startedTick = Stopwatch.GetTimestamp();
+        public void Dispose() => owner.RecordDiagnosticFullscreenTiming(stage, _startedTick);
+    }
+
+    private sealed class DiagnosticFullscreenPositionScope(MainWindow owner, IDisposable positionScope, string stage) : IDisposable
+    {
+        public void Dispose()
+        {
+            // Time only the final deferred child update, not the whole transaction.
+            var startedTick = Stopwatch.GetTimestamp();
+            try { positionScope.Dispose(); }
+            finally { owner.RecordDiagnosticFullscreenTiming(stage, startedTick); }
+        }
+    }
+#endif
 
     private const int WindowLongStyle = -16;
     private const int WindowLongExtendedStyle = -20;
@@ -1308,6 +1677,9 @@ public partial class MainWindow : Window
 
     private void AttachPlayerVideoInputHook()
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--stability-suite", StringComparer.Ordinal)) return;
+#endif
         if (PlayerView.Handle == IntPtr.Zero)
         {
             _logger.LogWarning("Native video host was not available for mini-player input");
@@ -1363,7 +1735,16 @@ public partial class MainWindow : Window
             }
 
             var attached = await Dispatcher.InvokeAsync(
-                () => SetNativeVideoWindowCursor(_isFullscreen ? ArrowCursorHandle : HandCursorHandle),
+                () =>
+                {
+#if PLAYBACK_DIAGNOSTICS
+                    if (IsDiagnosticCompactFullscreenHud)
+                    {
+                        return UpdateDiagnosticCompactFullscreenCursor();
+                    }
+#endif
+                    return SetNativeVideoWindowCursor(_isFullscreen ? ArrowCursorHandle : HandCursorHandle);
+                },
                 DispatcherPriority.Loaded);
             if (attached)
             {
@@ -1374,6 +1755,13 @@ public partial class MainWindow : Window
 
     private void UpdatePlayerVideoCursor()
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticCompactFullscreenHud)
+        {
+            UpdateDiagnosticCompactFullscreenCursor();
+            return;
+        }
+#endif
         if (_playerVideoHost is null)
         {
             return;
@@ -1431,6 +1819,14 @@ public partial class MainWindow : Window
         IntPtr lParam,
         ref bool handled)
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (message == WindowMessageSetCursor && IsDiagnosticCompactFullscreenHud && _isFullscreen)
+        {
+            SetCursor(GetDiagnosticCompactFullscreenCursor());
+            handled = true;
+            return new IntPtr(1);
+        }
+#endif
         if (message == WindowMessageSetCursor
             && !_isFullscreen
             && HandCursorHandle != IntPtr.Zero)
@@ -1703,7 +2099,7 @@ public partial class MainWindow : Window
                 || _isRecording
                 || _fullscreenHudWindow?.IsPointerOverControls == true)
             {
-                _fullscreenHudWindow?.SetChromeVisible(true);
+                SetFullscreenChromeVisible(true);
                 if (_viewModel.IsPlaybackPlaying && !_isRecording)
                 {
                     _fullscreenExitHintTimer.Start();
@@ -1712,12 +2108,16 @@ public partial class MainWindow : Window
                 return;
             }
 
-            _fullscreenHudWindow?.SetChromeVisible(false);
+            SetFullscreenChromeVisible(false);
         }
     }
 
     private void ShowFullscreenHud()
     {
+        if (_isClosed || !_isFullscreen) return;
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--suppress-fullscreen-hud", StringComparer.Ordinal)) return;
+#endif
         if (_fullscreenHudWindow is null)
         {
             var hudWindow = new FullscreenHudWindow
@@ -1725,6 +2125,10 @@ public partial class MainWindow : Window
                 Owner = this,
                 DataContext = _viewModel,
             };
+#if PLAYBACK_DIAGNOSTICS
+            if (Environment.GetCommandLineArgs().Contains("--stability-suite", StringComparer.Ordinal))
+                hudWindow.IsHitTestVisible = false;
+#endif
 
             hudWindow.ActivityDetected += FullscreenHudWindow_OnActivityDetected;
             hudWindow.ExitRequested += FullscreenHudWindow_OnExitRequested;
@@ -1733,10 +2137,10 @@ public partial class MainWindow : Window
             hudWindow.DisplayModeRequested += FullscreenHudWindow_OnDisplayModeRequested;
             hudWindow.Closed += FullscreenHudWindow_OnClosed;
             _fullscreenHudWindow = hudWindow;
-            hudWindow.SetRecordingState(_isRecording);
-            hudWindow.SetDisplayModeState(_isStretchDisplayMode);
         }
 
+        _fullscreenHudWindow.SetRecordingState(_isRecording);
+        _fullscreenHudWindow.SetDisplayModeState(_isStretchDisplayMode);
         if (!_fullscreenHudWindow.IsVisible)
         {
             if (!TryApplyFullscreenHudLogicalBounds(_fullscreenHudWindow))
@@ -1749,12 +2153,24 @@ public partial class MainWindow : Window
         }
 
         UpdateFullscreenHudBounds();
-        _fullscreenHudWindow.SetChromeVisible(true);
+        SetFullscreenChromeVisible(true);
+    }
+
+    private void SetFullscreenChromeVisible(bool visible)
+    {
+        _fullscreenHudWindow?.SetChromeVisible(visible);
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticCompactFullscreenHud)
+        {
+            _diagnosticFullscreenChromeVisible = visible;
+            UpdateDiagnosticCompactFullscreenCursor();
+        }
+#endif
     }
 
     private void UpdateFullscreenHudBounds()
     {
-        if (_fullscreenHudWindow is null)
+        if (_fullscreenHudWindow is null || !_fullscreenHudWindow.IsVisible || _isFullscreenTransitioning)
         {
             return;
         }
@@ -1768,7 +2184,16 @@ public partial class MainWindow : Window
             return;
         }
 
-        ApplyFullscreenHudLogicalBounds(_fullscreenHudWindow, ownerBounds);
+#if PLAYBACK_DIAGNOSTICS
+        ownerBounds = GetDiagnosticFullscreenHudBounds(ownerBounds);
+#endif
+        if (!ApplyFullscreenHudLogicalBounds(_fullscreenHudWindow, ownerBounds)) return;
+#if PLAYBACK_DIAGNOSTICS
+        if (!DiagnosticOverlaySeparateBoundsBaseline) return;
+        if (GetWindowRect(hudHandle, out var hudBounds)
+            && hudBounds.Left == ownerBounds.Left && hudBounds.Top == ownerBounds.Top
+            && hudBounds.Right == ownerBounds.Right && hudBounds.Bottom == ownerBounds.Bottom)
+            return;
 
         _ = SetWindowPos(
             hudHandle,
@@ -1778,6 +2203,7 @@ public partial class MainWindow : Window
             ownerBounds.Right - ownerBounds.Left,
             ownerBounds.Bottom - ownerBounds.Top,
             SetWindowPosNoZOrder | SetWindowPosNoActivate | SetWindowPosNoOwnerZOrder);
+#endif
     }
 
     private bool TryApplyFullscreenHudLogicalBounds(FullscreenHudWindow hudWindow)
@@ -1788,6 +2214,9 @@ public partial class MainWindow : Window
             return false;
         }
 
+#if PLAYBACK_DIAGNOSTICS
+        ownerBounds = GetDiagnosticFullscreenHudBounds(ownerBounds);
+#endif
         return ApplyFullscreenHudLogicalBounds(hudWindow, ownerBounds);
     }
 
@@ -1796,8 +2225,9 @@ public partial class MainWindow : Window
         var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(this);
         var scaleX = dpi.DpiScaleX;
         var scaleY = dpi.DpiScaleY;
-        var width = (ownerBounds.Right - ownerBounds.Left) / scaleX;
-        var height = (ownerBounds.Bottom - ownerBounds.Top) / scaleY;
+        if (!double.IsFinite(scaleX) || scaleX <= 0d || !double.IsFinite(scaleY) || scaleY <= 0d) return false;
+        var width = ((double)ownerBounds.Right - ownerBounds.Left) / scaleX;
+        var height = ((double)ownerBounds.Bottom - ownerBounds.Top) / scaleY;
         var left = ownerBounds.Left / scaleX;
         var top = ownerBounds.Top / scaleY;
 
@@ -1819,10 +2249,92 @@ public partial class MainWindow : Window
             return false;
         }
 
-        hudWindow.Left = left;
-        hudWindow.Top = top;
-        hudWindow.Width = width;
-        hudWindow.Height = height;
+#if PLAYBACK_DIAGNOSTICS
+        if (DiagnosticOverlaySeparateBoundsBaseline)
+        {
+            hudWindow.Left = left;
+            hudWindow.Top = top;
+            hudWindow.Width = width;
+            hudWindow.Height = height;
+            return true;
+        }
+#endif
+        return ApplyOverlayWindowBounds(
+            hudWindow, ownerBounds.Left, ownerBounds.Top,
+            (double)ownerBounds.Right - ownerBounds.Left,
+            (double)ownerBounds.Bottom - ownerBounds.Top, dpi);
+    }
+
+    private bool ApplyOverlayWindowBounds(
+        Window overlayWindow,
+        double leftPixels,
+        double topPixels,
+        double widthPixels,
+        double heightPixels,
+        DpiScale dpi)
+    {
+        if (!double.IsFinite(dpi.DpiScaleX) || dpi.DpiScaleX <= 0d
+            || !double.IsFinite(dpi.DpiScaleY) || dpi.DpiScaleY <= 0d
+            || !double.IsFinite(leftPixels) || !double.IsFinite(topPixels)
+            || !double.IsFinite(widthPixels) || widthPixels <= 0d
+            || !double.IsFinite(heightPixels) || heightPixels <= 0d)
+        {
+            return false;
+        }
+
+        var left = leftPixels / dpi.DpiScaleX;
+        var top = topPixels / dpi.DpiScaleY;
+        var width = widthPixels / dpi.DpiScaleX;
+        var height = heightPixels / dpi.DpiScaleY;
+        if (!double.IsFinite(left) || !double.IsFinite(top)
+            || !double.IsFinite(width) || !double.IsFinite(height)) return false;
+
+        var nativeLeft = Math.Round(leftPixels);
+        var nativeTop = Math.Round(topPixels);
+        var nativeWidth = Math.Max(1d, Math.Max(Math.Round(widthPixels), Math.Ceiling(overlayWindow.MinWidth * dpi.DpiScaleX)));
+        var nativeHeight = Math.Max(1d, Math.Max(Math.Round(heightPixels), Math.Ceiling(overlayWindow.MinHeight * dpi.DpiScaleY)));
+        var nativeRight = nativeLeft + nativeWidth;
+        var nativeBottom = nativeTop + nativeHeight;
+        if (!double.IsFinite(nativeWidth) || !double.IsFinite(nativeHeight)
+            || nativeLeft < int.MinValue || nativeLeft > int.MaxValue
+            || nativeTop < int.MinValue || nativeTop > int.MaxValue
+            || nativeWidth > int.MaxValue || nativeHeight > int.MaxValue
+            || nativeRight > int.MaxValue || nativeBottom > int.MaxValue)
+        {
+            return false;
+        }
+
+        var handle = new WindowInteropHelper(overlayWindow).Handle;
+        if (handle != IntPtr.Zero)
+        {
+            if (GetWindowRect(handle, out var currentBounds)
+                && currentBounds.Left == (int)nativeLeft && currentBounds.Top == (int)nativeTop
+                && currentBounds.Right == (int)nativeRight && currentBounds.Bottom == (int)nativeBottom)
+            {
+                return true;
+            }
+
+            // Window handles WM_MOVE/WM_SIZE by synchronizing the logical properties
+            // with native updates suppressed. One final rectangle avoids four separate
+            // moves/resizes of an already-created layered rendering surface.
+            if (SetWindowPos(handle, IntPtr.Zero,
+                    (int)nativeLeft, (int)nativeTop, (int)nativeWidth, (int)nativeHeight,
+                    SetWindowPosNoZOrder | SetWindowPosNoActivate | SetWindowPosNoOwnerZOrder))
+            {
+                return true;
+            }
+
+            _logger.LogWarning(
+                "Overlay native bounds update failed; using logical bounds. Overlay={Overlay}; NativeError={NativeError}",
+                overlayWindow.GetType().Name, Marshal.GetLastWin32Error());
+        }
+
+        // Initialize logical bounds before the first Show creates its HWND. Keep
+        // this path as a fallback when an existing native window cannot be moved.
+        overlayWindow.Left = left;
+        overlayWindow.Top = top;
+        overlayWindow.Width = width;
+        overlayWindow.Height = height;
         return true;
     }
 
@@ -1843,6 +2355,13 @@ public partial class MainWindow : Window
         hudWindow.DisplayModeRequested -= FullscreenHudWindow_OnDisplayModeRequested;
         hudWindow.Closed -= FullscreenHudWindow_OnClosed;
         hudWindow.Close();
+    }
+
+    private void HideFullscreenHud()
+    {
+        _fullscreenExitHintTimer.Stop();
+        SetFullscreenChromeVisible(false);
+        _fullscreenHudWindow?.Hide();
     }
 
     private void FullscreenHudWindow_OnActivityDetected(object? sender, EventArgs e)
@@ -1906,7 +2425,7 @@ public partial class MainWindow : Window
         }
 
         EnsurePlayerControlsOverlay();
-        UpdatePlayerControlsOverlayBounds();
+        UpdatePlayerControlsOverlayBounds(force: true);
         if (_playerControlsOverlayWindow is null)
         {
             return;
@@ -2038,11 +2557,13 @@ public partial class MainWindow : Window
         UpdatePlayerActionIndicatorOverlayBounds();
     }
 
-    private void UpdatePlayerControlsOverlayBounds()
+    private void UpdatePlayerControlsOverlayBounds(bool force = false)
     {
         var overlayWindow = _playerControlsOverlayWindow;
         if (overlayWindow is null
+            || (!overlayWindow.IsVisible && !force)
             || _isFullscreen
+            || _isFullscreenTransitioning
             || !PlayerSurface.IsVisible
             || PlayerSurface.ActualWidth <= 0d
             || PlayerSurface.ActualHeight <= 0d)
@@ -2062,10 +2583,18 @@ public partial class MainWindow : Window
                 return;
             }
 
-            overlayWindow.Left = left;
-            overlayWindow.Top = top;
-            overlayWindow.Width = PlayerSurface.ActualWidth;
-            overlayWindow.Height = overlayHeight;
+#if PLAYBACK_DIAGNOSTICS
+            if (DiagnosticOverlaySeparateBoundsBaseline)
+            {
+                overlayWindow.Left = left;
+                overlayWindow.Top = top;
+                overlayWindow.Width = PlayerSurface.ActualWidth;
+                overlayWindow.Height = overlayHeight;
+                return;
+            }
+#endif
+            ApplyOverlayWindowBounds(overlayWindow, screenPoint.X, screenPoint.Y,
+                PlayerSurface.ActualWidth * dpi.DpiScaleX, overlayHeight * dpi.DpiScaleY, dpi);
         }
         catch (InvalidOperationException)
         {
@@ -2134,6 +2663,8 @@ public partial class MainWindow : Window
             }
 
             var dpi = System.Windows.Media.VisualTreeHelper.GetDpi(PlayerSurface);
+            if (!double.IsFinite(dpi.DpiScaleX) || dpi.DpiScaleX <= 0d
+                || !double.IsFinite(dpi.DpiScaleY) || dpi.DpiScaleY <= 0d) return;
             var playerWidth = playerBounds.Right - playerBounds.Left;
             var playerHeight = playerBounds.Bottom - playerBounds.Top;
             var indicatorWidth = Math.Min(playerWidth, Math.Max(1, (int)Math.Round(PlayerActionIndicatorSize * dpi.DpiScaleX)));
@@ -2147,6 +2678,15 @@ public partial class MainWindow : Window
                 return;
             }
 
+#if PLAYBACK_DIAGNOSTICS
+            if (!DiagnosticOverlaySeparateBoundsBaseline)
+#endif
+            {
+                ApplyOverlayWindowBounds(indicatorWindow, leftPixels, topPixels,
+                    indicatorWidth, indicatorHeight, dpi);
+                return;
+            }
+#if PLAYBACK_DIAGNOSTICS
             indicatorWindow.Left = left;
             indicatorWindow.Top = top;
             indicatorWindow.Width = indicatorWidth / dpi.DpiScaleX;
@@ -2169,6 +2709,7 @@ public partial class MainWindow : Window
                     indicatorHeight,
                     SetWindowPosNoZOrder | SetWindowPosNoActivate | SetWindowPosNoOwnerZOrder);
             }
+#endif
         }
         catch (InvalidOperationException)
         {
@@ -2246,7 +2787,7 @@ public partial class MainWindow : Window
         if (_isFullscreen)
         {
             _fullscreenExitHintTimer.Stop();
-            _fullscreenHudWindow?.SetChromeVisible(false);
+            SetFullscreenChromeVisible(false);
         }
     }
 
@@ -2315,12 +2856,26 @@ public partial class MainWindow : Window
     {
         if (_viewModel.VisibleChannels.Count > 0)
         {
-            LogoCacheService.Instance.PreloadLogos(_viewModel.VisibleChannels.Select(channel => channel.LogoUri));
+            // WPF realizes only a small viewport. Avoid queuing the whole playlist
+            // and let newly realized images request their own logos when scrolling.
+            LogoCacheService.Instance.PreloadLogos(_viewModel.VisibleChannels.Take(64).Select(channel => channel.LogoUri));
         }
     }
 
     private void ViewModel_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (IsDiagnosticCompactFullscreenHud && _isFullscreen
+            && e.PropertyName is nameof(MainShellViewModel.IsFullscreenPlaybackLoadingVisible)
+                or nameof(MainShellViewModel.IsFullscreenNoSignalVisible)
+                or nameof(MainShellViewModel.IsPlayerActionIndicatorVisible))
+            RequestPlayerBoundsRefresh();
+        if (e.PropertyName == nameof(MainShellViewModel.IsNativeVideoSurfaceVisible))
+        {
+            UpdatePlaybackWindowTransitions();
+            return;
+        }
+#endif
         if (e.PropertyName == nameof(MainShellViewModel.IsStartupLoading))
         {
             HandleStartupLoadingChanged(_viewModel.IsStartupLoading);
@@ -2385,15 +2940,45 @@ public partial class MainWindow : Window
 
     private void ApplyStartupBlur(bool enable)
     {
-        // Panel-level BlurEffects force offscreen bitmap allocation and multi-pass shaders across
-        // large virtualized item lists, dropping animation framerates below 60fps.
-        // StartupLoadingOverlay's dark translucent scrim achieves the modern focused backdrop at 60fps.
-        if (!enable && SourcePanel.Effect is not null)
+        if (!enable)
         {
-            SourcePanel.Effect = null;
-            ChannelPanel.Effect = null;
-            PlaybackPanel.Effect = null;
+            StartupBackdrop.Source = null;
+            return;
         }
+        if (_startupBackdropRefreshQueued) return;
+        _startupBackdropRefreshQueued = true;
+        Dispatcher.BeginInvoke(DispatcherPriority.Render, new Action(() =>
+        {
+            _startupBackdropRefreshQueued = false;
+            if (_isClosed || StartupLoadingOverlay.Visibility != Visibility.Visible) return;
+            var width = StartupLoadingOverlay.ActualWidth;
+            var height = StartupLoadingOverlay.ActualHeight;
+            if (width <= 0 || height <= 0) return;
+
+            // Blur a small, frozen image of the shell rather than applying a
+            // live blur to thousands of catalog items during initialization.
+            // The overlay and native video are not part of this snapshot.
+            var scale = Math.Min(0.5, 1280 / width);
+            var snapshot = new DrawingVisual();
+            using (var drawing = snapshot.RenderOpen())
+            {
+                drawing.PushTransform(new ScaleTransform(scale, scale));
+                drawing.DrawRectangle(Background, null, new Rect(0, 0, width, height));
+                foreach (var panel in new FrameworkElement[] { SourcePanel, ChannelPanel, PlaybackPanel })
+                {
+                    if (!panel.IsVisible || panel.ActualWidth <= 0 || panel.ActualHeight <= 0) continue;
+                    var position = panel.TransformToVisual(StartupLoadingOverlay).Transform(new Point());
+                    var brush = new VisualBrush(panel) { Stretch = Stretch.Fill, AutoLayoutContent = false };
+                    drawing.DrawRectangle(brush, null, new Rect(position, panel.RenderSize));
+                }
+                drawing.Pop();
+            }
+            var bitmap = new RenderTargetBitmap(Math.Max(1, (int)Math.Ceiling(width * scale)),
+                Math.Max(1, (int)Math.Ceiling(height * scale)), 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(snapshot);
+            bitmap.Freeze();
+            StartupBackdrop.Source = bitmap;
+        }));
     }
 
     private async void HandleStartupLoadingChanged(bool isLoading)
@@ -2845,6 +3430,20 @@ public partial class MainWindow : Window
     private static void SetDwmColor(IntPtr windowHandle, DwmWindowAttribute attribute, int color)
         => _ = DwmSetWindowAttribute(windowHandle, attribute, ref color, sizeof(int));
 
+#if PLAYBACK_DIAGNOSTICS
+    private void UpdatePlaybackWindowTransitions()
+    {
+        // This experiment did not establish a playback improvement. Normal builds
+        // keep Windows' existing window transitions.
+        if (!Environment.GetCommandLineArgs().Contains("--disable-window-transitions", StringComparer.Ordinal)) return;
+        var windowHandle = new WindowInteropHelper(this).Handle;
+        if (windowHandle == IntPtr.Zero) return;
+        var disable = _viewModel.IsNativeVideoSurfaceVisible ? 1 : 0;
+        var result = DwmSetWindowAttribute(windowHandle, DwmWindowAttribute.TransitionsForceDisabled, ref disable, sizeof(int));
+        _nativeWindowTransitionsDisabled = result == 0 && disable != 0;
+    }
+#endif
+
     private int GetDwmColor(string resourceKey, string fallbackHex)
     {
         var color = TryFindResource(resourceKey) switch
@@ -2866,6 +3465,7 @@ public partial class MainWindow : Window
 
     private enum DwmWindowAttribute
     {
+        TransitionsForceDisabled = 3,
         UseImmersiveDarkModeBefore20H1 = 19,
         UseImmersiveDarkMode = 20,
         BorderColor = 34,

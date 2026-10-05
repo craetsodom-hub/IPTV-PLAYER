@@ -47,24 +47,38 @@ internal static class EventChannelMatcher
 
     public static IReadOnlyDictionary<string, IReadOnlyList<EventChannelOptionViewModel>> MatchAll(
         IReadOnlyList<SportsEventModel> events,
-        IReadOnlyList<ChannelItemViewModel> channels)
+        IReadOnlyList<ChannelItemViewModel> channels,
+        CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
         if (events.Count == 0 || channels.Count == 0)
         {
             return new Dictionary<string, IReadOnlyList<EventChannelOptionViewModel>>(StringComparer.OrdinalIgnoreCase);
         }
 
-        var index = BuildIndex(channels);
-        return events.ToDictionary(
-            sportsEvent => sportsEvent.Id,
-            sportsEvent => (IReadOnlyList<EventChannelOptionViewModel>)Match(sportsEvent, index, channels),
-            StringComparer.OrdinalIgnoreCase);
+        return MatchAll(events, CreateIndex(channels, cancellationToken), cancellationToken);
+    }
+
+    public static ChannelIndex CreateIndex(IReadOnlyList<ChannelItemViewModel> channels, CancellationToken cancellationToken = default)
+        => new(BuildIndex(channels, cancellationToken));
+
+    public static IReadOnlyDictionary<string, IReadOnlyList<EventChannelOptionViewModel>> MatchAll(
+        IReadOnlyList<SportsEventModel> events, ChannelIndex index, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var matches = new Dictionary<string, IReadOnlyList<EventChannelOptionViewModel>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var sportsEvent in events)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            matches.Add(sportsEvent.Id, Match(sportsEvent, index.Entries, cancellationToken));
+        }
+        return matches;
     }
 
     private static List<EventChannelOptionViewModel> Match(
         SportsEventModel sportsEvent,
         Dictionary<string, List<IndexedChannel>> index,
-        IReadOnlyList<ChannelItemViewModel> channels)
+        CancellationToken cancellationToken)
     {
         if (index.Count == 0)
         {
@@ -81,6 +95,7 @@ internal static class EventChannelMatcher
 
         foreach (var broadcast in broadcasts)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var keys = new[] { broadcast.ChannelName }
                 .Concat(broadcast.Aliases)
                 .SelectMany(BuildMatchKeys)
@@ -100,6 +115,7 @@ internal static class EventChannelMatcher
 
             foreach (var candidate in candidates)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var score = keys
                     .Select(key => ScoreBroadcastMatch(candidate.Tokens, key, broadcast.Territory))
                     .Where(value => value.HasValue)
@@ -149,17 +165,16 @@ internal static class EventChannelMatcher
             .ToList();
     }
 
-    private static Dictionary<string, List<IndexedChannel>> BuildIndex(IReadOnlyList<ChannelItemViewModel> channels)
+    private static Dictionary<string, List<IndexedChannel>> BuildIndex(
+        IReadOnlyList<ChannelItemViewModel> channels, CancellationToken cancellationToken)
     {
-        var entries = channels
-            .DistinctBy(channel => channel.Id)
-            .Select(channel => new IndexedChannel(channel, NormalizeTokens(channel.Name)))
-            .Where(entry => entry.Tokens.Count > 0)
-            .ToArray();
-
+        var seen = new HashSet<string>(StringComparer.Ordinal);
         var index = new Dictionary<string, List<IndexedChannel>>(StringComparer.OrdinalIgnoreCase);
-        foreach (var entry in entries)
+        foreach (var channel in channels)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!seen.Add(channel.Id)) continue;
+            var entry = new IndexedChannel(channel, NormalizeTokens(channel.Name));
             foreach (var token in entry.Tokens.Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 if (!index.TryGetValue(token, out var bucket))
@@ -493,7 +508,12 @@ internal static class EventChannelMatcher
         return builder.ToString().Normalize(NormalizationForm.FormC);
     }
 
-    private sealed record IndexedChannel(ChannelItemViewModel Channel, IReadOnlyList<string> Tokens);
+    internal sealed record IndexedChannel(ChannelItemViewModel Channel, IReadOnlyList<string> Tokens);
+
+    internal sealed class ChannelIndex(Dictionary<string, List<IndexedChannel>> entries)
+    {
+        internal Dictionary<string, List<IndexedChannel>> Entries { get; } = entries;
+    }
 
     private sealed record MatchedEventChannelOption(EventChannelOptionViewModel Option, int BroadcastOrder, int Score);
 

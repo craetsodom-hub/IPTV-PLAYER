@@ -40,6 +40,10 @@ public partial class PlayerControlsOverlayWindow : Window
 
     public void SetControlsVisible(bool visible, bool immediate = false)
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetCommandLineArgs().Contains("--instant-player-controls", StringComparer.Ordinal))
+            immediate = true;
+#endif
         if (_controlsVisible == visible && !immediate)
         {
             return;

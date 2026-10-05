@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,8 +10,7 @@ namespace IptvPlayer.App.Converters;
 
 /// <summary>
 /// Attached property helper that connects WPF Image controls to LogoCacheService.
-/// Loads cached logos in 0ms from RAM or disk, and automatically updates the Image
-/// without leaks when a background download finishes.
+/// Uses decoded logos from RAM and updates controls when background loading finishes.
 /// </summary>
 public static class ImageAsyncHelper
 {
@@ -26,7 +24,8 @@ public static class ImageAsyncHelper
     public static string? GetSourceUri(Image target) => (string?)target.GetValue(SourceUriProperty);
     public static void SetSourceUri(Image target, string? value) => target.SetValue(SourceUriProperty, value);
 
-    private static readonly ConcurrentDictionary<string, List<WeakReference<Image>>> _pendingImages =
+    private static readonly object PendingGate = new();
+    private static readonly Dictionary<string, List<WeakReference<Image>>> _pendingImages =
         new(StringComparer.OrdinalIgnoreCase);
 
     static ImageAsyncHelper()
@@ -42,62 +41,55 @@ public static class ImageAsyncHelper
         }
 
         var newUri = e.NewValue as string;
-        if (string.IsNullOrWhiteSpace(newUri))
+        if (string.IsNullOrWhiteSpace(newUri) || !Uri.TryCreate(newUri.Trim(), UriKind.Absolute, out var uri))
         {
             image.Source = null;
             return;
         }
 
-        var cached = LogoCacheService.Instance.GetCachedLogo(newUri);
+        var normalizedUrl = uri.AbsoluteUri;
+        image.Source = null;
+        // Register before queuing work: a small disk image may finish immediately.
+        RegisterPendingImage(normalizedUrl, image);
+        var cached = LogoCacheService.Instance.GetCachedLogo(normalizedUrl);
         if (cached is not null)
         {
             image.Source = cached;
-            return;
+            OnLogoLoaded(normalizedUrl, cached);
         }
-
-        image.Source = null;
-        RegisterPendingImage(newUri.Trim(), image);
     }
 
     private static void RegisterPendingImage(string uri, Image image)
     {
-        _pendingImages.AddOrUpdate(
-            uri,
-            _ => [new WeakReference<Image>(image)],
-            (_, list) =>
-            {
-                lock (list)
-                {
-                    // Clean up dead references while adding new one
-                    list.RemoveAll(wr => !wr.TryGetTarget(out Image? _));
-                    list.Add(new WeakReference<Image>(image));
-                }
-                return list;
-            });
+        lock (PendingGate)
+        {
+            if (!_pendingImages.TryGetValue(uri, out var list)) _pendingImages[uri] = list = [];
+            list.RemoveAll(wr => !wr.TryGetTarget(out Image? target) || ReferenceEquals(target, image));
+            list.Add(new WeakReference<Image>(image));
+        }
     }
 
     private static void OnLogoLoaded(string url, BitmapSource bitmap)
     {
-        if (!_pendingImages.TryRemove(url, out var list))
+        List<WeakReference<Image>> list;
+        lock (PendingGate)
         {
-            return;
+            if (!_pendingImages.Remove(url, out list!)) return;
         }
 
-        lock (list)
+        foreach (var weakRef in list)
         {
-            foreach (var weakRef in list)
+            if (weakRef.TryGetTarget(out var image))
             {
-                if (weakRef.TryGetTarget(out var image))
+                image.Dispatcher.InvokeAsync(() =>
                 {
-                    image.Dispatcher.InvokeAsync(() =>
+                    var currentUri = GetSourceUri(image);
+                    if (Uri.TryCreate(currentUri?.Trim(), UriKind.Absolute, out var current)
+                        && string.Equals(current.AbsoluteUri, url, StringComparison.OrdinalIgnoreCase))
                     {
-                        var currentUri = GetSourceUri(image);
-                        if (string.Equals(currentUri, url, StringComparison.OrdinalIgnoreCase))
-                        {
-                            image.Source = bitmap;
-                        }
-                    }, DispatcherPriority.Background);
-                }
+                        image.Source = bitmap;
+                    }
+                }, DispatcherPriority.Background);
             }
         }
     }

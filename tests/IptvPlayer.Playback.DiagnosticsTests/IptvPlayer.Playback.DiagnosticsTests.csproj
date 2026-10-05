@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\src\IptvPlayer.Infrastructure\Services\ProtectedCatalogFile.cs" Link="ProtectedCatalogFile.cs" />
+    <Compile Include="..\..\src\IptvPlayer.Infrastructure\Services\JsonUserStateStore.cs" Link="JsonUserStateStore.cs" />
+    <Compile Include="..\..\src\IptvPlayer.Infrastructure\Services\JsonOnDemandStateStore.cs" Link="JsonOnDemandStateStore.cs" />
+    <Compile Include="..\..\src\IptvPlayer.App\Services\LogoCacheService.cs" Link="LogoCacheService.cs" />
+    <Compile Include="..\..\src\IptvPlayer.App\Converters\ImageAsyncHelper.cs" Link="ImageAsyncHelper.cs" />
+    <ProjectReference Include="..\..\src\IptvPlayer.Player.Vlc\IptvPlayer.Player.Vlc.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+  </ItemGroup>
+</Project>

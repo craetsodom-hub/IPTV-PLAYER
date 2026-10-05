@@ -94,6 +94,10 @@ public sealed class SportsEventService : ISportsEventService
             "IptvPlayer",
             "cache");
         _cacheFilePath = Path.Combine(cacheRoot, "sports-events-v1.json");
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT") is { Length: > 0 } testRoot)
+            _cacheFilePath = Path.Combine(Path.GetFullPath(testRoot), "cache", "sports-events-v1.json");
+#endif
     }
 
     public async Task<SportsEventFeedModel?> LoadCachedAsync(CancellationToken cancellationToken = default)

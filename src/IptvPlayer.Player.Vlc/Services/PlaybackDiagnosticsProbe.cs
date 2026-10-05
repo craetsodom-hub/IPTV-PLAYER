@@ -2,7 +2,7 @@ using LibVLCSharp.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using System.Globalization;
+using System.Threading.Channels;
 
 namespace IptvPlayer.Player.Vlc.Services;
 
@@ -27,12 +27,25 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
     private long _summaryStarted;
     private long _nextSessionId;
     private long _activeSessionId;
+    private readonly Channel<NativePlaybackDiagnostic> _nativeEvents = Channel.CreateBounded<NativePlaybackDiagnostic>(
+        new BoundedChannelOptions(2048) { SingleReader = true, FullMode = BoundedChannelFullMode.Wait });
+    private long _droppedNativeEvents;
+    private readonly bool _logSamples;
+#if PLAYBACK_DIAGNOSTICS
+    private readonly int? _experimentDecoderThreads;
+    private readonly string? _experimentDeinterlaceMode;
+    private readonly bool _experimentExcludeDirect3D11;
+    private readonly bool _experimentPreserveLatePictures;
+    private readonly bool _captureNativeRenderIntervals;
+    private readonly string? _experimentVideoOutput;
+    private NativeRenderTimingProbe? _nativeRenderTiming;
+#endif
 
     public PlaybackDiagnosticsProbe(ILogger logger, IConfiguration configuration)
     {
         _logger = logger;
         var probeEnabledSetting = configuration["PlaybackDiagnostics:ProbeEnabled"];
-#if DEBUG
+#if DEBUG || PLAYBACK_DIAGNOSTICS
         Enabled = bool.TryParse(probeEnabledSetting, out var probeEnabled) && probeEnabled;
 #else
         Enabled = false;
@@ -51,7 +64,21 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
                 : DefaultSampleIntervalMs,
             MinimumSampleIntervalMs,
             MaximumSampleIntervalMs);
-
+        _logSamples = bool.TryParse(configuration["PlaybackDiagnostics:LogSamples"], out var logSamples) && logSamples;
+#if PLAYBACK_DIAGNOSTICS
+        if (int.TryParse(configuration["PlaybackDiagnostics:ExperimentDecoderThreads"], out var decoderThreads)
+            && decoderThreads is >= 1 and <= 8) _experimentDecoderThreads = decoderThreads;
+        var deinterlaceMode = configuration["PlaybackDiagnostics:ExperimentDeinterlaceMode"];
+        if (deinterlaceMode is "yadif2x" or "bob") _experimentDeinterlaceMode = deinterlaceMode;
+        _experimentExcludeDirect3D11 = bool.TryParse(configuration["PlaybackDiagnostics:ExperimentExcludeDirect3D11"], out var excludeDirect3D11)
+            && excludeDirect3D11;
+        _experimentPreserveLatePictures = bool.TryParse(configuration["PlaybackDiagnostics:ExperimentPreserveLatePictures"], out var preserveLatePictures)
+            && preserveLatePictures;
+        _captureNativeRenderIntervals = bool.TryParse(configuration["PlaybackDiagnostics:CaptureNativeRenderIntervals"], out var capture)
+            && capture;
+        var videoOutput = configuration["PlaybackDiagnostics:ExperimentVideoOutput"];
+        if (videoOutput is "direct3d9" or "direct3d11" or "glwin32") _experimentVideoOutput = videoOutput;
+#endif
         var hardwareDecoding = configuration["PlaybackDiagnostics:HardwareDecoding"]?.Trim().ToLowerInvariant();
         HardwareDecoding = hardwareDecoding is "none" or "dxva2" or "d3d11va"
             ? hardwareDecoding
@@ -70,6 +97,10 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
 
     public IReadOnlyList<string> BuildLibVlcArguments(int networkCachingMs, int liveCachingMs)
     {
+        var deinterlaceMode = "auto";
+#if PLAYBACK_DIAGNOSTICS
+        if (Enabled && _experimentDeinterlaceMode is { } mode) deinterlaceMode = mode;
+#endif
         var arguments = new List<string>
         {
             Enabled && NativeVerbosity > 0 ? $"--verbose={NativeVerbosity}" : "--quiet",
@@ -79,8 +110,16 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
             "--avcodec-hw=d3d11va",
             "--direct3d11-hw-blending",
             "--deinterlace=-1",
-            "--deinterlace-mode=auto",
+            $"--deinterlace-mode={deinterlaceMode}",
         };
+#if PLAYBACK_DIAGNOSTICS
+        if (Enabled && _experimentVideoOutput is { } videoOutput) arguments.Add("--vout=" + videoOutput);
+        if (Enabled && _experimentExcludeDirect3D11) arguments.Remove("--direct3d11-hw-blending");
+        if (Enabled && _experimentPreserveLatePictures)
+        {
+            arguments.Add("--no-drop-late-frames");
+        }
+#endif
 
         return arguments;
     }
@@ -93,11 +132,22 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
         }
 
         _attachedLibVlc = libVlc;
+#if PLAYBACK_DIAGNOSTICS
+        if (_captureNativeRenderIntervals && NativeVerbosity == 4)
+        {
+            _nativeRenderTiming = new NativeRenderTimingProbe(libVlc);
+            return;
+        }
+#endif
         libVlc.Log += _nativeLogHandler;
     }
 
     public void ApplyMediaOptions(Media media)
     {
+#if PLAYBACK_DIAGNOSTICS
+        if (Enabled && _experimentDecoderThreads is { } threads) media.AddOption($":avcodec-threads={threads}");
+        if (Enabled && _experimentDeinterlaceMode is { } mode) media.AddOption($":deinterlace-mode={mode}");
+#endif
         if (Enabled && HardwareDecoding is not null)
         {
             media.AddOption($":avcodec-hw={HardwareDecoding}");
@@ -146,7 +196,7 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
             SummaryOnly ? "summary-only" : "sampled",
             _sampleIntervalMs,
             NativeVerbosity,
-            HardwareDecoding ?? "auto");
+            HardwareDecoding ?? "d3d11va (baseline)");
     }
 
     public async Task StopSessionAsync()
@@ -258,6 +308,10 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
 
         if (_attachedLibVlc is not null)
         {
+#if PLAYBACK_DIAGNOSTICS
+            _nativeRenderTiming?.Dispose();
+            _nativeRenderTiming = null;
+#endif
             _attachedLibVlc.Log -= _nativeLogHandler;
             _attachedLibVlc = null;
         }
@@ -279,6 +333,7 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
         var audioWithoutVideoEpisodes = 0;
         var counterResets = 0;
         var sampleCount = 0;
+        var profileLogged = false;
 
         long heartbeatReadBytes = 0;
         long heartbeatDemuxBytes = 0;
@@ -314,6 +369,7 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
                 }
 
                 var sampledAt = Stopwatch.GetTimestamp();
+                DrainNativeEvents();
                 var statistics = media.Statistics;
                 sampleCount++;
 
@@ -386,6 +442,20 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
 
                 var playbackElapsed = Stopwatch.GetElapsedTime(started, sampledAt);
                 var isPastStartupWindow = playbackElapsed >= StartupExclusionWindow;
+
+                if (_logSamples)
+                {
+                    _logger.LogInformation(
+                        "Playback frame diagnostics sample. Session={Session}; TimestampTicks={TimestampTicks}; ElapsedMs={ElapsedMs:0.0}; WindowMs={WindowMs:0.0}; InputBytes={InputBytes}; DemuxBytes={DemuxBytes}; DecodedVideo={DecodedVideo}; Displayed={Displayed}; LostPictures={LostPictures}; PlayedAudio={PlayedAudio}; LostAudio={LostAudio}; Discontinuities={Discontinuities}; Corrupted={Corrupted}; State={State}",
+                        sessionId, sampledAt, playbackElapsed.TotalMilliseconds, sampleElapsed.TotalMilliseconds,
+                        readBytes, demuxBytes, decodedVideo, displayed, lostPictures, playedAudio, lostAudio,
+                        discontinuities, corrupted, mediaPlayer.State);
+                }
+
+                if (!profileLogged && isPastStartupWindow)
+                {
+                    profileLogged = LogTechnicalProfile(media, sessionId);
+                }
 
                 if (isPastStartupWindow && playedAudio > 0 && displayed == 0)
                 {
@@ -486,6 +556,7 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
         }
         finally
         {
+            DrainNativeEvents(2048);
             var elapsed = Stopwatch.GetElapsedTime(started);
             _logger.LogInformation(
                 "Playback frame diagnostics summary. Session={Session}; DurationMs={DurationMs:0}; Samples={Samples}; InputBytes={InputBytes}; DemuxBytes={DemuxBytes}; DecodedVideo={DecodedVideo}; DecodedAudio={DecodedAudio}; Displayed={Displayed}; LostPictures={LostPictures}; PlayedAudio={PlayedAudio}; LostAudio={LostAudio}; DemuxDiscontinuity={DemuxDiscontinuity}; DemuxCorrupted={DemuxCorrupted}; AudioWithoutVideoEpisodes={AudioWithoutVideoEpisodes}; CounterResets={CounterResets}; Scheme={Scheme}",
@@ -511,180 +582,57 @@ internal sealed class PlaybackDiagnosticsProbe : IAsyncDisposable
     private void OnNativeLog(object? sender, LogEventArgs eventArgs)
     {
         var sessionId = Interlocked.Read(ref _activeSessionId);
-        if (sessionId == 0)
+        if (sessionId == 0) return;
+        var nativeMessage = eventArgs.Message;
+        var diagnostic = NativePlaybackDiagnosticClassifier.Classify(nativeMessage, eventArgs.Module, sessionId);
+        // LibVLCSharp relays log events through Task.Run. This timestamp is the
+        // managed receipt time, not a native emission or picture presentation time.
+        // Keep handling bounded and drain file logging on the monitor task.
+        if (diagnostic.HasValue && !_nativeEvents.Writer.TryWrite(diagnostic.Value))
         {
-            return;
-        }
-
-        var message = eventArgs.Message;
-        if (string.IsNullOrEmpty(message))
-        {
-            return;
-        }
-
-        if (TryReadModuleSelection(message, out var selectionEvent, out var selectedModule))
-        {
-            _logger.LogInformation(
-                "Playback native diagnostics: video-output selection. Session={Session}; Event={Event}; Module={Module}",
-                sessionId,
-                selectionEvent,
-                selectedModule);
-            return;
-        }
-
-        if (TryReadMilliseconds(message, "waited ", " ms for the render fence", out var fenceWaitMs))
-        {
-            if (fenceWaitMs >= 5)
-            {
-                _logger.LogWarning(
-                    "Playback native diagnostics: render fence wait. Session={Session}; WaitMs={WaitMs}",
-                    sessionId,
-                    fenceWaitMs);
-            }
-
-            return;
-        }
-
-        if (TryReadMilliseconds(message, "missing ", " ms", out var lateByMs)
-            && message.Contains("picture", StringComparison.OrdinalIgnoreCase)
-            && message.Contains("late", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogWarning(
-                "Playback native diagnostics: late picture. Session={Session}; LateByMs={LateByMs}",
-                sessionId,
-                lateByMs);
-            return;
-        }
-
-        if (message.Contains("late frames in a row", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("seconds of late video", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogWarning("Playback native diagnostics: decoder late-frame escalation. Session={Session}", sessionId);
-            return;
-        }
-
-        if (message.Contains("trying to reconnect", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogWarning("Playback native diagnostics: reconnect attempt. Session={Session}", sessionId);
-            return;
-        }
-
-        if (message.Contains("reconnection failed", StringComparison.OrdinalIgnoreCase)
-            || message.Contains("HTTP connection failure", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogWarning("Playback native diagnostics: connection failure. Session={Session}", sessionId);
-            return;
-        }
-
-        if (message.Contains("SwapChain Present failed", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogWarning("Playback native diagnostics: swap-chain present failure. Session={Session}", sessionId);
-            return;
-        }
-
-        if ((string.Equals(eventArgs.Module, "direct3d11", StringComparison.OrdinalIgnoreCase)
-             || string.Equals(eventArgs.Module, "direct3d9", StringComparison.OrdinalIgnoreCase)
-             || string.Equals(eventArgs.Module, "gl", StringComparison.OrdinalIgnoreCase)
-             || string.Equals(eventArgs.Module, "glwin32", StringComparison.OrdinalIgnoreCase))
-            && (message.Contains("failed", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("error", StringComparison.OrdinalIgnoreCase)))
-        {
-            _logger.LogWarning(
-                "Playback native diagnostics: video-output module failure. Session={Session}; Module={Module}",
-                sessionId,
-                eventArgs.Module);
-            return;
-        }
-
-        if (string.Equals(eventArgs.Module, "avcodec", StringComparison.OrdinalIgnoreCase)
-            && (message.Contains("hardware", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("corrupt", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("failed", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("error", StringComparison.OrdinalIgnoreCase)))
-        {
-            _logger.LogWarning("Playback native diagnostics: decoder warning. Session={Session}", sessionId);
-            return;
-        }
-
-        if ((message.Contains("PCR", StringComparison.OrdinalIgnoreCase)
-             || message.Contains("timestamp", StringComparison.OrdinalIgnoreCase)
-             || message.Contains("clock", StringComparison.OrdinalIgnoreCase))
-            && (message.Contains("late", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("invalid", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("reset", StringComparison.OrdinalIgnoreCase)
-                || message.Contains("discontinu", StringComparison.OrdinalIgnoreCase)))
-        {
-            _logger.LogWarning("Playback native diagnostics: clock or timestamp discontinuity. Session={Session}", sessionId);
+            Interlocked.Increment(ref _droppedNativeEvents);
         }
     }
 
+    private void DrainNativeEvents(int maximum = 256)
+    {
+        for (var count = 0; count < maximum && _nativeEvents.Reader.TryRead(out var item); count++)
+        {
+            _logger.LogInformation(
+                "Playback native diagnostics event. ReceivedUtc={ReceivedUtc:O}; ReceivedTimestampTicks={ReceivedTimestampTicks}; Session={Session}; Kind={Kind}; Module={Module}; Milliseconds={Milliseconds}; DecoderThreads={DecoderThreads}",
+                item.CapturedUtc, item.TimestampTicks, item.SessionId, item.Kind, item.Module, item.Milliseconds,
+                item.DecoderThreads);
+        }
+
+        var dropped = Interlocked.Exchange(ref _droppedNativeEvents, 0);
+        if (dropped > 0)
+        {
+            _logger.LogWarning("Playback native diagnostics overflow. DroppedEvents={DroppedEvents}", dropped);
+        }
+    }
+
+    private bool LogTechnicalProfile(Media media, long sessionId)
+    {
+        foreach (var track in media.Tracks)
+        {
+            if (track.TrackType != TrackType.Video) continue;
+            var video = track.Data.Video;
+            _logger.LogInformation(
+                "Playback frame diagnostics technical profile. Session={Session}; CodecFourCC={CodecFourCC}; Width={Width}; Height={Height}; FrameRateNum={FrameRateNum}; FrameRateDen={FrameRateDen}",
+                sessionId, track.Codec, video.Width, video.Height, video.FrameRateNum, video.FrameRateDen);
+            return true;
+        }
+        return false;
+    }
     private static long Delta(int current, int previous)
         => (long)current - previous;
 
-    private static bool TryReadModuleSelection(string message, out string selectionEvent, out string module)
-    {
-        selectionEvent = string.Empty;
-        module = string.Empty;
-
-        if (message.Contains("looking for vout display module matching", StringComparison.OrdinalIgnoreCase))
-        {
-            selectionEvent = "requested-vout";
-        }
-        else if (message.Contains("using vout display module", StringComparison.OrdinalIgnoreCase))
-        {
-            selectionEvent = "selected-vout";
-        }
-        else if (message.Contains("no vout display modules matched", StringComparison.OrdinalIgnoreCase))
-        {
-            selectionEvent = "vout-not-found";
-            module = "none";
-            return true;
-        }
-        else if (message.Contains("using opengl module", StringComparison.OrdinalIgnoreCase))
-        {
-            selectionEvent = "selected-opengl-provider";
-        }
-        else
-        {
-            return false;
-        }
-
-        foreach (var knownModule in new[] { "direct3d11", "direct3d9", "glwin32", "wingdi", "directdraw", "wgl", "gl" })
-        {
-            if (message.Contains($"\"{knownModule}\"", StringComparison.OrdinalIgnoreCase))
-            {
-                module = knownModule;
-                return true;
-            }
-        }
-
-        module = "unrecognized";
-        return true;
-    }
+#if PLAYBACK_DIAGNOSTICS
+    internal double[] ReadNativeRenderIntervals(long sinceTick) => _nativeRenderTiming?.ReadIntervals(sinceTick) ?? [];
+    internal NativeRenderTimingProbe.NativeTimingEvent[] ReadNativeTimingEvents(long sinceTick) => _nativeRenderTiming?.ReadEvents(sinceTick) ?? [];
+#endif
 
     private static double ToMegabitsPerSecond(long bytes, TimeSpan elapsed)
         => elapsed.TotalSeconds <= 0d ? 0d : bytes * 8d / elapsed.TotalSeconds / 1_000_000d;
 
-    private static bool TryReadMilliseconds(string message, string prefix, string suffix, out int milliseconds)
-    {
-        milliseconds = 0;
-        var prefixIndex = message.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
-        if (prefixIndex < 0)
-        {
-            return false;
-        }
-
-        var numberStart = prefixIndex + prefix.Length;
-        var suffixIndex = message.IndexOf(suffix, numberStart, StringComparison.OrdinalIgnoreCase);
-        if (suffixIndex <= numberStart)
-        {
-            return false;
-        }
-
-        return int.TryParse(
-            message.AsSpan(numberStart, suffixIndex - numberStart),
-            NumberStyles.Integer,
-            CultureInfo.InvariantCulture,
-            out milliseconds);
-    }
 }

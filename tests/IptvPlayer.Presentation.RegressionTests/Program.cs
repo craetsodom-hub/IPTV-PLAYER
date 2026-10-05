@@ -100,6 +100,8 @@ if (EventPopularityRanker.Score(unsupportedSport) <= 0
     failures.Add("Sport-specific popularity or exact development-team matching produced an invalid score");
 }
 
+await EventsNavigationTests.RunAsync(failures);
+
 if (failures.Count > 0)
 {
     Console.Error.WriteLine("Sports event regression tests failed:");

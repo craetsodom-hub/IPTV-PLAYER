@@ -7,8 +7,12 @@
 
   <!-- Keep all source-build outputs distinct from the approved release. -->
   <PropertyGroup Condition="'$(MSBuildProjectExtension)' == '.csproj'">
-    <DevelopmentArtifactsRoot>$(MSBuildThisFileDirectory)artifacts\development\</DevelopmentArtifactsRoot>
+    <DevelopmentArtifactsRoot Condition="'$(PlaybackDiagnosticBuild)' != 'true'">$(MSBuildThisFileDirectory)artifacts\development\</DevelopmentArtifactsRoot>
+    <DevelopmentArtifactsRoot Condition="'$(PlaybackDiagnosticBuild)' == 'true'">$(MSBuildThisFileDirectory)artifacts\playback-test-build\</DevelopmentArtifactsRoot>
     <BaseOutputPath>$(DevelopmentArtifactsRoot)bin\$(MSBuildProjectName)\</BaseOutputPath>
     <BaseIntermediateOutputPath>$(DevelopmentArtifactsRoot)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(PlaybackDiagnosticBuild)' == 'true'">
+    <DefineConstants>$(DefineConstants);PLAYBACK_DIAGNOSTICS</DefineConstants>
   </PropertyGroup>
 </Project>

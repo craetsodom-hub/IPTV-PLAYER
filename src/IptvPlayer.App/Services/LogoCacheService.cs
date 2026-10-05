@@ -36,6 +36,10 @@ public sealed class LogoCacheService
             "WhoseIptv",
             "Cache",
             "Logos");
+#if PLAYBACK_DIAGNOSTICS
+        if (Environment.GetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT") is { Length: > 0 } testRoot)
+            _cacheDirectory = Path.Combine(Path.GetFullPath(testRoot), "cache", "logos");
+#endif
 
         try
         {
@@ -64,8 +68,8 @@ public sealed class LogoCacheService
     }
 
     /// <summary>
-    /// Attempts to retrieve a cached logo from memory or disk instantly.
-    /// If not cached, queues an asynchronous background download and returns null.
+    /// Returns an already decoded logo from memory. Disk reads, image decoding,
+    /// and downloads run in the background and notify LogoLoaded when ready.
     /// </summary>
     public BitmapSource? GetCachedLogo(string? uriString, int decodeWidth = 80)
     {
@@ -76,28 +80,11 @@ public sealed class LogoCacheService
 
         var normalizedUrl = uri.AbsoluteUri;
 
-        // 1. Check in-memory cache (0 ms)
         if (_memoryCache.TryGetValue(normalizedUrl, out var cachedBitmap))
         {
             return cachedBitmap;
         }
 
-        // 2. Check local disk cache (< 0.1 ms)
-        var cacheFilePath = GetDiskCachePath(normalizedUrl);
-        if (File.Exists(cacheFilePath))
-        {
-            var diskBitmap = LoadBitmapFromFile(cacheFilePath, decodeWidth);
-            if (diskBitmap is not null)
-            {
-                _memoryCache[normalizedUrl] = diskBitmap;
-                return diskBitmap;
-            }
-
-            // If file was corrupt/0 bytes, delete it so it can be re-fetched
-            try { File.Delete(cacheFilePath); } catch { }
-        }
-
-        // 3. Queue asynchronous background download
         QueueDownload(normalizedUrl, decodeWidth);
         return null;
     }
@@ -107,35 +94,16 @@ public sealed class LogoCacheService
     /// </summary>
     public void PreloadLogos(IEnumerable<string?> uris, int decodeWidth = 80)
     {
-        Task.Run(() =>
+        foreach (var rawUri in uris)
         {
-            foreach (var rawUri in uris)
+            if (string.IsNullOrWhiteSpace(rawUri) || !Uri.TryCreate(rawUri.Trim(), UriKind.Absolute, out var uri))
             {
-                if (string.IsNullOrWhiteSpace(rawUri) || !Uri.TryCreate(rawUri.Trim(), UriKind.Absolute, out var uri))
-                {
-                    continue;
-                }
-
-                var normalizedUrl = uri.AbsoluteUri;
-                if (_memoryCache.ContainsKey(normalizedUrl))
-                {
-                    continue;
-                }
-
-                var diskPath = GetDiskCachePath(normalizedUrl);
-                if (File.Exists(diskPath))
-                {
-                    var bitmap = LoadBitmapFromFile(diskPath, decodeWidth);
-                    if (bitmap is not null)
-                    {
-                        _memoryCache[normalizedUrl] = bitmap;
-                        continue;
-                    }
-                }
-
-                QueueDownload(normalizedUrl, decodeWidth);
+                continue;
             }
-        });
+
+            var normalizedUrl = uri.AbsoluteUri;
+            if (!_memoryCache.ContainsKey(normalizedUrl)) QueueDownload(normalizedUrl, decodeWidth);
+        }
     }
 
     private void QueueDownload(string normalizedUrl, int decodeWidth)
@@ -153,6 +121,15 @@ public sealed class LogoCacheService
                 try
                 {
                     var cacheFilePath = GetDiskCachePath(normalizedUrl);
+                    var bitmap = File.Exists(cacheFilePath) ? LoadBitmapFromFile(cacheFilePath, decodeWidth) : null;
+                    if (bitmap is not null)
+                    {
+                        _memoryCache[normalizedUrl] = bitmap;
+                        LogoLoaded?.Invoke(normalizedUrl, bitmap);
+                        return;
+                    }
+                    // A corrupt cache entry must be retried on the worker too.
+                    if (File.Exists(cacheFilePath)) File.Delete(cacheFilePath);
                     if (!File.Exists(cacheFilePath))
                     {
                         using var response = await _httpClient.GetAsync(normalizedUrl, HttpCompletionOption.ResponseContentRead).ConfigureAwait(false);
@@ -172,7 +149,7 @@ public sealed class LogoCacheService
                         File.Move(tempPath, cacheFilePath, overwrite: true);
                     }
 
-                    var bitmap = LoadBitmapFromFile(cacheFilePath, decodeWidth);
+                    bitmap = LoadBitmapFromFile(cacheFilePath, decodeWidth);
                     if (bitmap is not null)
                     {
                         _memoryCache[normalizedUrl] = bitmap;

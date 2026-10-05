@@ -22,11 +22,25 @@ public partial class App : System.Windows.Application
     private static readonly TimeSpan UiExceptionDialogThrottle = TimeSpan.FromSeconds(20);
 
     private IHost? _host;
+#if PLAYBACK_DIAGNOSTICS
+    internal IServiceProvider DiagnosticServices => _host!.Services;
+#endif
     private DateTimeOffset _lastUiExceptionDialogUtc = DateTimeOffset.MinValue;
     private bool _isUiExceptionDialogOpen;
 
     protected override async void OnStartup(System.Windows.StartupEventArgs e)
     {
+#if PLAYBACK_DIAGNOSTICS
+        var profileArgument = Array.IndexOf(e.Args, "--playback-test-profile");
+        if (profileArgument >= 0 && profileArgument + 1 < e.Args.Length)
+        {
+            var testRoot = Path.GetFullPath(e.Args[profileArgument + 1]);
+            Directory.CreateDirectory(testRoot);
+            Environment.SetEnvironmentVariable("IPTV_PLAYBACK_TEST_DATA_ROOT", testRoot);
+        }
+        if (Environment.GetCommandLineArgs().Contains("--software-ui-rendering", StringComparer.Ordinal))
+            System.Windows.Media.RenderOptions.ProcessRenderMode = System.Windows.Interop.RenderMode.SoftwareOnly;
+#endif
         base.OnStartup(e);
 
         UiLocalization.Current.Initialize();
@@ -43,6 +57,14 @@ public partial class App : System.Windows.Application
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "WhoseIPTV",
                     "logs");
+#if PLAYBACK_DIAGNOSTICS
+                logsRoot = Path.Combine(AppContext.BaseDirectory, "diagnostics");
+                loggerConfiguration.Filter.ByIncludingOnly(log =>
+                    log.MessageTemplate.Text.StartsWith("Playback frame diagnostics", StringComparison.Ordinal)
+                    || log.MessageTemplate.Text.StartsWith("Playback native diagnostics", StringComparison.Ordinal)
+                    || log.MessageTemplate.Text.StartsWith("Playback diagnostics:", StringComparison.Ordinal)
+                    || log.MessageTemplate.Text.StartsWith("Playback test", StringComparison.Ordinal));
+#endif
 
                 Directory.CreateDirectory(logsRoot);
 
@@ -54,6 +76,9 @@ public partial class App : System.Windows.Application
                         Path.Combine(logsRoot, "iptv-player-.log"),
                         rollingInterval: RollingInterval.Day,
                         retainedFileCountLimit: 14,
+#if PLAYBACK_DIAGNOSTICS
+                        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}",
+#endif
                         fileSizeLimitBytes: 10 * 1024 * 1024,
                         rollOnFileSizeLimit: true,
                         shared: true);
@@ -70,21 +95,11 @@ public partial class App : System.Windows.Application
 
         await _host.StartAsync();
 
-        bool hasSavedPlaylists = false;
-        try
-        {
-            var catalog = _host.Services.GetRequiredService<CatalogOrchestrator>();
-            var sources = await catalog.GetSourcesAsync();
-            hasSavedPlaylists = sources.Count > 0;
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "Failed to inspect saved playlists during startup");
-        }
-
         var window = _host.Services.GetRequiredService<MainWindow>();
         MainWindow = window;
-        window.SetStartupLoadingState(hasSavedPlaylists);
+        // Show the loading UI before waiting for the catalog. Shell initialization
+        // already reads sources and clears loading when this is a fresh install.
+        window.SetStartupLoadingState(true);
         window.WindowState = WindowState.Maximized;
         window.Show();
         window.Activate();
